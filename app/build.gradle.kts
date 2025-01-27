@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.google.gms.google.services)
 }
 
 android {
@@ -49,6 +50,8 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation("com.google.accompanist:accompanist-navigation-animation:0.30.1")
+    implementation(libs.firebase.auth)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -78,13 +81,24 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-tooling:1.5.0")
     debugImplementation("androidx.compose.ui:ui-tooling-preview:1.5.0")
     implementation("com.google.android.material:material:1.9.0")
-
+    implementation("androidx.navigation:navigation-compose:2.7.0")
     implementation ("com.caverock:androidsvg:1.4")
     implementation ("androidx.compose.ui:ui:1.6.0-alpha01")
     implementation ("androidx.compose.material:material:1.5.1")
     implementation ("androidx.compose.ui:ui:1.5.1")
     implementation ("androidx.compose.foundation:foundation:1.5.1")
     implementation ("androidx.compose.runtime:runtime:1.5.1")
+    implementation("androidx.core:core-splashscreen:1.0.0")
+    implementation ("org.jetbrains.kotlin:kotlin-stdlib:1.9.10")
+    implementation("androidx.compose.material:material-icons-core:1.5.1")
+    implementation("androidx.compose.material:material-icons-extended:1.5.1")
+    implementation ("androidx.compose.material3:material3:1.0.0")
+
+
+//    implementation(platform("com.google.firebase:firebase-bom:32.7.1"))
+//    implementation("com.google.firebase:firebase-auth-ktx")
+//    implementation("com.google.firebase:firebase-firestore")
+
 }
 
 

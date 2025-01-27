@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "191296193641",
+    "project_id": "ble-sense",
+    "storage_bucket": "ble-sense.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:191296193641:android:ea8f76cb77180e8dd30ef8",
+        "android_client_info": {
+          "package_name": "com.example.ble_jetpackcompose"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAf2PUaq5NaQCLfOi4U3mCLRRWuU5Gr4WM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

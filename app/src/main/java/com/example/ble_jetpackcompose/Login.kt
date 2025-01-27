@@ -1,12 +1,60 @@
+@file:OptIn(ExperimentalMaterial3Api::class)
 package com.example.ble_jetpackcompose
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -21,26 +69,88 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-
+import androidx.compose.ui.unit.times
+import com.example.ble_jetpackcompose.AppColors.PrimaryColor
+import com.example.ble_jetpackcompose.AppColors.SecondaryTextColor
+import com.example.ble_jetpackcompose.AppColors.TextFieldBackgroundColor
+import kotlinx.coroutines.delay
 
 val helveticaFont = FontFamily(
     Font(R.font.helvetica),
     Font(R.font.helvetica_bold, weight = FontWeight.Bold)
 )
 
+object AppColors {
+    val PrimaryColor = Color(0xFF007AFF) // iOS blue
+    val BackgroundColor = Color(0xFFF2F2F7) // iOS light gray
+    val TextFieldBackgroundColor = Color(0xFFFFFFFF) // White
+    val SecondaryTextColor = Color(0xFF8E8E93) // Gray
+    val ErrorColor = Color(0xFFFF3B30) // iOS red
+    val DividerColor = Color(0xFFE5E5EA) // Light gray for dividers
+    val DisabledColor = Color(0xFFE5E5EA) // Light gray for disabled states
+    val TextPrimaryColor = Color(0xFF000000) // Black
+    val TextSecondaryColor = Color(0xFF8E8E93) // Gray
+    val SurfaceColor = Color(0xFFFFFFFF) // White
+}
 
-@OptIn(ExperimentalMaterial3Api::class)
+
 @Composable
-fun LoginScreen() {
+fun LoginScreen(
+    viewModel: AuthViewModel,
+    onNavigateToRegister: () -> Unit,
+    onNavigateToHome: () -> Unit
+) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
+    var errorMessage by remember { mutableStateOf<String?>(null) }
 
-    // Define custom colors
-    val primaryColor = Color(0xFF007AFF) // iOS blue
-    val backgroundColor = Color(0xFFF2F2F7) // iOS light gray
-    val textFieldBgColor = Color(0xFFFFFFFF)
-    val secondaryTextColor = Color(0xFF8E8E93)
+    // Track form validity
+    val isFormValid by remember(email, password) {
+        derivedStateOf {
+            isValidEmail(email) && isValidPassword(password)
+        }
+    }
+
+    val authState by viewModel.authState.collectAsState()
+
+    // Handle loading state with a blocking dialog
+    if (authState is AuthState.Loading) {
+        LoadingDialog()
+    }
+
+    errorMessage?.let { error ->
+        LaunchedEffect(error) {
+            delay(5000)
+            errorMessage = null
+        }
+    }
+
+    // Handle auth state changes and errors
+    LaunchedEffect(authState) {
+        when (authState) {
+            is AuthState.Success -> {
+                onNavigateToHome()
+            }
+
+            is AuthState.Error -> {
+                val error = (authState as AuthState.Error).message
+                errorMessage = when {
+                    error.contains("network", ignoreCase = true) ->
+                        "Network error. Please check your connection."
+
+                    error.contains("credentials", ignoreCase = true) ->
+                        "Invalid email or password."
+
+                    else -> "An unexpected error occurred. Please try again."
+                }
+            }
+
+            else -> {}
+        }
+    }
+
+
 
     Column(
         modifier = Modifier
@@ -67,7 +177,7 @@ fun LoginScreen() {
             text = "Sign in to continue",
             style = TextStyle(
                 fontSize = 17.sp,
-                color = secondaryTextColor,
+                color = SecondaryTextColor,
                 fontFamily = helveticaFont,
                 fontWeight = FontWeight.Bold,
             ),
@@ -77,73 +187,59 @@ fun LoginScreen() {
         Spacer(modifier = Modifier.height(90.dp))
 
         // Email TextField
-        TextField(
-            value = email,
-            onValueChange = { email = it },
+        EmailTextField(
+            email = email,
+            onEmailChange = {
+                email = it
+                errorMessage = null
+            },
+            isError = !isValidEmail(email) && email.isNotEmpty(),
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 16.dp),
-            placeholder = { Text("Email") },
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Email,
-                imeAction = ImeAction.Next
-            ),
-            colors = TextFieldDefaults.textFieldColors(
-                containerColor = textFieldBgColor,
-                unfocusedIndicatorColor = Color.LightGray,
-                focusedIndicatorColor = primaryColor
-            ),
-            shape = RoundedCornerShape(12.dp),
-            textStyle = TextStyle(
-                fontSize = 17.sp,
-                fontFamily = helveticaFont
-            )
+                .padding(bottom = 16.dp)
         )
 
         // Password TextField
-        TextField(
-            value = password,
-            onValueChange = { password = it },
-            modifier = Modifier.fillMaxWidth(),
-            placeholder = { Text("Password") },
-            visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Password,
-                imeAction = ImeAction.Done
-            ),
-            trailingIcon = {
-                IconButton(onClick = { passwordVisible = !passwordVisible },
-                modifier = Modifier.size(24.dp))
-                {
-                    Icon(
-                        painter = painterResource(
-                            id = if (passwordVisible) {
-                                R.drawable.monkey // Replace with your visible icon resource
-                            } else {
-                                R.drawable.eyes // Replace with your hidden icon resource
-                            }
-                        ),
-                        contentDescription = if (passwordVisible) "Hide password" else "Show password",
-                        tint = Color.Unspecified // Ensure original colors of the icon are preserved
-
-
-                    )
-                }
+        PasswordTextField(
+            password = password,
+            onPasswordChange = {
+                password = it
+                errorMessage = null
             },
-
-                    colors = TextFieldDefaults.textFieldColors(
-                containerColor = textFieldBgColor,
-                unfocusedIndicatorColor = Color.LightGray,
-                focusedIndicatorColor = primaryColor
-            ),
-            shape = RoundedCornerShape(12.dp),
-            textStyle = TextStyle(
-                fontSize = 17.sp,
-                fontFamily = helveticaFont
-            )
+            passwordVisible = passwordVisible,
+            onPasswordVisibilityChange = { passwordVisible = it },
+            isError = !isValidPassword(password) && password.isNotEmpty(),
+            modifier = Modifier.fillMaxWidth()
         )
 
 
+//        colors = TextFieldDefaults.textFieldColors(
+//                containerColor = TextFieldBackgroundColor,
+//                unfocusedIndicatorColor = Color.LightGray,
+//                focusedIndicatorColor = PrimaryColor
+//            ),
+//            shape = RoundedCornerShape(12.dp)
+//            textStyle = TextStyle(
+//                fontSize = 17.sp,
+//                fontFamily = helveticaFont
+//            )
+
+
+        AnimatedVisibility(
+            visible = errorMessage != null,
+            enter = fadeIn() + expandVertically(),
+            exit = fadeOut() + shrinkVertically()
+        ) {
+            Text(
+                text = errorMessage ?: "",
+                color = MaterialTheme.colorScheme.error,
+                style = TextStyle(
+                    fontSize = 14.sp,
+                    fontFamily = helveticaFont
+                ),
+                modifier = Modifier.padding(top = 8.dp)
+            )
+        }
 
 
         // Forgot Password
@@ -157,7 +253,7 @@ fun LoginScreen() {
                 text = "Forgot Password?",
                 style = TextStyle(
                     fontSize = 15.sp,
-                    color = primaryColor,
+                    color = PrimaryColor,
                     fontFamily = helveticaFont,
                     fontWeight = FontWeight.SemiBold,
                 )
@@ -168,22 +264,37 @@ fun LoginScreen() {
 
         // Sign In Button
         Button(
-            onClick = { /* Handle login */ },
+            onClick = {
+                if (isFormValid) {
+                    viewModel.loginUser(email.trim(), password)
+                }
+            },
+            enabled = isFormValid && authState !is AuthState.Loading,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(50.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = primaryColor),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = PrimaryColor,
+                disabledContainerColor = PrimaryColor.copy(alpha = 0.7f)
+            ),
             shape = RoundedCornerShape(12.dp)
         ) {
-            Text(
-                text = "Sign In",
-                style = TextStyle(
-                    fontSize = 17.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    fontFamily = helveticaFont,
-
+            if (authState is AuthState.Loading) {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(24.dp),
+                    color = Color.White
                 )
-            )
+            } else {
+                Text(
+                    text = "Sign In",
+                    color = Color.White,
+                    style = TextStyle(
+                        fontSize = 17.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        fontFamily = helveticaFont
+                    )
+                )
+            }
         }
 
 //        Spacer(modifier = Modifier.weight(1f))
@@ -195,7 +306,7 @@ fun LoginScreen() {
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Divider(
+            HorizontalDivider(
                 modifier = Modifier.weight(1f),
                 color = Color.LightGray
             )
@@ -204,12 +315,12 @@ fun LoginScreen() {
                 modifier = Modifier.padding(horizontal = 16.dp),
                 style = TextStyle(
                     fontSize = 15.sp,
-                    color = secondaryTextColor,
+                    color = SecondaryTextColor,
                     fontFamily = helveticaFont,
                     fontWeight = FontWeight.Bold
                 )
             )
-            Divider(
+            HorizontalDivider(
                 modifier = Modifier.weight(1f),
                 color = Color.LightGray
             )
@@ -236,7 +347,7 @@ fun LoginScreen() {
             )
         }
 
-        Spacer(modifier = Modifier.height(60.dp))
+        Spacer(modifier = Modifier.weight(1f))
 
         // Register Now Section
         Row(
@@ -257,12 +368,12 @@ fun LoginScreen() {
 
 
 
-            TextButton(onClick = { /* Navigate to register */ }) {
+            TextButton(onClick = onNavigateToRegister) {
                 Text(
                     text = "Register Now",
                     style = TextStyle(
                         fontSize = 15.sp,
-                        color = primaryColor,
+                        color = PrimaryColor,
                         fontWeight = FontWeight.SemiBold,
                         fontFamily = helveticaFont
                     )
@@ -273,7 +384,7 @@ fun LoginScreen() {
 }
 
 @Composable
-private fun SocialLoginButton(
+fun SocialLoginButton(
     icon: Int,
     onClick: () -> Unit
 ) {
@@ -296,8 +407,191 @@ private fun SocialLoginButton(
     }
 }
 
+@Composable
+private fun LoadingDialog() {
+    val backgroundColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.8f)
+    val progressColor = MaterialTheme.colorScheme.primary
+
+    AlertDialog(
+        onDismissRequest = { },
+        modifier = Modifier
+            .background(backgroundColor, shape = RoundedCornerShape(16.dp))
+            .padding(24.dp),
+        title = {
+            Text(
+                text = "Signing In",
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+        },
+        text = {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                // Custom animated progress bar
+                SlidingProgressBar(progressColor)
+                Spacer(modifier = Modifier.height(16.dp))
+                Text(
+                    text = "Almost there, please wait...",
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                )
+            }
+        },
+        confirmButton = { },
+        shape = RoundedCornerShape(16.dp),
+//        backgroundColor = Color.Transparent, // Transparent background for blur effect
+//        contentColor = Color.Transparent
+    )
+}
+
+@Composable
+fun SlidingProgressBar(progressColor: Color) {
+    val transition = rememberInfiniteTransition()
+
+    // Animate the progress bar's width
+    val progress by transition.animateFloat(
+        initialValue = 0f,
+        targetValue = 1f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 2000, easing = LinearEasing),
+            repeatMode = RepeatMode.Restart
+        )
+    )
+
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(4.dp)
+            .clip(RoundedCornerShape(50))
+            .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f))
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxHeight()
+                .width(progress * 200.dp) // Width depends on progress value
+                .clip(RoundedCornerShape(50))
+                .background(progressColor)
+        )
+    }
+}
+
+
+
+
+@Composable
+private fun EmailTextField(
+    email: String,
+    onEmailChange: (String) -> Unit,
+    isError: Boolean,
+    modifier: Modifier = Modifier
+) {
+    TextField(
+        value = email,
+        onValueChange = onEmailChange,
+        modifier = modifier,
+        placeholder = { Text("Email") },
+        keyboardOptions = KeyboardOptions(
+            keyboardType = KeyboardType.Email,
+            imeAction = ImeAction.Next
+        ),
+        isError = isError,
+        supportingText = {
+            if (isError) {
+                Text("Please enter a valid email address")
+            }
+        },
+        colors = TextFieldDefaults.textFieldColors(
+            containerColor = TextFieldBackgroundColor,
+            unfocusedIndicatorColor = Color.LightGray,
+            focusedIndicatorColor = PrimaryColor,
+            errorIndicatorColor = MaterialTheme.colorScheme.error
+        ),
+        shape = RoundedCornerShape(12.dp),
+        textStyle = TextStyle(
+            fontSize = 17.sp,
+            fontFamily = helveticaFont
+        )
+    )
+}
+
+@Composable
+private fun PasswordTextField(
+    password: String,
+    onPasswordChange: (String) -> Unit,
+    passwordVisible: Boolean,
+    onPasswordVisibilityChange: (Boolean) -> Unit,
+    isError: Boolean,
+    modifier: Modifier = Modifier
+) {
+    TextField(
+        value = password,
+        onValueChange = onPasswordChange,
+        modifier = modifier,
+        placeholder = { Text("Password") },
+        visualTransformation = if (passwordVisible)
+            VisualTransformation.None
+        else
+            PasswordVisualTransformation(),
+        keyboardOptions = KeyboardOptions(
+            keyboardType = KeyboardType.Password,
+            imeAction = ImeAction.Done
+        ),
+        isError = isError,
+        supportingText = {
+            if (isError) {
+                Text("Password must be at least 8 characters")
+            }
+        },
+        trailingIcon = {
+            IconButton(
+                onClick = { onPasswordVisibilityChange(!passwordVisible) },
+                modifier = Modifier.size(24.dp)
+            ) {
+                Icon(
+                    painter = painterResource(
+                        id = if (passwordVisible) {
+                            R.drawable.monkey
+                        } else {
+                            R.drawable.eyes
+                        }
+                    ),
+                    contentDescription = if (passwordVisible)
+                        "Hide password"
+                    else
+                        "Show password",
+                    tint = Color.Unspecified
+                )
+            }
+        },
+        colors = TextFieldDefaults.textFieldColors(
+            containerColor = TextFieldBackgroundColor,
+            unfocusedIndicatorColor = Color.LightGray,
+            focusedIndicatorColor = PrimaryColor,
+            errorIndicatorColor = MaterialTheme.colorScheme.error
+        ),
+        shape = RoundedCornerShape(12.dp),
+        textStyle = TextStyle(
+            fontSize = 17.sp,
+            fontFamily = helveticaFont
+        )
+    )
+}
+
+// Validation functions
+private fun isValidEmail(email: String): Boolean {
+    return email.isNotBlank() && android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()
+}
+
+private fun isValidPassword(password: String): Boolean {
+    return password.length >= 8
+}
+
+
 @Preview(showBackground = true)
 @Composable
 fun LoginScreenPreview() {
-    LoginScreen()
+    LoginScreen(onNavigateToRegister = {}, onNavigateToHome = {}, viewModel = AuthViewModel())
 }
