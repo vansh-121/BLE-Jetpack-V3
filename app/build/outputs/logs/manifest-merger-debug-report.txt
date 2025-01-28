@@ -10,6 +10,7 @@ MERGED from [androidx.navigation:navigation-runtime:2.7.0] C:\Users\DELL\.gradle
 MERGED from [androidx.navigation:navigation-common-ktx:2.7.0] C:\Users\DELL\.gradle\caches\8.9\transforms\9043e540a676769801672faf1f68d64d\transformed\navigation-common-ktx-2.7.0\AndroidManifest.xml:2:1-7:12
 MERGED from [androidx.navigation:navigation-runtime-ktx:2.7.0] C:\Users\DELL\.gradle\caches\8.9\transforms\ac324e8428269ed09a4e7f4e42e138a5\transformed\navigation-runtime-ktx-2.7.0\AndroidManifest.xml:2:1-7:12
 MERGED from [androidx.navigation:navigation-compose:2.7.0] C:\Users\DELL\.gradle\caches\8.9\transforms\9a9627c077cdaf41de3a3d1aca36024a\transformed\navigation-compose-2.7.0\AndroidManifest.xml:2:1-7:12
+MERGED from [com.google.accompanist:accompanist-permissions:0.32.0] C:\Users\DELL\.gradle\caches\8.9\transforms\f2ae818f2823766e79c3dd509b8f4184\transformed\accompanist-permissions-0.32.0\AndroidManifest.xml:17:1-23:12
 MERGED from [com.google.android.material:material:1.9.0] C:\Users\DELL\.gradle\caches\8.9\transforms\829b93a50d82b3ab49f671e9524dabae\transformed\material-1.9.0\AndroidManifest.xml:17:1-26:12
 MERGED from [androidx.constraintlayout:constraintlayout:2.0.1] C:\Users\DELL\.gradle\caches\8.9\transforms\437825ab7b333d30e9988b35be6ac949\transformed\constraintlayout-2.0.1\AndroidManifest.xml:2:1-11:12
 MERGED from [androidx.appcompat:appcompat-resources:1.5.0] C:\Users\DELL\.gradle\caches\8.9\transforms\cf98a97f01f8d6614da959038b5c3cee\transformed\appcompat-resources-1.5.0\AndroidManifest.xml:17:1-22:12
@@ -102,6 +103,7 @@ MERGED from [androidx.documentfile:documentfile:1.0.0] C:\Users\DELL\.gradle\cac
 MERGED from [androidx.print:print:1.0.0] C:\Users\DELL\.gradle\caches\8.9\transforms\190f286464dfb4c2929e9c7931e57524\transformed\print-1.0.0\AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.arch.core:core-runtime:2.2.0] C:\Users\DELL\.gradle\caches\8.9\transforms\e9e3fd7bb1e3860d94774e304bb46847\transformed\core-runtime-2.2.0\AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.annotation:annotation-experimental:1.4.1] C:\Users\DELL\.gradle\caches\8.9\transforms\5013e0e355e3af1b204c32c1150de531\transformed\annotation-experimental-1.4.1\AndroidManifest.xml:2:1-7:12
+MERGED from [io.github.aakira:napier-android-debug:1.4.1] C:\Users\DELL\.gradle\caches\8.9\transforms\06a6ef003dad03ee99a2730c9b2ba986\transformed\napier-debug\AndroidManifest.xml:2:1-11:12
 MERGED from [com.google.android.play:core-common:2.0.3] C:\Users\DELL\.gradle\caches\8.9\transforms\8918ce33e137f227ae47231e644e89d7\transformed\core-common-2.0.3\AndroidManifest.xml:2:1-21:12
 	package
 		INJECTED from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\src\main\AndroidManifest.xml
@@ -248,6 +250,8 @@ MERGED from [androidx.navigation:navigation-runtime-ktx:2.7.0] C:\Users\DELL\.gr
 MERGED from [androidx.navigation:navigation-runtime-ktx:2.7.0] C:\Users\DELL\.gradle\caches\8.9\transforms\ac324e8428269ed09a4e7f4e42e138a5\transformed\navigation-runtime-ktx-2.7.0\AndroidManifest.xml:5:5-44
 MERGED from [androidx.navigation:navigation-compose:2.7.0] C:\Users\DELL\.gradle\caches\8.9\transforms\9a9627c077cdaf41de3a3d1aca36024a\transformed\navigation-compose-2.7.0\AndroidManifest.xml:5:5-44
 MERGED from [androidx.navigation:navigation-compose:2.7.0] C:\Users\DELL\.gradle\caches\8.9\transforms\9a9627c077cdaf41de3a3d1aca36024a\transformed\navigation-compose-2.7.0\AndroidManifest.xml:5:5-44
+MERGED from [com.google.accompanist:accompanist-permissions:0.32.0] C:\Users\DELL\.gradle\caches\8.9\transforms\f2ae818f2823766e79c3dd509b8f4184\transformed\accompanist-permissions-0.32.0\AndroidManifest.xml:21:5-44
+MERGED from [com.google.accompanist:accompanist-permissions:0.32.0] C:\Users\DELL\.gradle\caches\8.9\transforms\f2ae818f2823766e79c3dd509b8f4184\transformed\accompanist-permissions-0.32.0\AndroidManifest.xml:21:5-44
 MERGED from [com.google.android.material:material:1.9.0] C:\Users\DELL\.gradle\caches\8.9\transforms\829b93a50d82b3ab49f671e9524dabae\transformed\material-1.9.0\AndroidManifest.xml:20:5-22:41
 MERGED from [com.google.android.material:material:1.9.0] C:\Users\DELL\.gradle\caches\8.9\transforms\829b93a50d82b3ab49f671e9524dabae\transformed\material-1.9.0\AndroidManifest.xml:20:5-22:41
 MERGED from [androidx.constraintlayout:constraintlayout:2.0.1] C:\Users\DELL\.gradle\caches\8.9\transforms\437825ab7b333d30e9988b35be6ac949\transformed\constraintlayout-2.0.1\AndroidManifest.xml:5:5-7:41
@@ -432,6 +436,8 @@ MERGED from [androidx.arch.core:core-runtime:2.2.0] C:\Users\DELL\.gradle\caches
 MERGED from [androidx.arch.core:core-runtime:2.2.0] C:\Users\DELL\.gradle\caches\8.9\transforms\e9e3fd7bb1e3860d94774e304bb46847\transformed\core-runtime-2.2.0\AndroidManifest.xml:20:5-44
 MERGED from [androidx.annotation:annotation-experimental:1.4.1] C:\Users\DELL\.gradle\caches\8.9\transforms\5013e0e355e3af1b204c32c1150de531\transformed\annotation-experimental-1.4.1\AndroidManifest.xml:5:5-44
 MERGED from [androidx.annotation:annotation-experimental:1.4.1] C:\Users\DELL\.gradle\caches\8.9\transforms\5013e0e355e3af1b204c32c1150de531\transformed\annotation-experimental-1.4.1\AndroidManifest.xml:5:5-44
+MERGED from [io.github.aakira:napier-android-debug:1.4.1] C:\Users\DELL\.gradle\caches\8.9\transforms\06a6ef003dad03ee99a2730c9b2ba986\transformed\napier-debug\AndroidManifest.xml:7:5-9:41
+MERGED from [io.github.aakira:napier-android-debug:1.4.1] C:\Users\DELL\.gradle\caches\8.9\transforms\06a6ef003dad03ee99a2730c9b2ba986\transformed\napier-debug\AndroidManifest.xml:7:5-9:41
 MERGED from [com.google.android.play:core-common:2.0.3] C:\Users\DELL\.gradle\caches\8.9\transforms\8918ce33e137f227ae47231e644e89d7\transformed\core-common-2.0.3\AndroidManifest.xml:7:5-9:41
 MERGED from [com.google.android.play:core-common:2.0.3] C:\Users\DELL\.gradle\caches\8.9\transforms\8918ce33e137f227ae47231e644e89d7\transformed\core-common-2.0.3\AndroidManifest.xml:7:5-9:41
 	tools:overrideLibrary

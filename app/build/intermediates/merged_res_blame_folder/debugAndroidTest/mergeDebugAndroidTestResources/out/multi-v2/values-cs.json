@@ -4,24 +4,7 @@
             "outputFile": "com.example.ble_jetpackcompose.test.app-mergeDebugAndroidTestResources-33:/values-cs/values-cs.xml",
             "map": [
                 {
-                    "source": "C:\\Users\\DELL\\.gradle\\caches\\8.9\\transforms\\dec158b06d870a971d486a9a4eea480a\\transformed\\core-1.15.0\\res\\values-cs\\values-cs.xml",
-                    "from": {
-                        "startLines": "2,3,4,5,6,7,8,9",
-                        "startColumns": "4,4,4,4,4,4,4,4",
-                        "startOffsets": "55,153,255,356,455,560,667,786",
-                        "endColumns": "97,101,100,98,104,106,118,100",
-                        "endOffsets": "148,250,351,450,555,662,781,882"
-                    },
-                    "to": {
-                        "startLines": "2,3,4,5,6,7,8,23",
-                        "startColumns": "4,4,4,4,4,4,4,4",
-                        "startOffsets": "105,203,305,406,505,610,717,2020",
-                        "endColumns": "97,101,100,98,104,106,118,100",
-                        "endOffsets": "198,300,401,500,605,712,831,2116"
-                    }
-                },
-                {
-                    "source": "C:\\Users\\DELL\\.gradle\\caches\\8.9\\transforms\\81444e25e5624447f8085cc243006a32\\transformed\\ui-release\\res\\values-cs\\values-cs.xml",
+                    "source": "C:\\Users\\DELL\\.gradle\\caches\\8.9\\transforms\\b151523f9fff83c5a8b641d2345d5b45\\transformed\\ui-release\\res\\values-cs\\values-cs.xml",
                     "from": {
                         "startLines": "2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18",
                         "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
@@ -35,6 +18,23 @@
                         "startOffsets": "836,929,1012,1106,1208,1300,1378,1470,1561,1642,1711,1780,1862,1948,2121,2200,2268",
                         "endColumns": "92,82,93,101,91,77,91,90,80,68,68,81,85,71,78,67,119",
                         "endOffsets": "924,1007,1101,1203,1295,1373,1465,1556,1637,1706,1775,1857,1943,2015,2195,2263,2383"
+                    }
+                },
+                {
+                    "source": "C:\\Users\\DELL\\.gradle\\caches\\8.9\\transforms\\5528f48779f9f69ca9223a2bcb58d298\\transformed\\core-1.15.0\\res\\values-cs\\values-cs.xml",
+                    "from": {
+                        "startLines": "2,3,4,5,6,7,8,9",
+                        "startColumns": "4,4,4,4,4,4,4,4",
+                        "startOffsets": "55,153,255,356,455,560,667,786",
+                        "endColumns": "97,101,100,98,104,106,118,100",
+                        "endOffsets": "148,250,351,450,555,662,781,882"
+                    },
+                    "to": {
+                        "startLines": "2,3,4,5,6,7,8,23",
+                        "startColumns": "4,4,4,4,4,4,4,4",
+                        "startOffsets": "105,203,305,406,505,610,717,2020",
+                        "endColumns": "97,101,100,98,104,106,118,100",
+                        "endOffsets": "198,300,401,500,605,712,831,2116"
                     }
                 }
             ]

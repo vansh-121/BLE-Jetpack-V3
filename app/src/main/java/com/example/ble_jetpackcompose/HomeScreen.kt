@@ -15,6 +15,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -32,6 +33,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import kotlinx.coroutines.delay
 
 
 @Composable
@@ -45,13 +47,27 @@ fun MainScreen(
     val bluetoothDevices by bluetoothViewModel.devices.collectAsState(initial = emptyList())
     val context = LocalContext.current
     val isPermissionGranted = remember { mutableStateOf(false) }
+    val isScanning = remember { mutableStateOf(false) }
+
+
+
 
     BluetoothPermissionHandler(
         onPermissionsGranted = {
             isPermissionGranted.value = true
             bluetoothViewModel.startScan()
+            isScanning.value = true
         }
     )
+    LaunchedEffect (isScanning) {
+        if (isScanning.value) {
+            delay(10000) // 10 seconds timeout
+            isScanning.value = false
+            bluetoothViewModel.stopScan()
+        }
+    }
+
+
 
     Box(
         modifier = Modifier
@@ -94,53 +110,68 @@ fun MainScreen(
                 modifier = Modifier
                     .weight(1f)
                     .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
             ) {
                 item {
-                    // Nearby Devices Card
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(16.dp),
+                            .padding(vertical = 16.dp),
                         elevation = 4.dp,
                         shape = RoundedCornerShape(16.dp)
                     ) {
-                        Column(modifier = Modifier.padding(16.dp)) {
-                            // Header
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp)
+                        ) {
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Text(
                                     text = "Nearby devices (${bluetoothDevices.size})",
-                                    style = MaterialTheme.typography.h6,
-                                    modifier = Modifier.weight(1f)
+                                    style = MaterialTheme.typography.h6
                                 )
-                                Icon(
-                                    imageVector = Icons.Default.Refresh,
-                                    contentDescription = "Refresh",
-                                    modifier = Modifier
-                                        .clickable { bluetoothViewModel.startScan() }
-                                        .padding(end = 8.dp)
-                                )
-                                Icon(
-                                    imageVector = Icons.Default.MoreVert,
-                                    contentDescription = "More options",
-                                    modifier = Modifier.clickable { /* More options logic */ }
-                                )
-                            }
-                            Spacer(modifier = Modifier.height(8.dp))
-                            if (bluetoothDevices.isEmpty()) {
-                                Text(
-                                    text = "No devices found",
-                                    modifier = Modifier.fillMaxWidth(),
-                                    textAlign = TextAlign.Center
-                                )
-                            } else {
-                                LazyColumn {
-                                    items(bluetoothDevices) { device ->
-                                        BluetoothDeviceItem(device)
-                                        Divider()
+                                IconButton(
+                                    onClick = {
+                                        bluetoothViewModel.startScan()
+                                        isScanning.value = true
                                     }
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Refresh,
+                                        contentDescription = "Refresh"
+                                    )
+                                }
+                            }
+
+                            Spacer(modifier = Modifier.height(16.dp))
+
+                            if (!isPermissionGranted.value) {
+                                Text(
+                                    "Bluetooth permissions required",
+                                    textAlign = TextAlign.Center,
+                                    modifier = Modifier.fillMaxWidth()
+                                )
+                            } else if (bluetoothDevices.isEmpty()) {
+                                Column(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
+                                    if (isScanning.value) {
+                                        CircularProgressIndicator()
+                                        Spacer(modifier = Modifier.height(8.dp))
+                                        Text("Scanning for devices...")
+                                    } else {
+                                        Text("No devices found")
+                                    }
+                                }
+                            } else {
+                                bluetoothDevices.forEach { device ->
+                                    BluetoothDeviceItem(device)
+                                    Divider()
                                 }
                             }
                         }

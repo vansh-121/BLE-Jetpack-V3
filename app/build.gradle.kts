@@ -93,7 +93,7 @@ dependencies {
     implementation("androidx.compose.material:material-icons-core:1.5.1")
     implementation("androidx.compose.material:material-icons-extended:1.5.1")
     implementation ("androidx.compose.material3:material3:1.0.0")
-
+    implementation("com.google.accompanist:accompanist-permissions:0.32.0")
 
 //    implementation(platform("com.google.firebase:firebase-bom:32.7.1"))
 //    implementation("com.google.firebase:firebase-auth-ktx")
