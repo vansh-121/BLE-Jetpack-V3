@@ -34,6 +34,13 @@ drawable ic_launcher_background
 drawable ic_launcher_foreground
 drawable jack
 drawable lock
+drawable logo3
+drawable logo_square
+drawable logoble
+drawable logoble_round
+drawable logoblelastfinal
+drawable logofinal
+drawable logofinallast
 drawable monkey
 drawable parrot
 drawable pirate

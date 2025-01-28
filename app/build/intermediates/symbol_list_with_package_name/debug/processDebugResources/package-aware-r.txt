@@ -2967,6 +2967,13 @@ drawable ic_search_black_24
 drawable icon_background
 drawable jack
 drawable lock
+drawable logo3
+drawable logo_square
+drawable logoble
+drawable logoble_round
+drawable logoblelastfinal
+drawable logofinal
+drawable logofinallast
 drawable m3_appbar_background
 drawable m3_avd_hide_password
 drawable m3_avd_show_password

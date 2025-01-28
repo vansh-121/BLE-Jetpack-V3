@@ -2966,6 +2966,13 @@ int drawable ic_search_black_24 0x7f0700c5
 int drawable icon_background 0x7f0700c6
 int drawable jack 0x7f0700c7
 int drawable lock 0x7f0700c8
+int drawable logo3 0x7f07011f
+int drawable logo_square 0x7f07011d
+int drawable logoble 0x7f07011c
+int drawable logoble_round 0x7f07011e
+int drawable logoblelastfinal 0x7f070121
+int drawable logofinal 0x7f070120
+int drawable logofinallast 0x7f070122
 int drawable m3_appbar_background 0x7f0700c9
 int drawable m3_avd_hide_password 0x7f0700ca
 int drawable m3_avd_show_password 0x7f0700cb

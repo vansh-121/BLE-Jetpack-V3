@@ -29,13 +29,20 @@ class BluetoothScanViewModel(private val context: Context) : ViewModel() {
         if (!hasBluetoothPermissions()) {
             Log.w("BluetoothScan", "Permissions not granted")
             return
+
+
+
         }
+
+
 
         viewModelScope.launch {
             try {
                 bluetoothLeScanner?.startScan(
                     listOf(),
+
                     ScanSettings.Builder().build(),
+
                     scanCallback
                 )
             } catch (e: SecurityException) {
@@ -43,6 +50,8 @@ class BluetoothScanViewModel(private val context: Context) : ViewModel() {
             }
         }
     }
+
+
 
     private fun hasBluetoothPermissions(): Boolean {
         val permissions = arrayOf(
