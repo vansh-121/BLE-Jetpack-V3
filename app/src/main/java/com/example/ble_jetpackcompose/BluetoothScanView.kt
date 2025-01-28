@@ -6,7 +6,9 @@ import android.bluetooth.le.ScanResult
 import android.bluetooth.le.ScanSettings
 import android.content.Context
 import android.content.pm.PackageManager
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -53,6 +55,7 @@ class BluetoothScanViewModel(private val context: Context) : ViewModel() {
 
 
 
+    @RequiresApi(Build.VERSION_CODES.S)
     private fun hasBluetoothPermissions(): Boolean {
         val permissions = arrayOf(
             android.Manifest.permission.BLUETOOTH_SCAN,
