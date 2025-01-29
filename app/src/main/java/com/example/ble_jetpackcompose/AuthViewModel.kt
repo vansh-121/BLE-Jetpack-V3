@@ -26,6 +26,25 @@ class AuthViewModel : ViewModel() {
     private val _authState = MutableStateFlow<AuthState>(AuthState.Idle)
     val authState: StateFlow<AuthState> = _authState
 
+
+    fun signInAsGuest() {
+        viewModelScope.launch {
+            try {
+                _authState.value = AuthState.Loading
+                val result = auth.signInAnonymously().await()
+                if (result.user != null) {
+                    _authState.value = AuthState.Success(result.user!!)
+                } else {
+                    _authState.value = AuthState.Error("Anonymous sign-in failed")
+                }
+            } catch (e: Exception) {
+                _authState.value = AuthState.Error(e.message ?: "Unknown error occurred")
+            }
+        }
+    }
+
+
+
     fun registerUser(email: String, password: String) {
         viewModelScope.launch {
             try {

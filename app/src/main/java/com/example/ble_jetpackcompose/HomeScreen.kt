@@ -42,6 +42,7 @@ fun MainScreen(
     onSignOut: () -> Unit,
     navController: NavHostController,
     bluetoothViewModel: BluetoothScanViewModel,
+
 //    goToSettings : () -> Unit
 ) {
     val bluetoothDevices by bluetoothViewModel.devices.collectAsState(initial = emptyList())

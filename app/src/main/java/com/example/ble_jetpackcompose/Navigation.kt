@@ -15,6 +15,24 @@ import androidx.navigation.compose.composable
 fun AppNavigation(navController: NavHostController) {
     // Initialize AuthViewModel
     val authViewModel: AuthViewModel = viewModel()
+    val authState by authViewModel.authState.collectAsState()
+    LaunchedEffect(authState) {
+        when (authState) {
+            is AuthState.Success -> {
+                // Navigate to home screen when authentication is successful
+                navController.navigate("home_screen") {
+                    popUpTo("first_screen") { inclusive = true }
+                }
+            }
+            is AuthState.Error -> {
+                // Handle error if needed
+                // You might want to show a toast or error message
+            }
+            else -> {} // Handle other states if needed
+        }
+    }
+
+
 
     NavHost(navController = navController, startDestination = "splash_screen") {
         composable("splash_screen") {
@@ -34,8 +52,8 @@ fun AppNavigation(navController: NavHostController) {
                 },
                 onNavigateToSignup = {
                     navController.navigate("register")
-                }
-            )
+                },
+                onGuestSignIn = {  authViewModel.signInAsGuest() })
         }
 
         composable("login") {
