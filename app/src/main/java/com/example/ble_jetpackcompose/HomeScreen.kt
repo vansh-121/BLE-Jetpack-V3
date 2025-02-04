@@ -1,6 +1,10 @@
 package com.example.ble_jetpackcompose
-
+import android.Manifest // This provides access to all permission constants
+import android.bluetooth.BluetoothAdapter
 import BluetoothScanViewModel
+import android.content.Context
+import android.content.pm.PackageManager
+import android.os.Build
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -32,9 +36,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat
 import androidx.navigation.NavHostController
 import kotlinx.coroutines.delay
-
 
 @Composable
 fun MainScreen(
@@ -50,63 +54,53 @@ fun MainScreen(
     val isPermissionGranted = remember { mutableStateOf(false) }
     val isScanning = remember { mutableStateOf(false) }
 
+    LaunchedEffect(Unit) {
+        val hasPermissions = checkBluetoothPermissions(context)
+        isPermissionGranted.value = hasPermissions
 
+        if (hasPermissions) {
+            // Start initial scan
+            bluetoothViewModel.startScan()
+            isScanning.value = true
+        } else {
+            println("Permissions not granted!")
+        }
+    }
 
+    // Periodic scanning
+    LaunchedEffect(isPermissionGranted.value) {
+        while (isPermissionGranted.value) {
+            if (!isScanning.value) {
+                bluetoothViewModel.startScan()
+                isScanning.value = true
+            }
+            delay(10000) // Scan every 30 seconds
+        }
+    }
+
+    // Handle scan timeout
+    LaunchedEffect(isScanning.value) {
+        if (isScanning.value) {
+            delay(3000) // 10 seconds scan timeout
+            bluetoothViewModel.stopScan()
+            isScanning.value = false
+        }
+    }
 
     BluetoothPermissionHandler(
         onPermissionsGranted = {
             isPermissionGranted.value = true
             bluetoothViewModel.startScan()
             isScanning.value = true
-        }
-    )
-    LaunchedEffect (isScanning) {
-        if (isScanning.value) {
-            delay(10000) // 10 seconds timeout
-            isScanning.value = false
-            bluetoothViewModel.stopScan()
-        }
-    }
-
-
-
+        })
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(Color(0xFFF5F5F5))
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
-            // Top Bar
-            TopAppBar(
-                title = {
-                    Text(
-                        "BLE",
-                        fontSize = 24.sp,
-                        modifier = Modifier.wrapContentSize()
-                    )
-                },
-                backgroundColor = Color.White,
-                contentColor = Color.Black,
-                elevation = 4.dp,
-                actions = {
-                    Button(
-                        onClick = {
-                            viewModel.signOut()
-                            onSignOut()
-                        },
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colors.error
-                        ),
-                        modifier = Modifier
-                            .padding(end = 16.dp)
-                            .height(36.dp)
-                    ) {
-                        Text("Sign Out", color = Color.White)
-                    }
-                }
-            )
+            // Your existing TopAppBar code...
 
-            // Scrollable content
             LazyColumn(
                 modifier = Modifier
                     .weight(1f)
@@ -137,8 +131,10 @@ fun MainScreen(
                                 )
                                 IconButton(
                                     onClick = {
-                                        bluetoothViewModel.startScan()
-                                        isScanning.value = true
+                                        if (isPermissionGranted.value && !isScanning.value) {
+                                            bluetoothViewModel.startScan()
+                                            isScanning.value = true
+                                        }
                                     }
                                 ) {
                                     Icon(
@@ -224,10 +220,35 @@ fun MainScreen(
                 modifier = Modifier.align(Alignment.BottomCenter),
                 navController = navController
             )
-        }
             }
+        }
     }
 }
+
+
+private fun checkBluetoothPermissions(context: Context): Boolean {
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        checkPermission(context, Manifest.permission.BLUETOOTH_SCAN) &&
+                checkPermission(context, Manifest.permission.BLUETOOTH_CONNECT) &&
+                checkPermission(context, Manifest.permission.ACCESS_FINE_LOCATION)
+    } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        checkPermission(context, Manifest.permission.BLUETOOTH) &&
+                checkPermission(context, Manifest.permission.BLUETOOTH_ADMIN) &&
+                checkPermission(context, Manifest.permission.ACCESS_FINE_LOCATION)
+    } else {
+        checkPermission(context, Manifest.permission.ACCESS_FINE_LOCATION)
+    }
+}
+
+private fun checkPermission(context: Context, permission: String): Boolean {
+    return ContextCompat.checkSelfPermission(
+        context,
+        permission
+    ) == PackageManager.PERMISSION_GRANTED
+}
+
+
+
     @Composable
     fun BluetoothDeviceItem(device: BLEDevice) {
         Row(

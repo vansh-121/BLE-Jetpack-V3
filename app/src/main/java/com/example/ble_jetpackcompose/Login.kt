@@ -211,20 +211,6 @@ fun LoginScreen(
             isError = !isValidPassword(password) && password.isNotEmpty(),
             modifier = Modifier.fillMaxWidth()
         )
-
-
-//        colors = TextFieldDefaults.textFieldColors(
-//                containerColor = TextFieldBackgroundColor,
-//                unfocusedIndicatorColor = Color.LightGray,
-//                focusedIndicatorColor = PrimaryColor
-//            ),
-//            shape = RoundedCornerShape(12.dp)
-//            textStyle = TextStyle(
-//                fontSize = 17.sp,
-//                fontFamily = helveticaFont
-//            )
-
-
         AnimatedVisibility(
             visible = errorMessage != null,
             enter = fadeIn() + expandVertically(),
@@ -458,7 +444,7 @@ fun SlidingProgressBar(progressColor: Color) {
         animationSpec = infiniteRepeatable(
             animation = tween(durationMillis = 2000, easing = LinearEasing),
             repeatMode = RepeatMode.Restart
-        )
+        ), label = ""
     )
 
     Box(
