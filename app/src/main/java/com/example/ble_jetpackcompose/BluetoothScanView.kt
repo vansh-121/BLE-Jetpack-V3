@@ -131,22 +131,21 @@ class BluetoothScanViewModel(private val context: Context) : ViewModel() {
         }
     }
 
+
     private fun hasBluetoothPermissions(): Boolean {
-        val permissions = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            arrayOf(
-                android.Manifest.permission.BLUETOOTH_SCAN,
-                android.Manifest.permission.BLUETOOTH_CONNECT,
-                android.Manifest.permission.ACCESS_FINE_LOCATION
-            )
-        } else {
-            TODO("VERSION.SDK_INT < S")
-        }
+        val permissions = arrayOf(
+            android.Manifest.permission.BLUETOOTH_SCAN,
+            android.Manifest.permission.BLUETOOTH_CONNECT,
+            android.Manifest.permission.ACCESS_FINE_LOCATION
+        )
 
         return permissions.all { permission ->
             ContextCompat.checkSelfPermission(context, permission) ==
                     PackageManager.PERMISSION_GRANTED
         }
     }
+
+
 
     private val scanCallback = object : ScanCallback() {
         override fun onScanResult(callbackType: Int, result: ScanResult) {
