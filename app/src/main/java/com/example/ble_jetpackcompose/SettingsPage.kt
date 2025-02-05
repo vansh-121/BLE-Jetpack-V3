@@ -1,14 +1,13 @@
 package com.example.ble_jetpackcompose
 
-import androidx.compose.ui.tooling.preview.Preview
-
-import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.Help
+import androidx.compose.material.icons.automirrored.outlined.Logout
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -18,11 +17,19 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.viewmodel.compose.viewModel
 
 @Composable
-fun ModernSettingsScreen() {
+fun ModernSettingsScreen(
+    viewModel: AuthViewModel = viewModel(),
+    onSignOut: () -> Unit
+) {
     val backgroundColor = Color(0xFFF2F2F7)
     val cardBackground = Color.White
+    val authState by viewModel.authState.collectAsState()
+    val currentUser = viewModel.checkCurrentUser()
 
     Scaffold(
         backgroundColor = backgroundColor,
@@ -49,8 +56,24 @@ fun ModernSettingsScreen() {
                 .fillMaxSize()
                 .padding(horizontal = 16.dp)
         ) {
-            // User Profile Section
-            UserProfileCard(cardBackground)
+            // User Profile Section with current user info
+            UserProfileCard(
+                cardBackground = cardBackground,
+                userName = when {
+                    currentUser?.isAnonymous == true -> "Guest User"
+                    currentUser != null -> currentUser.email?.substringBefore('@') ?: "User"
+                    else -> "Not Signed In"
+                },
+                userEmail = when {
+                    currentUser?.isAnonymous == true -> "Anonymous User"
+                    currentUser != null -> currentUser.email ?: ""
+                    else -> ""
+                },
+                onLogout = {
+                    viewModel.signOut()
+                    onSignOut()
+                }
+            )
 
             Spacer(modifier = Modifier.height(20.dp))
 
@@ -61,10 +84,15 @@ fun ModernSettingsScreen() {
 }
 
 @Composable
-fun UserProfileCard(backgroundColor: Color) {
+fun UserProfileCard(
+    cardBackground: Color,
+    userName: String,
+    userEmail: String,
+    onLogout: () -> Unit
+) {
     Card(
         shape = RoundedCornerShape(12.dp),
-        backgroundColor = backgroundColor,
+        backgroundColor = cardBackground,
         elevation = 0.dp,
         modifier = Modifier.fillMaxWidth()
     ) {
@@ -72,7 +100,7 @@ fun UserProfileCard(backgroundColor: Color) {
             modifier = Modifier.padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Circular Profile Image Placeholder
+            // Profile Image
             Box(
                 modifier = Modifier
                     .size(60.dp)
@@ -92,14 +120,14 @@ fun UserProfileCard(backgroundColor: Color) {
 
             Column {
                 Text(
-                    text = "John Doe",
+                    text = userName,
                     fontFamily = helveticaFont,
                     style = MaterialTheme.typography.subtitle1.copy(
                         fontWeight = FontWeight.Bold
                     )
                 )
                 Text(
-                    text = "johndoe@example.com",
+                    text = userEmail,
                     fontFamily = helveticaFont,
                     style = MaterialTheme.typography.body2.copy(
                         color = Color.Gray
@@ -109,9 +137,9 @@ fun UserProfileCard(backgroundColor: Color) {
 
             Spacer(modifier = Modifier.weight(1f))
 
-            IconButton(onClick = { /* Logout action */ }) {
+            IconButton(onClick = onLogout) {
                 Icon(
-                    imageVector = Icons.Outlined.Logout,
+                    imageVector = Icons.AutoMirrored.Outlined.Logout,
                     contentDescription = "Logout",
                     tint = Color(0xFF007AFF)
                 )
@@ -125,7 +153,7 @@ fun SettingsOptionsList(backgroundColor: Color) {
     val settingsOptions = listOf(
         SettingsItem(Icons.Outlined.DarkMode, "Dark Mode", SettingsItemType.SWITCH),
         SettingsItem(Icons.Outlined.Language, "Language", SettingsItemType.DETAIL),
-        SettingsItem(Icons.Outlined.Help, "Help", SettingsItemType.DETAIL),
+        SettingsItem(Icons.AutoMirrored.Outlined.Help, "Help", SettingsItemType.DETAIL),
         SettingsItem(Icons.Outlined.AccountCircle, "Accounts", SettingsItemType.DETAIL),
         SettingsItem(Icons.Outlined.Info, "About BLE", SettingsItemType.DETAIL)
     )
@@ -140,7 +168,6 @@ fun SettingsOptionsList(backgroundColor: Color) {
             settingsOptions.forEachIndexed { index, item ->
                 SettingsItemRow(item)
 
-                // Divider between items
                 if (index < settingsOptions.size - 1) {
                     Divider(
                         color = Color(0xFFE0E0E0),
@@ -153,6 +180,7 @@ fun SettingsOptionsList(backgroundColor: Color) {
     }
 }
 
+// ... rest of your existing code for SettingsItemRow, SettingsItem, and SettingsItemType remains the same
 @Composable
 fun SettingsItemRow(item: SettingsItem) {
     var switchState by remember { mutableStateOf(false) }
@@ -232,5 +260,6 @@ enum class SettingsItemType {
 @Preview(showBackground = true)
 @Composable
 fun ModernSettingsScreenPreview() {
-    ModernSettingsScreen()
+    ModernSettingsScreen(onSignOut = {})
 }
+

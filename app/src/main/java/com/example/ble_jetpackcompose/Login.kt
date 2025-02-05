@@ -106,7 +106,8 @@ fun LoginScreen(
     var password by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
-
+    var forgotPasswordEmail by remember { mutableStateOf("") }
+    var showForgotPasswordDialog by remember { mutableStateOf(false) }
     // Track form validity
     val isFormValid by remember(email, password) {
         derivedStateOf {
@@ -148,6 +149,13 @@ fun LoginScreen(
                 }
             }
 
+            is AuthState.PasswordResetEmailSent -> {
+                showForgotPasswordDialog = false
+                errorMessage = null
+                // Show success message
+                // You can handle this how you prefer - for now we'll use the error message system
+                errorMessage = "Password reset email sent! Please check your inbox."
+            }
             else -> {}
         }
     }
@@ -232,7 +240,7 @@ fun LoginScreen(
 
         // Forgot Password
         TextButton(
-            onClick = { /* Handle forgot password */ },
+            onClick = { showForgotPasswordDialog = true  },
             modifier = Modifier
                 .align(Alignment.End)
                 .padding(top = 8.dp)
@@ -354,7 +362,70 @@ fun LoginScreen(
                 )
             )
 
-
+            if (showForgotPasswordDialog) {
+                AlertDialog(
+                    onDismissRequest = { showForgotPasswordDialog = false },
+                    title = {
+                        Text(
+                            text = "Reset Password",
+                            style = TextStyle(
+                                fontSize = 20.sp,
+                                fontFamily = helveticaFont,
+                                fontWeight = FontWeight.Bold
+                            )
+                        )
+                    },
+                    text = {
+                        Column {
+                            Text(
+                                text = "Enter your email address and we'll send you a link to reset your password.",
+                                style = TextStyle(
+                                    fontSize = 16.sp,
+                                    fontFamily = helveticaFont
+                                )
+                            )
+                            Spacer(modifier = Modifier.height(16.dp))
+                            TextField(
+                                value = forgotPasswordEmail,
+                                onValueChange = { forgotPasswordEmail = it },
+                                placeholder = { Text("Email") },
+                                keyboardOptions = KeyboardOptions(
+                                    keyboardType = KeyboardType.Email,
+                                    imeAction = ImeAction.Done
+                                ),
+                                colors = TextFieldDefaults.textFieldColors(
+                                    containerColor = TextFieldBackgroundColor,
+                                    unfocusedIndicatorColor = Color.LightGray,
+                                    focusedIndicatorColor = PrimaryColor
+                                ),
+                                shape = RoundedCornerShape(12.dp),
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                        }
+                    },
+                    confirmButton = {
+                        Button(
+                            onClick = {
+                                if (isValidEmail(forgotPasswordEmail)) {
+                                    viewModel.sendPasswordResetEmail(forgotPasswordEmail.trim())
+                                }
+                            },
+                            enabled = isValidEmail(forgotPasswordEmail),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = PrimaryColor,
+                                disabledContainerColor = PrimaryColor.copy(alpha = 0.7f)
+                            )
+                        ) {
+                            Text("Send Reset Link")
+                        }
+                    },
+                    dismissButton = {
+                        TextButton(onClick = { showForgotPasswordDialog = false }) {
+                            Text("Cancel")
+                        }
+                    }
+                )
+            }
 
             TextButton(onClick = onNavigateToRegister) {
                 Text(

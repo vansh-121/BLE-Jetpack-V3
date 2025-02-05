@@ -63,27 +63,26 @@ fun AnimatedFirstScreen(
     val textAlpha = remember { Animatable(0f) }
     val buttonAlpha = remember { Animatable(0f) }
 
-
     // Trigger animations
     LaunchedEffect(Unit) {
         backgroundScale.animateTo(
             targetValue = 1f,
-            animationSpec = tween(durationMillis = 1200, easing = FastOutSlowInEasing)
+            animationSpec = tween(durationMillis = 800, easing = FastOutSlowInEasing) // Reduced from 1200 to 800
         )
 
         iconAlpha.animateTo(
             targetValue = 1f,
-            animationSpec = tween(durationMillis = 800, easing = LinearEasing)
+            animationSpec = tween(durationMillis = 500, easing = LinearEasing) // Reduced from 800 to 500
         )
 
         textAlpha.animateTo(
             targetValue = 1f,
-            animationSpec = tween(durationMillis = 800, easing = LinearEasing)
+            animationSpec = tween(durationMillis = 500, easing = LinearEasing) // Reduced from 800 to 500
         )
 
         buttonAlpha.animateTo(
             targetValue = 1f,
-            animationSpec = tween(durationMillis = 800, easing = LinearEasing)
+            animationSpec = tween(durationMillis = 500, easing = LinearEasing) // Reduced from 800 to 500
         )
     }
 
@@ -260,43 +259,43 @@ fun AnimatedFirstScreen(
     }
 }
 
-    @Composable
-    fun LoadingAnimation(
-        modifier: Modifier = Modifier
+@Composable
+fun LoadingAnimation(
+    modifier: Modifier = Modifier
+) {
+    val infiniteTransition = rememberInfiniteTransition()
+    val rotationAngle by infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = 360f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(800, easing = LinearEasing), // Reduced from 1000 to 800
+            repeatMode = RepeatMode.Restart
+        )
+    )
+
+    val scale by infiniteTransition.animateFloat(
+        initialValue = 0.6f,
+        targetValue = 1f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(500, easing = FastOutSlowInEasing), // Reduced from 700 to 500
+            repeatMode = RepeatMode.Reverse
+        )
+    )
+
+    Box(
+        modifier = modifier,
+        contentAlignment = Alignment.Center
     ) {
-        val infiniteTransition = rememberInfiniteTransition()
-        val rotationAngle by infiniteTransition.animateFloat(
-            initialValue = 0f,
-            targetValue = 360f,
-            animationSpec = infiniteRepeatable(
-                animation = tween(1000, easing = LinearEasing),
-                repeatMode = RepeatMode.Restart
-            )
+        CircularProgressIndicator(
+            modifier = Modifier
+                .graphicsLayer {
+                    scaleX = scale
+                    scaleY = scale
+                    rotationZ = rotationAngle
+                }
+                .size(32.dp),
+            color = colorResource(R.color.btnColor),
+            strokeWidth = 3.dp
         )
-
-        val scale by infiniteTransition.animateFloat(
-            initialValue = 0.6f,
-            targetValue = 1f,
-            animationSpec = infiniteRepeatable(
-                animation = tween(700, easing = FastOutSlowInEasing),
-                repeatMode = RepeatMode.Reverse
-            )
-        )
-
-        Box(
-            modifier = modifier,
-            contentAlignment = Alignment.Center
-        ) {
-            CircularProgressIndicator(
-                modifier = Modifier
-                    .graphicsLayer {
-                        scaleX = scale
-                        scaleY = scale
-                        rotationZ = rotationAngle
-                    }
-                    .size(32.dp),
-                color = colorResource(R.color.btnColor),
-                strokeWidth = 3.dp
-            )
-        }
     }
+}

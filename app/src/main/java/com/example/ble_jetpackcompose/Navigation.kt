@@ -121,7 +121,14 @@ fun AppNavigation(navController: NavHostController) {
         }
 
         composable("settings_screen") {
-            ModernSettingsScreen()
+            ModernSettingsScreen(
+                viewModel = authViewModel,
+                onSignOut = {
+                    navController.navigate("first_screen") {
+                        popUpTo("home_screen") { inclusive = true }
+                    }
+                }
+            )
         }
 
         composable("home_screen") {

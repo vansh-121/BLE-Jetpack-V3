@@ -18,6 +18,7 @@ sealed class AuthState {
     object Loading : AuthState()
     data class Success(val user: FirebaseUser) : AuthState()
     data class Error(val message: String) : AuthState()
+    object PasswordResetEmailSent : AuthState() // New state for password reset
 }
 
 class AuthViewModel : ViewModel() {
@@ -26,27 +27,53 @@ class AuthViewModel : ViewModel() {
     private val _authState = MutableStateFlow<AuthState>(AuthState.Idle)
     val authState: StateFlow<AuthState> = _authState
 
+    // Current user state
+    private val _currentUser = MutableStateFlow<FirebaseUser?>(auth.currentUser)
+    val currentUser: StateFlow<FirebaseUser?> = _currentUser
+
     init {
-        // Check for existing session when ViewModel is created
-        checkAuthState()
+        // Initialize current user and listen for changes
+        updateCurrentUser()
+        auth.addAuthStateListener { firebaseAuth ->
+            updateCurrentUser()
+        }
     }
 
-    private fun checkAuthState() {
+    private fun updateCurrentUser() {
+        _currentUser.value = auth.currentUser
         auth.currentUser?.let { user ->
-            // User is already signed in
             _authState.value = AuthState.Success(user)
+        } ?: run {
+            _authState.value = AuthState.Idle
         }
+    }
 
-        // Add auth state listener to handle auth state changes
-        auth.addAuthStateListener { firebaseAuth ->
-            firebaseAuth.currentUser?.let { user ->
-                if (_authState.value !is AuthState.Success) {
-                    _authState.value = AuthState.Success(user)
+    // Get current user
+    fun checkCurrentUser(): FirebaseUser? = auth.currentUser
+
+    // Check if user is anonymous
+    fun isAnonymousUser(): Boolean = auth.currentUser?.isAnonymous ?: false
+
+    // Get user email
+    fun getUserEmail(): String = auth.currentUser?.email ?: ""
+
+    // Check if user is authenticated
+    fun isUserAuthenticated(): Boolean = auth.currentUser != null
+
+    // New function for forgot password
+    fun sendPasswordResetEmail(email: String) {
+        viewModelScope.launch {
+            try {
+                _authState.value = AuthState.Loading
+                auth.sendPasswordResetEmail(email).await()
+                _authState.value = AuthState.PasswordResetEmailSent
+            } catch (e: Exception) {
+                val errorMessage = when (e) {
+                    is FirebaseAuthInvalidUserException -> "No account found with this email."
+                    is FirebaseAuthInvalidCredentialsException -> "Invalid email format."
+                    else -> e.message ?: "Failed to send password reset email."
                 }
-            } ?: run {
-                if (_authState.value !is AuthState.Idle) {
-                    _authState.value = AuthState.Idle
-                }
+                _authState.value = AuthState.Error(errorMessage)
             }
         }
     }
@@ -56,11 +83,10 @@ class AuthViewModel : ViewModel() {
             try {
                 _authState.value = AuthState.Loading
                 val result = auth.signInAnonymously().await()
-                if (result.user != null) {
-                    _authState.value = AuthState.Success(result.user!!)
-                } else {
-                    _authState.value = AuthState.Error("Anonymous sign-in failed")
-                }
+                result.user?.let {
+                    _authState.value = AuthState.Success(it)
+                    updateCurrentUser()
+                } ?: throw Exception("Anonymous sign-in failed")
             } catch (e: Exception) {
                 _authState.value = AuthState.Error(e.message ?: "Unknown error occurred")
             }
@@ -74,6 +100,7 @@ class AuthViewModel : ViewModel() {
                 val result = auth.createUserWithEmailAndPassword(email, password).await()
                 result.user?.let {
                     _authState.value = AuthState.Success(it)
+                    updateCurrentUser()
                 } ?: throw Exception("Registration failed. No user created.")
             } catch (e: Exception) {
                 val errorMessage = when (e) {
@@ -94,6 +121,7 @@ class AuthViewModel : ViewModel() {
                 val result = auth.signInWithEmailAndPassword(email, password).await()
                 result.user?.let {
                     _authState.value = AuthState.Success(it)
+                    updateCurrentUser()
                 } ?: throw Exception("Login failed. No user found.")
             } catch (e: Exception) {
                 val errorMessage = when (e) {
@@ -109,10 +137,6 @@ class AuthViewModel : ViewModel() {
     fun signOut() {
         auth.signOut()
         _authState.value = AuthState.Idle
-    }
-
-    // Check if user is already authenticated
-    fun isUserAuthenticated(): Boolean {
-        return auth.currentUser != null
+        updateCurrentUser()
     }
 }
