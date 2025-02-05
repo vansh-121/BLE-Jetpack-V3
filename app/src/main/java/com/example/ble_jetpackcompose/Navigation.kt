@@ -16,6 +16,17 @@ fun AppNavigation(navController: NavHostController) {
     // Initialize AuthViewModel
     val authViewModel: AuthViewModel = viewModel()
     val authState by authViewModel.authState.collectAsState()
+
+    // Check authentication state when the app starts
+    LaunchedEffect(Unit) {
+        if (authViewModel.isUserAuthenticated()) {
+            navController.navigate("home_screen") {
+                popUpTo("splash_screen") { inclusive = true }
+            }
+        }
+    }
+
+    // Handle authentication state changes
     LaunchedEffect(authState) {
         when (authState) {
             is AuthState.Success -> {
@@ -28,18 +39,30 @@ fun AppNavigation(navController: NavHostController) {
                 // Handle error if needed
                 // You might want to show a toast or error message
             }
+            is AuthState.Idle -> {
+                // Handle sign out - only navigate if we're not already on first_screen or splash_screen
+                if (navController.currentDestination?.route !in listOf("first_screen", "splash_screen")) {
+                    navController.navigate("first_screen") {
+                        popUpTo(0) { inclusive = true }
+                    }
+                }
+            }
             else -> {} // Handle other states if needed
         }
     }
 
-
-
-    NavHost(navController = navController, startDestination = "splash_screen") {
+    NavHost(
+        navController = navController,
+        startDestination = if (authViewModel.isUserAuthenticated()) "home_screen" else "splash_screen"
+    ) {
         composable("splash_screen") {
             SplashScreen(
                 onNavigateToLogin = {
-                    navController.navigate("first_screen") {
-                        popUpTo("splash_screen") { inclusive = true }
+                    // Only navigate if user is not authenticated
+                    if (!authViewModel.isUserAuthenticated()) {
+                        navController.navigate("first_screen") {
+                            popUpTo("splash_screen") { inclusive = true }
+                        }
                     }
                 }
             )
@@ -53,7 +76,10 @@ fun AppNavigation(navController: NavHostController) {
                 onNavigateToSignup = {
                     navController.navigate("register")
                 },
-                onGuestSignIn = {  authViewModel.signInAsGuest() })
+                onGuestSignIn = {
+                    authViewModel.signInAsGuest()
+                }
+            )
         }
 
         composable("login") {
@@ -64,7 +90,7 @@ fun AppNavigation(navController: NavHostController) {
                 },
                 onNavigateToHome = {
                     navController.navigate("home_screen") {
-                        popUpTo("login") { inclusive = true }
+                        popUpTo(0) { inclusive = true }
                     }
                 }
             )
@@ -80,7 +106,7 @@ fun AppNavigation(navController: NavHostController) {
                 },
                 onNavigateToHome = {
                     navController.navigate("home_screen") {
-                        popUpTo("register") { inclusive = true }
+                        popUpTo(0) { inclusive = true }
                     }
                 }
             )
@@ -90,7 +116,6 @@ fun AppNavigation(navController: NavHostController) {
             BLEGamesScreen(navController = navController)
         }
 
-
         composable("game_screen") {
             GameActivityScreen()
         }
@@ -99,7 +124,6 @@ fun AppNavigation(navController: NavHostController) {
             ModernSettingsScreen()
         }
 
-
         composable("home_screen") {
             val bluetoothViewModel = BluetoothScanViewModel(context = LocalContext.current)
             MainScreen(
@@ -107,36 +131,9 @@ fun AppNavigation(navController: NavHostController) {
                 navController = navController,
                 bluetoothViewModel = bluetoothViewModel,
                 onSignOut = {
-                    navController.navigate("first_screen") {
-                        popUpTo("home_screen") { inclusive = true }
-                    }
-                },
-//                goToSettings = {
-//                    navController.navigate("settings_screen") {
-//                        popUpTo("home_screen") { inclusive = true }
-//                    }
-//                }
+                    authViewModel.signOut() // This will trigger the Idle state and handle navigation
+                }
             )
         }
     }
 }
-
-
-
-//@Composable
-//fun HomeScreen(
-//    viewModel: AuthViewModel,
-//    onSignOut: () -> Unit
-//) {
-//    val authState by viewModel.authState.collectAsState()
-//
-//    // Add your home screen UI here
-//    // You can access the current user via viewModel.checkCurrentUser()
-//
-//    // Handle sign out
-//    LaunchedEffect(authState) {
-//        if (authState is AuthState.Idle) {
-//            onSignOut()
-//        }
-//    }
-//}

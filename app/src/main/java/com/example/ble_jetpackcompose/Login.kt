@@ -1,5 +1,7 @@
 @file:OptIn(ExperimentalMaterial3Api::class)
+
 package com.example.ble_jetpackcompose
+
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearEasing
@@ -463,8 +465,6 @@ fun SlidingProgressBar(progressColor: Color) {
         )
     }
 }
-
-
 
 
 @Composable

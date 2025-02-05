@@ -26,6 +26,30 @@ class AuthViewModel : ViewModel() {
     private val _authState = MutableStateFlow<AuthState>(AuthState.Idle)
     val authState: StateFlow<AuthState> = _authState
 
+    init {
+        // Check for existing session when ViewModel is created
+        checkAuthState()
+    }
+
+    private fun checkAuthState() {
+        auth.currentUser?.let { user ->
+            // User is already signed in
+            _authState.value = AuthState.Success(user)
+        }
+
+        // Add auth state listener to handle auth state changes
+        auth.addAuthStateListener { firebaseAuth ->
+            firebaseAuth.currentUser?.let { user ->
+                if (_authState.value !is AuthState.Success) {
+                    _authState.value = AuthState.Success(user)
+                }
+            } ?: run {
+                if (_authState.value !is AuthState.Idle) {
+                    _authState.value = AuthState.Idle
+                }
+            }
+        }
+    }
 
     fun signInAsGuest() {
         viewModelScope.launch {
@@ -42,8 +66,6 @@ class AuthViewModel : ViewModel() {
             }
         }
     }
-
-
 
     fun registerUser(email: String, password: String) {
         viewModelScope.launch {
@@ -65,7 +87,6 @@ class AuthViewModel : ViewModel() {
         }
     }
 
-
     fun loginUser(email: String, password: String) {
         viewModelScope.launch {
             try {
@@ -85,15 +106,13 @@ class AuthViewModel : ViewModel() {
         }
     }
 
-
-
-
-
-
     fun signOut() {
         auth.signOut()
         _authState.value = AuthState.Idle
     }
 
-    fun checkCurrentUser(): FirebaseUser? = auth.currentUser
+    // Check if user is already authenticated
+    fun isUserAuthenticated(): Boolean {
+        return auth.currentUser != null
+    }
 }
