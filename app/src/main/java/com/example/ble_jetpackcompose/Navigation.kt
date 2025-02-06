@@ -8,8 +8,10 @@ import androidx.compose.runtime.getValue
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 
 @Composable
 fun AppNavigation(navController: NavHostController) {
@@ -130,6 +132,27 @@ fun AppNavigation(navController: NavHostController) {
                 }
             )
         }
+        composable(
+            "advertising/{deviceName}/{deviceAddress}",
+            arguments = listOf(
+                navArgument("deviceName") { type = NavType.StringType },
+                navArgument("deviceAddress") { type = NavType.StringType }
+            )
+        ) { backStackEntry ->
+            val context = LocalContext.current
+            val contentResolver = context.contentResolver
+
+            val deviceName = backStackEntry.arguments?.getString("deviceName") ?: "Unknown Device"
+            val deviceAddress = backStackEntry.arguments?.getString("deviceAddress") ?: ""
+
+            AdvertisingDataScreen(
+                contentResolver = contentResolver, // ✅ Passing contentResolver
+                deviceName = deviceName,
+                deviceAddress = deviceAddress
+            )
+        }
+
+
 
         composable("home_screen") {
             val bluetoothViewModel = BluetoothScanViewModel(context = LocalContext.current)

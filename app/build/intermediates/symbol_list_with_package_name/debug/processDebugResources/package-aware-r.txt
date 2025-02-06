@@ -2886,6 +2886,7 @@ drawable abc_textfield_search_activated_mtrl_alpha
 drawable abc_textfield_search_default_mtrl_alpha
 drawable abc_textfield_search_material
 drawable abc_vector_test
+drawable arrow_back
 drawable avd_hide_password
 drawable avd_show_password
 drawable background
@@ -2937,6 +2938,7 @@ drawable google
 drawable google_g
 drawable googleg_disabled_color_18
 drawable googleg_standard_color_18
+drawable graph
 drawable gth
 drawable guess_the_character
 drawable hth
@@ -3051,6 +3053,7 @@ drawable parrot
 drawable pirate
 drawable search
 drawable settings
+drawable sun
 drawable test_level_drawable
 drawable tooltip_frame_dark
 drawable tooltip_frame_light

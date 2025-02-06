@@ -26,12 +26,14 @@ import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.Card
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Divider
+import androidx.compose.material.DropdownMenu
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -39,6 +41,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -67,6 +70,11 @@ fun MainScreen(
     val activity = context as Activity
     val isPermissionGranted = remember { mutableStateOf(false) }
     val isScanning = remember { mutableStateOf(false) }
+    var expanded by remember { mutableStateOf(false) }
+    val sensorTypes = listOf("SHT40", "LIS2DH", "Soil Sensor", "Weather", "LUX", "Speed & Distance")
+    var selectedSensor by remember { mutableStateOf(sensorTypes[0]) }
+    var showAllDevices by remember { mutableStateOf(false) }
+
 
     LaunchedEffect(Unit) {
         isPermissionGranted.value = checkBluetoothPermissions(context)
@@ -130,24 +138,54 @@ fun MainScreen(
                                 horizontalArrangement = Arrangement.SpaceBetween,
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
+
                                 Text(
                                     text = "Nearby devices (${bluetoothDevices.size})",
                                     style = MaterialTheme.typography.h6
                                 )
-                                IconButton(
-                                    onClick = {
-                                        if (isPermissionGranted.value) {
-                                            bluetoothViewModel.stopScan() // Stop current scan first
-                                            bluetoothViewModel.startScan(activity)
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    IconButton(
+                                        onClick = {
+                                            if (isPermissionGranted.value && !isScanning.value) {
+                                                bluetoothViewModel.startScan(activity)
+                                                isScanning.value = true
+                                            }
+                                        }
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Default.Refresh,
+                                            contentDescription = "Refresh"
+                                        )
+                                    }
+                                    // 3 Dots Menu Icon
+                                    Box {
+                                        IconButton(onClick = { expanded = true }) {
+                                            Icon(
+                                                imageVector = Icons.Default.MoreVert,
+                                                contentDescription = "More Options"
+                                            )
+                                        }
+
+                                        DropdownMenu(
+                                            expanded = expanded,
+                                            onDismissRequest = { expanded = false }
+                                        ) {
+                                            sensorTypes.forEach { sensor ->
+                                                DropdownMenuItem(
+                                                    text = { Text(sensor) },
+                                                    onClick = {
+                                                        selectedSensor = sensor
+                                                        expanded = false
+                                                    }
+                                                )
+                                            }
                                         }
                                     }
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Default.Refresh,
-                                        contentDescription = "Refresh"
-                                    )
                                 }
                             }
+
 
                             Spacer(modifier = Modifier.height(16.dp))
 
@@ -171,14 +209,38 @@ fun MainScreen(
                                     }
                                 }
                             } else {
-                                bluetoothDevices.forEach { device ->
-                                    BluetoothDeviceItem(device)
+//                                bluetoothDevices.forEach { device ->
+//                                    BluetoothDeviceItem(device)
+//                                    Divider()
+                                // Show only first 4 devices initially
+                                val devicesToShow = if (showAllDevices) bluetoothDevices else bluetoothDevices.take(4)
+                                devicesToShow.forEach { device ->
+                                    BluetoothDeviceItem(device, navController)
                                     Divider()
+                                }
+
+                                // Show "Show More" button if there are more than 4 devices
+                                // Toggle between "Show More" and "Show Less" if there are more than 4 devices
+                                if (bluetoothDevices.size > 4) {
+                                    Box(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(vertical = 8.dp)
+                                            .clickable { showAllDevices = !showAllDevices }
+                                            .background(Color.LightGray, RoundedCornerShape(8.dp)),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Text(
+                                            text = if (showAllDevices) "Show Less" else "Show More",
+                                            modifier = Modifier.padding(12.dp),
+                                            textAlign = TextAlign.Center
+                                        )
+                                    }
                                 }
                             }
                         }
-                    }
-                }
+                    }}
+
 
                 item {
                     Spacer(modifier = Modifier.height(16.dp))
@@ -252,13 +314,15 @@ private fun checkPermission(context: Context, permission: String): Boolean {
     ) == PackageManager.PERMISSION_GRANTED
 }
 
-
 @Composable
-fun BluetoothDeviceItem(device: BLEDevice) {
+fun BluetoothDeviceItem(device: BLEDevice, navController: NavHostController) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp),
+            .padding(vertical = 8.dp)
+            .clickable {
+                navController.navigate("advertising/${device.name}/${device.address}") // Navigate to Advertising
+            },
         verticalAlignment = Alignment.CenterVertically
     ) {
         Box(
@@ -269,7 +333,7 @@ fun BluetoothDeviceItem(device: BLEDevice) {
         Spacer(modifier = Modifier.width(12.dp))
         Column {
             Text(
-                text = device.name.toString(),
+                text = device.name ?: "Unknown Device",
                 style = MaterialTheme.typography.subtitle1
             )
             Text(

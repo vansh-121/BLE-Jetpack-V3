@@ -13,6 +13,7 @@ color radar_color
 color teal_200
 color teal_700
 color white
+drawable arrow_back
 drawable background
 drawable bg_remove_2
 drawable bg_remove_ble
@@ -26,6 +27,7 @@ drawable facebook_f_
 drawable gamepad
 drawable google
 drawable google_g
+drawable graph
 drawable gth
 drawable guess_the_character
 drawable hth
@@ -46,6 +48,7 @@ drawable parrot
 drawable pirate
 drawable search
 drawable settings
+drawable sun
 drawable visibility
 drawable visibility_off
 drawable visibility_on
