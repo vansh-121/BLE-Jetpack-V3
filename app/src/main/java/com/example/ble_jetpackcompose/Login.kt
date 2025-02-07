@@ -127,7 +127,7 @@ fun LoginScreen(
 
     // Handle loading state with a blocking dialog
     if (authState is AuthState.Loading) {
-        LoadingDialog()
+        LoadingDialog(onDismissRequest = {})
     }
 
     errorMessage?.let { error ->

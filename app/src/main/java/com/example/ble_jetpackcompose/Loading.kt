@@ -31,42 +31,45 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.dp
-@Composable
-fun LoadingDialog() {
-    val primaryColor = MaterialTheme.colorScheme.primary
-    val onSurfaceColor = MaterialTheme.colorScheme.onSurface
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 
-    // Full-screen overlay with a semi-transparent background
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.Black.copy(alpha = 0.3f)),
-        contentAlignment = Alignment.Center
+@Composable
+fun LoadingDialog(onDismissRequest: () -> Unit) {
+    Dialog(
+        onDismissRequest = onDismissRequest,
+        properties = DialogProperties(
+            dismissOnBackPress = true,
+            dismissOnClickOutside = false,
+            usePlatformDefaultWidth = false
+        )
     ) {
-        // Centered column with shadow and background
-        Column (
+        val primaryColor = MaterialTheme.colorScheme.primary
+        val onSurfaceColor = MaterialTheme.colorScheme.onSurface
+
+        Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
-                .shadow(elevation = 30.dp, shape = MaterialTheme.shapes.medium)
-                .background(color = MaterialTheme.colorScheme.surface, shape = MaterialTheme.shapes.medium)
-                .padding(16.dp)
+                .shadow(elevation = 8.dp, shape = MaterialTheme.shapes.medium)
+                .background(
+                    color = MaterialTheme.colorScheme.surface,
+                    shape = MaterialTheme.shapes.medium
+                )
+                .padding(24.dp)
         ) {
-            // A box that holds the animated arcs and the Bluetooth icon together
             Box(
                 modifier = Modifier.size(160.dp),
                 contentAlignment = Alignment.Center
             ) {
-                // Animated arcs drawn to fill the entire Box
-                AnimatedWiFiArcs(
+                OptimizedAnimatedArcs(
                     primaryColor = primaryColor,
                     modifier = Modifier.matchParentSize()
                 )
-                // Bluetooth icon placed on top of the arcs
                 BluetoothIcon(primaryColor = primaryColor)
             }
             Spacer(modifier = Modifier.height(16.dp))
             Text(
-                text = "Wait... it's Sensing",
+                text = "Wait.It's Sensing...",
                 style = MaterialTheme.typography.bodyMedium,
                 color = onSurfaceColor
             )
@@ -85,47 +88,47 @@ fun BluetoothIcon(primaryColor: Color) {
 }
 
 @Composable
-fun AnimatedWiFiArcs(
+fun OptimizedAnimatedArcs(
     primaryColor: Color,
     modifier: Modifier = Modifier
 ) {
-    // Set up an infinite transition for alpha and scale
-    val infiniteTransition = rememberInfiniteTransition(label = "WiFi Arc Animation Transition")
+    val transition = rememberInfiniteTransition(label = "Arc Animation")
 
-    val alpha by infiniteTransition.animateFloat(
-        initialValue = 0.1f,
+    // Combined animation value to reduce number of animations
+    val animationValue by transition.animateFloat(
+        initialValue = 0f,
         targetValue = 1f,
         animationSpec = infiniteRepeatable(
-            animation = tween(2000, easing = LinearEasing),
+            animation = tween(
+                durationMillis = 1500,
+                easing = LinearEasing
+            ),
             repeatMode = RepeatMode.Restart
         ),
-        label = "WiFi Arc Alpha"
-    )
-    val scale by infiniteTransition.animateFloat(
-        initialValue = 1f,
-        targetValue = 1.5f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(2000, easing = LinearEasing),
-            repeatMode = RepeatMode.Restart
-        ),
-        label = "WiFi Arc Scale"
+        label = "Combined Animation"
     )
 
-    // Use Canvas to draw the arcs behind the icon
     Canvas(modifier = modifier) {
         val baseRadius = size.minDimension / 4
+        val strokeWidth = 4.dp.toPx()
 
-        for (i in 1..3) {
+        // Pre-calculate common values
+        val scale = 1f + (animationValue * 0.3f)
+
+        for (i in 0..2) {
+            val alphaMultiplier = (3 - i) / 3f
+            val alpha = (animationValue * alphaMultiplier).coerceIn(0f, 0.7f)
             val scaledRadius = baseRadius * scale + (i * 20)
+
             drawArc(
-                color = primaryColor.copy(alpha = (alpha - (0.15f * i)).coerceAtLeast(0f)),
+                color = primaryColor.copy(alpha = alpha),
                 startAngle = -45f,
                 sweepAngle = 90f,
                 useCenter = false,
-                style = Stroke(width = 6.dp.toPx()),
-                size = Size((scaledRadius * 1.6).toFloat(), (scaledRadius * 2.0).toFloat()),
+                style = Stroke(width = strokeWidth),
+                size = Size(scaledRadius * 1.6f, scaledRadius * 2.0f),
                 topLeft = Offset(
-                    center.x - scaledRadius,
+                    center.x - (scaledRadius * 0.8f),
                     center.y - scaledRadius
                 )
             )
