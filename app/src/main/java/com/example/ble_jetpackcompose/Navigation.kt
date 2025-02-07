@@ -133,10 +133,11 @@ fun AppNavigation(navController: NavHostController) {
             )
         }
         composable(
-            "advertising/{deviceName}/{deviceAddress}",
+            "advertising/{deviceName}/{deviceAddress}/{sensorType}",
             arguments = listOf(
                 navArgument("deviceName") { type = NavType.StringType },
-                navArgument("deviceAddress") { type = NavType.StringType }
+                navArgument("deviceAddress") { type = NavType.StringType },
+                navArgument("sensorType") { type = NavType.StringType }
             )
         ) { backStackEntry ->
             val context = LocalContext.current
@@ -144,14 +145,29 @@ fun AppNavigation(navController: NavHostController) {
 
             val deviceName = backStackEntry.arguments?.getString("deviceName") ?: "Unknown Device"
             val deviceAddress = backStackEntry.arguments?.getString("deviceAddress") ?: ""
+            val sensorType = backStackEntry.arguments?.getString("sensorType") ?: "Unknown"
 
             AdvertisingDataScreen(
-                contentResolver = contentResolver, // ✅ Passing contentResolver
+                navController = navController,
+                contentResolver = contentResolver,
                 deviceName = deviceName,
-                deviceAddress = deviceAddress
+                deviceAddress = deviceAddress,
+                sensorType = sensorType
             )
         }
 
+
+        composable("chart_screen") {
+            ChartScreen(navController = navController)
+        }
+
+
+        composable("chart_screen_2/{title}/{value}") { backStackEntry ->
+            val title = backStackEntry.arguments?.getString("title")
+            val value = backStackEntry.arguments?.getString("value")
+
+            ChartScreen2(navController = navController, title = title, value = value)
+        }
 
 
         composable("home_screen") {

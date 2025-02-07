@@ -1,8 +1,11 @@
 package com.example.ble_jetpackcompose
-
+import android.media.MediaPlayer
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.*
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Image
@@ -13,7 +16,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.background
 import androidx.compose.ui.graphics.graphicsLayer
@@ -26,15 +28,29 @@ import kotlin.math.*
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Text
 import androidx.compose.ui.Alignment.Companion.Center
+import androidx.compose.ui.Alignment.Companion.TopCenter
+import androidx.compose.ui.Alignment.Companion.TopStart
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.graphics.drawscope.rotate
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.imageResource
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.IntSize
+import kotlinx.coroutines.delay
+import androidx.compose.ui.platform.LocalContext
 
 
 fun dpToPx(dp: Dp): Float {
@@ -46,7 +62,10 @@ fun GameActivityScreen() {
     var expandedImage by remember { mutableStateOf<Int?>(null) }
     var screenWidth by remember { mutableFloatStateOf(0f) }
     var screenHeight by remember { mutableFloatStateOf(0f) }
-
+    var showSearchImage by remember { mutableStateOf(true) }
+    var showTTHButton by remember { mutableStateOf(false) }
+    var showScratchCard by remember { mutableStateOf(false) }
+    val interactionSource = remember { MutableInteractionSource() }
     // State for pop-up visibility
     var showPopup by remember { mutableStateOf(false) }
 
@@ -65,6 +84,32 @@ fun GameActivityScreen() {
     val radius = 100f
     val searchX = remember { derivedStateOf { radius * cos(Math.toRadians(angle.toDouble())).toFloat() } }
     val searchY = remember { derivedStateOf { radius * sin(Math.toRadians(angle.toDouble())).toFloat() } }
+    var isSoundOn by remember { mutableStateOf(true) } // Initially sound is on
+    val context = LocalContext.current
+    val mediaPlayer = remember {
+        MediaPlayer.create(context, R.raw.bgmusic).apply {
+            isLooping = true // Ensure the music loops if needed
+        }
+    }
+    LaunchedEffect(isSoundOn) {
+        if (isSoundOn) {
+            if (!mediaPlayer.isPlaying) {
+                mediaPlayer.start() // Resume playback if previously paused
+            }
+        } else {
+            if (mediaPlayer.isPlaying) {
+                mediaPlayer.pause() // Pause the music
+            }
+        }
+    }
+
+    // Release mediaPlayer when the composable is removed
+    DisposableEffect(Unit) {
+        onDispose {
+            mediaPlayer.release()
+        }
+    }
+
 
     Box(
         modifier = Modifier
@@ -130,31 +175,67 @@ fun GameActivityScreen() {
                         onClick = {
                             expandedImage = if (expandedImage == R.drawable.hunt_the_heroes) null
                             else R.drawable.hunt_the_heroes
-                            showPopup = !showPopup // Toggle popup visibility
+                            showPopup = !showPopup
+                            showSearchImage = true // Reset search button visibility when reopened
+                            showTTHButton = false // Reset TTR button visibility when reopened
+                            showScratchCard = false // Hide scratch card initially
                         }
                     )
                 }
 
-
                 // Search button overlay
                 if (expandedImage == R.drawable.hunt_the_heroes) {
-                    Box(
-                        modifier = Modifier
-                            .offset {
-                                IntOffset(
-                                    (searchX.value + screenWidth / 2 - 50.dp.toPx()).toInt(),  // Subtract half of button size (50dp/2)
-                                    (searchY.value + screenHeight / 2 - 180.dp.toPx()).toInt()  // Subtract half of button size (50dp/2)
-                                )
-                            }
-                            .zIndex(7f)
-                    ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.search),
-                            contentDescription = "Search Button",
-                            modifier = Modifier.size(50.dp),
-                            contentScale = ContentScale.Crop
-                        )
+                    if (showSearchImage) {
+                        LaunchedEffect(Unit) {
+                            delay(2000) // Wait for 2 seconds
+                            showSearchImage = false
+                            showTTHButton = true
+
+
+                        }
+                        Box(
+                            modifier = Modifier
+                                .offset {
+                                    IntOffset(
+                                        (searchX.value + screenWidth / 2 - 50.dp.toPx()).toInt(),
+                                        (searchY.value + screenHeight / 2 - 180.dp.toPx()).toInt()
+                                    )
+                                }
+                                .zIndex(2f)
+                        ) {
+                            Image(
+                                painter = painterResource(id = R.drawable.search),
+                                contentDescription = "Search Button",
+                                modifier = Modifier.size(50.dp),
+                                contentScale = ContentScale.Crop
+                            )
+                        }
                     }
+
+                    if (showTTHButton) {
+                        Box(
+                            modifier = Modifier
+                                .align(Center)
+                                .zIndex(6f)
+                                .clickable(
+                                    interactionSource = interactionSource,
+                                    indication = null // Disables ripple effect
+                                ) {
+                                    showScratchCard = true
+                                }
+                        ) {
+                            Image(
+                                painter = painterResource(id = R.drawable.ttr),
+                                contentDescription = "TTR Button",
+                                modifier = Modifier.size(100.dp),
+                                contentScale = ContentScale.Crop
+                            )
+                            if (showScratchCard) {
+                                ScratchCardScreen()
+                            }
+                        }
+                    }
+
                     // Pop-up with images (Jack, Parrot, Pirate)
                     Box(
                         modifier = Modifier
@@ -164,7 +245,7 @@ fun GameActivityScreen() {
                         contentAlignment = Alignment.BottomCenter
                     ) {
                         // Animate the images appearing from the bottom
-                        androidx.compose.animation.AnimatedVisibility (
+                        androidx.compose.animation.AnimatedVisibility(
                             visible = showPopup,
                             enter = slideInVertically(initialOffsetY = { it }) + fadeIn(),
                             exit = slideOutVertically(targetOffsetY = { it }) + fadeOut()
@@ -173,7 +254,6 @@ fun GameActivityScreen() {
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(40.dp),
-
                                 horizontalArrangement = Arrangement.SpaceBetween,
                             ) {
                                 Image(
@@ -202,7 +282,6 @@ fun GameActivityScreen() {
                     }
                 }
 
-
                 // Second Row - Guess the Character
                 Row(
                     modifier = Modifier
@@ -229,23 +308,79 @@ fun GameActivityScreen() {
                         }
                     )
                 }
+
                 // Show Radar only when "Guess the Character" is expanded
                 if (expandedImage == R.drawable.guess_the_character) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(bottom = 150.dp)
-                            .zIndex(7f),
-                        contentAlignment = Center  // This ensures the radar is centered
-                    ) {
-                        RadarScreenWithRotatingLine()
+                    var showRadar by remember { mutableStateOf(false) }
+
+                    // Trigger the delay when expandedImage changes to guess_the_character
+                    LaunchedEffect(expandedImage) {
+                        if (expandedImage == R.drawable.guess_the_character) {
+                            delay(100) // delay
+                            showRadar = true
+                        } else {
+                            showRadar = false
+                        }
+                    }
+
+                    if (showRadar) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(bottom = 150.dp)
+                                .zIndex(7f),
+                            contentAlignment = Center,  // This ensures the radar is centered
+                        ) {
+                            RadarScreenWithRotatingLine()
+                        }
                     }
                 }
-
-
             }
         }
+
+        // Home Button - Bottom Left
+        Box(
+            modifier = Modifier
+                .align(Alignment.BottomStart)
+                .padding(16.dp)
+                .clickable(
+                    interactionSource = interactionSource,
+                    indication = null ) {
+                    // Handle Home button click action here
+                    println("Home button clicked")
+                }
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.home),
+                contentDescription = "Home Button",
+                modifier = Modifier.size(40.dp)
+            )
+        }
+
+        // Sound Button - Bottom Right
+
+
+        Box(
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(16.dp)
+                .clickable(
+                    interactionSource = interactionSource,
+                    indication = null // Disable ripple effect
+                ) {
+                    // Toggle the sound state (mute/unmute)
+                    isSoundOn = !isSoundOn
+                }
+        ) {
+            // Conditionally show sound on or off image based on the state
+            Image(
+                painter = painterResource(id = if (isSoundOn) R.drawable.soundon else R.drawable.soundoff),
+                contentDescription = if (isSoundOn) "Sound On" else "Sound Off", // Update the content description for accessibility
+                modifier = Modifier.size(40.dp)
+            )
+        }
     }
+
 }
 @Composable
 fun AnimatedImageButton(
@@ -275,7 +410,7 @@ fun AnimatedImageButton(
     }
 
     // Animate alpha using transition
-    var alpha = transition.animateFloat(
+    val alpha = transition.animateFloat(
         label = "buttonAlphaAnimation",
         transitionSpec = { tween(300) }
     ) { expanded ->
@@ -350,12 +485,11 @@ fun RadarScreenWithRotatingLine(modifier: Modifier = Modifier) {
 
     Box(
         modifier = modifier, // Apply the passed modifier here
-        contentAlignment = Center
+        contentAlignment = Alignment.Center
     ) {
         RadarLayoutWithRotatingLine(radarColor, centerCircleColor)
     }
 }
-
 
 @Composable
 fun RadarLayoutWithRotatingLine(
@@ -363,6 +497,14 @@ fun RadarLayoutWithRotatingLine(
     centerCircleColor: Color
 ) {
     val lineRotation = remember { Animatable(0f) }
+
+    // State to manage the visibility and position of the image
+    val showImage = remember { mutableStateOf(false) }
+    val imagePosition = remember { mutableStateOf(Offset.Zero) }
+
+    // State for burst effect
+    val burstEffectVisible = remember { mutableStateOf(false) }
+    val burstScale = remember { Animatable(0f) }
 
     // Infinite rotation animation
     LaunchedEffect(Unit) {
@@ -378,12 +520,22 @@ fun RadarLayoutWithRotatingLine(
         )
     }
 
+    // Show image after 3 seconds
+    LaunchedEffect(Unit) {
+        delay(3000L) // Wait for 3 seconds
+        burstEffectVisible.value = true
+        imagePosition.value = generateRandomPosition(radius = 300f) // Generate random position
+        delay(300) // Brief delay to show burst effect
+        showImage.value = true
+        burstScale.animateTo(1f, animationSpec = tween(500))
+    }
+
     Box(
         modifier = Modifier
-            .size(200.dp) // Outer box size
+            .size(300.dp) // Outer box size
             .clip(CircleShape)
             .background(Color.Transparent), // Background color for the radar
-        contentAlignment = Center
+        contentAlignment = Alignment.Center
     ) {
         Canvas(modifier = Modifier.fillMaxSize()) {
             val boxSize = size.minDimension
@@ -412,7 +564,6 @@ fun RadarLayoutWithRotatingLine(
                 alpha = 1f // Fully opaque
             )
 
-
             // Draw the rotating line
             rotate(degrees = lineRotation.value) {
                 drawLine(
@@ -425,6 +576,7 @@ fun RadarLayoutWithRotatingLine(
                     strokeWidth = 3.dp.toPx()
                 )
             }
+
             // 3D Effect: Radar "pie slice" shadow effect
             val angle = lineRotation.value
             val shadowColor = Color.Black.copy(alpha = 0.2f) // Light shadow effect
@@ -442,11 +594,197 @@ fun RadarLayoutWithRotatingLine(
                 )
             }
         }
+
+        // Display image with burst effect
+        Box(
+            modifier = Modifier
+                .size(60.dp) // Set image size
+                .offset(
+                    x = with(LocalDensity.current) { imagePosition.value.x.toDp() },
+                    y = with(LocalDensity.current) { imagePosition.value.y.toDp() }
+                )
+        ) {
+            // Burst effect animation (glowing light effect)
+            if (burstEffectVisible.value) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Color.White.copy(alpha = 0.3f), shape = CircleShape)
+                        .scale(burstScale.value)
+                        .animateContentSize()
+                )
+            }
+
+            // Actual Image
+            AnimatedVisibility(
+                visible = showImage.value,
+                enter = fadeIn(animationSpec = tween(500)) + scaleIn(initialScale = 0.8f, animationSpec = tween(500)),
+                exit = fadeOut(animationSpec = tween(500))
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.jjack), // Replace with your image resource
+                    contentDescription = null,
+                    modifier = Modifier.fillMaxSize()
+                )
+            }
+        }
     }
 }
 
+// Function to generate a random position within one of the two circles
+fun generateRandomPosition(radius: Float): Offset {
+    val randomRadius = listOf(radius * 0.33f, radius * 0.66f).random() // Choose one of the two radii
+    val randomAngle = Math.random() * 2 * Math.PI // Random angle in radians
+
+    val x = (randomRadius * cos(randomAngle)).toFloat()
+    val y = (randomRadius * sin(randomAngle)).toFloat()
+
+    return Offset(x, y)
+}
+
+
+
+
+
+//@OptIn(ExperimentalComposeUiApi::class) // Opting into experimental API @Composable
+@Composable
+fun ScratchCardScreen(modifier: Modifier = Modifier) {
+    val overlayImage = ImageBitmap.imageResource(id = R.drawable.scratch)
+    val baseImage = ImageBitmap.imageResource(id = R.drawable.inner)
+
+    val currentPathState = remember { mutableStateOf(DraggedPath(path = Path(), width = 150f)) }
+    var scratchedAreaPercentage by remember { mutableFloatStateOf(0f) }
+
+
+    val canvasSizePx = with(LocalDensity.current) { 300.dp.toPx() }
+
+    LaunchedEffect(Unit) {
+        val stepSize = canvasSizePx / 8
+        var scratchedArea = 0f
+        canvasSizePx * canvasSizePx
+
+        // Zigzag pattern
+        for (y in 0..canvasSizePx.toInt() step (stepSize / 1.5f).toInt()) {
+            // Alternate direction for each row
+            val xRange = if (y % (stepSize.toInt() * 2) == 0) {
+                (0..canvasSizePx.toInt() step (stepSize / 1.5f).toInt())
+            } else {
+                (canvasSizePx.toInt() downTo 0 step (stepSize / 1.5f).toInt())
+            }
+
+            for (x in xRange) {
+                currentPathState.value.path.addOval(
+                    androidx.compose.ui.geometry.Rect(
+                        center = Offset(x.toFloat(), y.toFloat()),
+                        radius = stepSize * 1.2f
+                    )
+                )
+
+                // Add diagonal connections for smoother zigzag
+                if (y > 0 && x > stepSize && x < canvasSizePx - stepSize) {
+                    currentPathState.value.path.addOval(
+                        androidx.compose.ui.geometry.Rect(
+                            center = Offset(
+                                x.toFloat() - stepSize/2,
+                                y.toFloat() - stepSize/2
+                            ),
+                            radius = stepSize * 1.2f
+                        )
+                    )
+                }
+
+                scratchedArea = (y * canvasSizePx + x) / (canvasSizePx * canvasSizePx) * 100f
+                scratchedAreaPercentage = scratchedArea.coerceAtMost(100f)
+
+                delay(30)
+
+            }
+
+        }
+    }
+
+    Box(
+        contentAlignment = TopCenter
+    ) {
+        ScratchCanvas(
+            overlayImage = overlayImage,
+            baseImage = baseImage,
+            movedOffset = null,
+            onMovedOffset = { _, _ -> },
+            currentPath = currentPathState.value.path,
+            currentPathThickness = currentPathState.value.width,
+            modifier = Modifier
+                .align(alignment = TopStart)
+                .size(300.dp)
+        )
+
+        Text(
+            text = " ${scratchedAreaPercentage.toInt()}%",
+            modifier = Modifier.size(height =  0.dp, width = 0.dp),
+        )
+
+
+    }
+}
+
+@Composable
+fun ScratchCanvas(
+    overlayImage: ImageBitmap,
+    baseImage: ImageBitmap,
+    movedOffset: Offset?,
+    onMovedOffset: (Float, Float) -> Unit,
+    currentPath: Path,
+    currentPathThickness: Float,
+    modifier: Modifier = Modifier
+) {
+    Canvas(
+        modifier = modifier
+            .size(400.dp)
+            .clipToBounds()
+            .background(Color(0xFFF7DCA7)) // Added background color F7DCA7
+    ) {
+        val canvasWidth = size.width
+        val canvasHeight = size.height
+
+        // Draw the overlay image to fit the entire canvas
+        drawImage(
+            image = overlayImage,
+            dstSize = IntSize(
+                canvasWidth.toInt(),
+                canvasHeight.toInt()
+            )
+        )
+
+        // Clip the base image to the current path
+        clipPath(path = currentPath) {
+            // Calculate a smaller size for the base image
+            val baseImageScaleFactor = 0.8f
+            val baseImageWidth = (canvasWidth * baseImageScaleFactor).toInt()
+            val baseImageHeight = (canvasHeight * baseImageScaleFactor).toInt()
+
+            // Center the base image within the canvas
+            val baseImageOffsetX = (canvasWidth - baseImageWidth) / 2
+            val baseImageOffsetY = (canvasHeight - baseImageHeight) / 2
+
+            drawImage(
+                image = baseImage,
+                dstSize = IntSize(baseImageWidth, baseImageHeight),
+                dstOffset = IntOffset(
+                    x = baseImageOffsetX.toInt(),
+                    y = baseImageOffsetY.toInt()
+                )
+            )
+        }
+    }
+}
+
+data class DraggedPath(
+    val path: Path,
+    val width: Float = 50f
+)
+
 @Preview(showBackground = true)
 @Composable
-fun BleGamesScreenPreview() {
-    GameActivityScreen()
+fun ScratchCardScreenPreview() {
+    ScratchCardScreen()
 }

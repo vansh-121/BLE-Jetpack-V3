@@ -2940,6 +2940,7 @@ int drawable googleg_standard_color_18 0x7f0700ab
 int drawable graph 0x7f0700ac
 int drawable gth 0x7f0700ad
 int drawable guess_the_character 0x7f0700ae
+int drawable home 0x7f070126
 int drawable hth 0x7f0700af
 int drawable hunt_the_heroes 0x7f0700b0
 int drawable ic_arrow_back_black_24 0x7f0700b1
@@ -2966,7 +2967,9 @@ int drawable ic_passkey 0x7f0700c5
 int drawable ic_password 0x7f0700c6
 int drawable ic_search_black_24 0x7f0700c7
 int drawable icon_background 0x7f0700c8
+int drawable inner 0x7f070127
 int drawable jack 0x7f0700c9
+int drawable jjack 0x7f070128
 int drawable lock 0x7f0700ca
 int drawable logo3 0x7f0700cb
 int drawable logo_square 0x7f0700cc
@@ -3050,12 +3053,16 @@ int drawable notification_tile_bg 0x7f070119
 int drawable notify_panel_notification_icon_bg 0x7f07011a
 int drawable parrot 0x7f07011b
 int drawable pirate 0x7f07011c
+int drawable scratch 0x7f070129
 int drawable search 0x7f07011d
 int drawable settings 0x7f07011e
+int drawable soundoff 0x7f07012a
+int drawable soundon 0x7f07012b
 int drawable sun 0x7f07011f
 int drawable test_level_drawable 0x7f070120
 int drawable tooltip_frame_dark 0x7f070121
 int drawable tooltip_frame_light 0x7f070122
+int drawable ttr 0x7f07012c
 int drawable visibility 0x7f070123
 int drawable visibility_off 0x7f070124
 int drawable visibility_on 0x7f070125
@@ -3732,6 +3739,7 @@ int layout support_simple_spinner_dropdown_item 0x7f0c006d
 int mipmap ic_launcher 0x7f0e0000
 int mipmap ic_launcher_round 0x7f0e0001
 int plurals mtrl_badge_content_description 0x7f0f0000
+int raw bgmusic 0x7f100001
 int raw firebase_common_keep 0x7f100000
 int string abc_action_bar_home_description 0x7f110000
 int string abc_action_bar_up_description 0x7f110001

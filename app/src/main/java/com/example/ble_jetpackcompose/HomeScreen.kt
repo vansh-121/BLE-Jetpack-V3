@@ -215,7 +215,7 @@ fun MainScreen(
                                 // Show only first 4 devices initially
                                 val devicesToShow = if (showAllDevices) bluetoothDevices else bluetoothDevices.take(4)
                                 devicesToShow.forEach { device ->
-                                    BluetoothDeviceItem(device, navController)
+                                    BluetoothDeviceItem(device, navController, selectedSensor)
                                     Divider()
                                 }
 
@@ -313,23 +313,32 @@ private fun checkPermission(context: Context, permission: String): Boolean {
         permission
     ) == PackageManager.PERMISSION_GRANTED
 }
-
 @Composable
-fun BluetoothDeviceItem(device: BLEDevice, navController: NavHostController) {
+fun BluetoothDeviceItem(device: BLEDevice, navController: NavHostController, selectedSensor: String) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp)
             .clickable {
-                navController.navigate("advertising/${device.name}/${device.address}") // Navigate to Advertising
+                navController.navigate("advertising/${device.name}/${device.address}/${selectedSensor}")
             },
         verticalAlignment = Alignment.CenterVertically
     ) {
+        // Replace Box with Icon in a Container
         Box(
             modifier = Modifier
                 .size(48.dp)
-                .background(Color.Gray, RoundedCornerShape(8.dp))
-        )
+                .background(Color(0xFFE3F2FD), RoundedCornerShape(8.dp)),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.bluetooth),
+                contentDescription = "Bluetooth Device",
+                modifier = Modifier.size(24.dp),
+                tint = Color(0xFF2196F3)  // Material Blue color
+            )
+        }
+
         Spacer(modifier = Modifier.width(12.dp))
         Column {
             Text(
@@ -347,7 +356,6 @@ fun BluetoothDeviceItem(device: BLEDevice, navController: NavHostController) {
         }
     }
 }
-
 @Composable
 private fun DeviceItem() {
     Row(

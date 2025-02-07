@@ -42,9 +42,9 @@ class AuthViewModel : ViewModel() {
     private fun updateCurrentUser() {
         _currentUser.value = auth.currentUser
         auth.currentUser?.let { user ->
-            _authState.value = AuthState.Success(user)
+            _authState.value = AuthState.Success(user)  // Changes state again
         } ?: run {
-            _authState.value = AuthState.Idle
+            _authState.value = AuthState.Idle  // Changes state again
         }
     }
 

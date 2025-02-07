@@ -30,11 +30,14 @@ drawable google_g
 drawable graph
 drawable gth
 drawable guess_the_character
+drawable home
 drawable hth
 drawable hunt_the_heroes
 drawable ic_launcher_background
 drawable ic_launcher_foreground
+drawable inner
 drawable jack
+drawable jjack
 drawable lock
 drawable logo3
 drawable logo_square
@@ -46,9 +49,13 @@ drawable logofinallast
 drawable monkey
 drawable parrot
 drawable pirate
+drawable scratch
 drawable search
 drawable settings
+drawable soundoff
+drawable soundon
 drawable sun
+drawable ttr
 drawable visibility
 drawable visibility_off
 drawable visibility_on
@@ -57,6 +64,7 @@ font helvetica
 font helvetica_bold
 mipmap ic_launcher
 mipmap ic_launcher_round
+raw bgmusic
 string app_name
 string gcm_defaultSenderId
 string google_api_key

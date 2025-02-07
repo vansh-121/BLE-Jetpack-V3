@@ -15,6 +15,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -30,8 +31,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Bluetooth
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -57,7 +61,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
@@ -466,76 +474,93 @@ fun SocialLoginButton(
     }
 }
 
-@Composable
-private fun LoadingDialog() {
-    val backgroundColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.8f)
-    val progressColor = MaterialTheme.colorScheme.primary
-
-    AlertDialog(
-        onDismissRequest = { },
-        modifier = Modifier
-            .background(backgroundColor, shape = RoundedCornerShape(16.dp))
-            .padding(24.dp),
-        title = {
-            Text(
-                text = "Signing In",
-                style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.onSurface
-            )
-        },
-        text = {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                // Custom animated progress bar
-                SlidingProgressBar(progressColor)
-                Spacer(modifier = Modifier.height(16.dp))
-                Text(
-                    text = "Almost there, please wait...",
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
-                )
-            }
-        },
-        confirmButton = { },
-        shape = RoundedCornerShape(16.dp),
-//        backgroundColor = Color.Transparent, // Transparent background for blur effect
-//        contentColor = Color.Transparent
-    )
-}
-
-@Composable
-fun SlidingProgressBar(progressColor: Color) {
-    val transition = rememberInfiniteTransition()
-
-    // Animate the progress bar's width
-    val progress by transition.animateFloat(
-        initialValue = 0f,
-        targetValue = 1f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = 2000, easing = LinearEasing),
-            repeatMode = RepeatMode.Restart
-        ), label = ""
-    )
-
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(4.dp)
-            .clip(RoundedCornerShape(50))
-            .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f))
-    ) {
-        Box(
-            modifier = Modifier
-                .fillMaxHeight()
-                .width(progress * 200.dp) // Width depends on progress value
-                .clip(RoundedCornerShape(50))
-                .background(progressColor)
-        )
-    }
-}
+//@Composable
+//fun LoadingDialog() {
+//    val primaryColor = MaterialTheme.colorScheme.primary
+//    val onSurfaceColor = MaterialTheme.colorScheme.onSurface
+//
+//    Box(
+//        contentAlignment = Alignment.Center, // Centers the inner Box within the parent
+//        modifier = Modifier
+//            .wrapContentSize() // Ensures the size wraps the content
+//    ) {
+//        Box(
+//            modifier = Modifier
+//                .size(160.dp)
+//                .shadow(elevation = 30.dp, shape = MaterialTheme.shapes.medium)
+//                .background(color = MaterialTheme.colorScheme.surface, shape = MaterialTheme.shapes.medium),
+//            contentAlignment = Alignment.Center
+//        ) {
+//            BluetoothIcon(primaryColor)
+//            AnimatedWiFiArcs(primaryColor)
+//
+//            Spacer(modifier = Modifier.height(16.dp)) // Space between the animation and text
+//
+//            Text(
+//                text = "Wait... it's Sensing",
+//                style = MaterialTheme.typography.bodyMedium,
+//                color = onSurfaceColor,
+//                modifier = Modifier.align(Alignment.BottomCenter)
+//            )
+//        }
+//    }
+//}
+//
+//
+//@Composable
+//fun BluetoothIcon(primaryColor: Color) {
+//    Icon(
+//        imageVector = Icons.Default.Bluetooth,
+//        contentDescription = "Bluetooth Icon",
+//        modifier = Modifier.size(60.dp),
+//        tint = primaryColor
+//    )
+//}
+//
+//@Composable
+//fun AnimatedWiFiArcs(primaryColor: Color) {
+//    val infiniteTransition = rememberInfiniteTransition(label = "WiFi Arc Animation Transition")
+//
+//    // Animating the alpha and scale of the arcs with labels for better inspection
+//    val alpha by infiniteTransition.animateFloat(
+//        initialValue = 0.1f,
+//        targetValue = 1f,
+//        animationSpec = infiniteRepeatable(
+//            animation = tween(2000, easing = LinearEasing),
+//            repeatMode = RepeatMode.Restart
+//        ),
+//        label = "WiFi Arc Alpha"
+//    )
+//    val scale by infiniteTransition.animateFloat(
+//        initialValue = 1f,
+//        targetValue = 1.5f,
+//        animationSpec = infiniteRepeatable(
+//            animation = tween(2000, easing = LinearEasing),
+//            repeatMode = RepeatMode.Restart
+//        ),
+//        label = "WiFi Arc Scale"
+//    )
+//
+//    Canvas (modifier = Modifier.fillMaxSize()) {
+//        val baseRadius = size.minDimension / 4
+//
+//        for (i in 1..3) {
+//            val scaledRadius = baseRadius * scale + (i * 20)
+//            drawArc(
+//                color = primaryColor.copy(alpha = alpha - (0.15f * i)),
+//                startAngle = -45f,
+//                sweepAngle = 90f,
+//                useCenter = false,
+//                style = Stroke(width = 6.dp.toPx()),
+//                size = Size((scaledRadius * 1.6).toFloat(), (scaledRadius * 2.0).toFloat()),
+//                topLeft = Offset(
+//                    center.x - scaledRadius,
+//                    center.y - scaledRadius
+//                )
+//            )
+//        }
+//    }
+//}
 
 
 @Composable

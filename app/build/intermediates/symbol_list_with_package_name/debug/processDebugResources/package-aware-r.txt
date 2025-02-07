@@ -2941,6 +2941,7 @@ drawable googleg_standard_color_18
 drawable graph
 drawable gth
 drawable guess_the_character
+drawable home
 drawable hth
 drawable hunt_the_heroes
 drawable ic_arrow_back_black_24
@@ -2967,7 +2968,9 @@ drawable ic_passkey
 drawable ic_password
 drawable ic_search_black_24
 drawable icon_background
+drawable inner
 drawable jack
+drawable jjack
 drawable lock
 drawable logo3
 drawable logo_square
@@ -3051,12 +3054,16 @@ drawable notification_tile_bg
 drawable notify_panel_notification_icon_bg
 drawable parrot
 drawable pirate
+drawable scratch
 drawable search
 drawable settings
+drawable soundoff
+drawable soundon
 drawable sun
 drawable test_level_drawable
 drawable tooltip_frame_dark
 drawable tooltip_frame_light
+drawable ttr
 drawable visibility
 drawable visibility_off
 drawable visibility_on
@@ -3733,6 +3740,7 @@ layout support_simple_spinner_dropdown_item
 mipmap ic_launcher
 mipmap ic_launcher_round
 plurals mtrl_badge_content_description
+raw bgmusic
 raw firebase_common_keep
 string abc_action_bar_home_description
 string abc_action_bar_up_description
