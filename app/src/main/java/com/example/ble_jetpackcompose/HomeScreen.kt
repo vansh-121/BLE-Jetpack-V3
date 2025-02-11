@@ -320,7 +320,7 @@ fun BluetoothDeviceItem(device: BLEDevice, navController: NavHostController, sel
             .fillMaxWidth()
             .padding(vertical = 8.dp)
             .clickable {
-                navController.navigate("advertising/${device.name}/${device.address}/${selectedSensor}")
+                navController.navigate("advertising/${device.name}/${device.address}/${selectedSensor}/${device.deviceId}")
             },
         verticalAlignment = Alignment.CenterVertically
     ) {

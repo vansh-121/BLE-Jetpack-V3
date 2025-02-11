@@ -42,6 +42,8 @@ fun AdvertisingDataScreen(
     deviceName: String,
     navController: NavController,
     sensorType: String,
+    deviceId: String,
+
 
 
     ) {
@@ -158,7 +160,28 @@ fun AdvertisingDataScreen(
                         .padding(16.dp)
                 ) {
                     Text(
-                        text = "Device: $deviceName ($deviceAddress)",
+                        text = "Device Name: $deviceName ($deviceAddress)",
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = Color.White
+                    )
+                }
+            }
+
+            Surface(
+                modifier = Modifier.width(365.dp).height(49.dp),
+                shape = RoundedCornerShape(16.dp),
+                color = Color(0xFF0A8AE6),
+                tonalElevation = 8.dp
+            ) {
+                Box(
+                    modifier = Modifier
+                        .background(Brush.verticalGradient(colors = listOf(Color(0xFF2A9EE5), Color(0xFF076FB8))))
+                        .padding(16.dp)
+                ) {
+                    val device = null
+                    Text(
+                        text = "Node ID: ${deviceId ?: "Unknown"}",
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Medium,
                         color = Color.White
@@ -168,60 +191,27 @@ fun AdvertisingDataScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                modifier = Modifier.fillMaxWidth().padding(start = 15.dp),
-                verticalAlignment = Alignment.CenterVertically
-            )   // Show different data based on sensor type
-            {
-                when (sensorType) {
-                    "SHT40" -> {
-                        DataCard(label = "Temperature", value = "${temperature.toInt()}°C")
-                        DataCard(label = "Humidity", value = "${humidity.toInt()}%")
-                    }
-                    "LUX" -> {
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            DataCard(label = "Light Intensity", value = "$lux LUX") // Display light intensity
-                            Spacer(modifier = Modifier.height(16.dp))
-
-                            // Only show the sun animation for "Lux" sensor
-                            if (sensorType == "LUX") {
-                                Box(
-                                    modifier = Modifier
-                                        .size(200.dp)
-                                        .background(Color.Transparent, shape = CircleShape),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    SunWithRayAnimation(lux = lux) // Show Sun animation only for "Lux"
-                                }
-                            }
-                        }
-                    }
-                    "LIS2DH" -> {
-                        DataCard(label = "X-Axis", value = "$x m/s²")
-                        DataCard(label = "Y-Axis", value = "$y m/s²")
-                        DataCard(label = "Z-Axis", value = "$z m/s²")
-                    }
-                    "Soil" -> {
-                        DataCard(label = "Nitrogen", value = "$nitrogen mg/kg")
-                        DataCard(label = "Phosphorus", value = "$phosphorus mg/kg")
-                        DataCard(label = "Potassium", value = "$potassium mg/kg")
-                        DataCard(label = "Moisture", value = "$moisture%")
-                        DataCard(label = "Temperature", value = "${temperature.toInt()}°C")
-                        DataCard(label = "Electric Conductivity", value = "$electricConductivity mS/cm")
-                        DataCard(label = "pH", value = "$ph")
-                    }
-                    "Speed & Distance" -> {
-                        DataCard(label = "Speed", value = "$speed km/h")
-                        DataCard(label = "Distance", value = "$distance km")
-                    }
+            // Use the new ResponsiveDataCards function
+            ResponsiveDataCards(
+                sensorType = sensorType,
+                data = when (sensorType) {
+                    "SHT40" -> listOf("Temperature" to "${temperature.toInt()}°C", "Humidity" to "${humidity.toInt()}%")
+                    "LUX" -> listOf("Light Intensity" to "$lux LUX")
+                    "LIS2DH" -> listOf("X-Axis" to "$x m/s²", "Y-Axis" to "$y m/s²", "Z-Axis" to "$z m/s²")
+                    "Soil" -> listOf(
+                        "Nitrogen" to "$nitrogen mg/kg",
+                        "Phosphorus" to "$phosphorus mg/kg",
+                        "Potassium" to "$potassium mg/kg",
+                        "Moisture" to "$moisture%",
+                        "Temperature" to "${temperature.toInt()}°C",
+                        "Electric Conductivity" to "$electricConductivity mS/cm",
+                        "pH" to "$ph"
+                    )
+                    "Speed & Distance" -> listOf("Speed" to "$speed km/h", "Distance" to "$distance km")
+                    else -> emptyList()
                 }
-            }
+            )
 
-            Spacer(modifier = Modifier.height(32.dp))
 
 
 
@@ -250,23 +240,42 @@ fun AdvertisingDataScreen(
 
 @Composable
 fun ResponsiveDataCards(sensorType: String, data: List<Pair<String, String>>) {
-    val isSingleItem = data.size == 1
-
-    Column(
-        modifier = Modifier.fillMaxWidth(),
-        verticalArrangement = if (isSingleItem) Arrangement.Center else Arrangement.Top,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        data.chunked(2).forEach { rowItems -> // Split the list into chunks of 2
+    when (data.size) {
+        1 -> { // Single card, centered
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                DataCard(label = data[0].first, value = data[0].second)
+            }
+        }
+        2 -> { // Two cards in a single row
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = if (rowItems.size == 1) Arrangement.Center else Arrangement.SpaceEvenly
+                horizontalArrangement = Arrangement.SpaceEvenly
             ) {
-                rowItems.forEach { (label, value) ->
+                data.forEach { (label, value) ->
                     DataCard(label = label, value = value)
                 }
             }
-            Spacer(modifier = Modifier.height(16.dp)) // Add space between rows
+        }
+        else -> { // More than 2, display in rows of 2
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                data.chunked(2).forEach { rowItems -> // Split the list into chunks of 2
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceEvenly
+                    ) {
+                        rowItems.forEach { (label, value) ->
+                            DataCard(label = label, value = value)
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(16.dp)) // Add space between rows
+                }
+            }
         }
     }
 }
@@ -386,5 +395,6 @@ fun AdvertisingDataScreenPreview() {
         deviceName = deviceName,
         navController = TODO(),
         sensorType = TODO(),
+        deviceId = TODO(),
     )
 }

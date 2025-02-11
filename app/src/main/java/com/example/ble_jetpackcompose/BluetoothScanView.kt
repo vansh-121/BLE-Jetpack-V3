@@ -101,7 +101,6 @@ class BluetoothScanViewModel(private val context: Context) : ViewModel() {
 
         // Check Bluetooth permissions
         if (!hasBluetoothPermissions()) {
-            Log.w("BluetoothScan", "Permissions not granted")
             return
         }
 
@@ -141,6 +140,33 @@ class BluetoothScanViewModel(private val context: Context) : ViewModel() {
         override fun onScanResult(callbackType: Int, result: ScanResult) {
             try {
                 val device = result.device ?: return
+                val scanRecord = result.scanRecord ?: return
+                val manufacturerData = scanRecord.manufacturerSpecificData
+
+                // Try to get manufacturer data first
+                val deviceId = when {
+                    // Check manufacturer specific data
+                    manufacturerData?.size() ?: 0 > 0 -> {
+                        val key = manufacturerData.keyAt(0)
+                        val data = manufacturerData.get(key)
+                        if (data?.isNotEmpty() == true) {
+                            val id = data[0].toUByte().toInt()
+                            id.toString()
+                        } else {
+                            "Unknown ID"
+                        }
+                    }
+                    // Fallback to scan record bytes if no manufacturer data
+                    scanRecord.bytes?.isNotEmpty() == true -> {
+                        // Look for the correct position of device ID in scan record
+                        // You might need to adjust this based on your device's advertising format
+                        val id = scanRecord.bytes[0].toUByte().toInt()
+                        id.toString()
+                    }
+                    else -> {
+                        "Unknown ID"
+                    }
+                }
 
                 // Filter out devices with empty names and addresses
                 if (device.address.isNullOrEmpty() || device.name.isNullOrEmpty()) {
@@ -150,8 +176,10 @@ class BluetoothScanViewModel(private val context: Context) : ViewModel() {
                 val bleDevice = BLEDevice(
                     name = device.name ?: "Unknown Device",
                     address = device.address,
-                    rssi = result.rssi.toString()
+                    rssi = result.rssi.toString(),
+                    deviceId = deviceId
                 )
+
 
                 viewModelScope.launch {
                     val currentDevices = _devices.value
@@ -167,12 +195,10 @@ class BluetoothScanViewModel(private val context: Context) : ViewModel() {
                     }
 
                     _devices.value = updatedDevices
-                    persistentDevices = updatedDevices  // Update the persistent storage
+                    persistentDevices = updatedDevices
                 }
             } catch (e: SecurityException) {
-                Log.e("BluetoothScan", "Permission error in scan callback", e)
             } catch (e: Exception) {
-                Log.e("BluetoothScan", "Error processing scan result", e)
             }
         }
     }
@@ -181,7 +207,6 @@ class BluetoothScanViewModel(private val context: Context) : ViewModel() {
         try {
             bluetoothLeScanner?.stopScan(scanCallback)
         } catch (e: SecurityException) {
-            Log.e("BluetoothScan", "Error stopping scan", e)
         }
     }
 
