@@ -1,12 +1,10 @@
 package com.example.ble_jetpackcompose
 
+import android.app.Activity
 import android.content.ContentResolver
-import android.provider.Settings
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -29,80 +27,66 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.style.TextAlign
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.example.ble_jetpackcompose.R
-import kotlinx.coroutines.delay
-import kotlin.random.Random
 
 @Composable
 fun AdvertisingDataScreen(
-
     contentResolver: ContentResolver,
     deviceAddress: String,
     deviceName: String,
     navController: NavController,
     sensorType: String,
     deviceId: String,
-
-
-
-    ) {
-    var lux by remember { mutableStateOf(0f) }
-    var temperature by remember { mutableStateOf(0f) }
-    var humidity by remember { mutableStateOf(0f) }
-    var x by remember { mutableStateOf(0f) }
-    var y by remember { mutableStateOf(0f) }
-    var z by remember { mutableStateOf(0f) }
-    var nitrogen by remember { mutableStateOf(0f) }
-    var phosphorus by remember { mutableStateOf(0f) }
-    var potassium by remember { mutableStateOf(0f) }
-    var moisture by remember { mutableStateOf(0f) }
-    var electricConductivity by remember { mutableStateOf(0f) }
-    var ph by remember { mutableStateOf(0f) }
-    var speed by remember { mutableStateOf(0f) }
-    var distance by remember { mutableStateOf(0f) }
-
-    var selectedSetting by remember { mutableStateOf("LUX") }
-
-    val luxText = when (selectedSetting) {
-        "LIS2DH" -> "LIS2DH Sensor"
-        "Soil" -> "Soil Sensor"
-        "Weather" -> "Weather Station"
-        "SHT40" -> "SHT40 Sensor"
-        else -> "${lux.toInt()} LUX"
+    sensorData: BluetoothScanViewModel.SensorData? = null
+) {
+    // Get ViewModel instance using the remember helper
+    val context = LocalContext.current
+    val viewModel = remember {
+        BluetoothScanViewModel<Any?>(context)
     }
 
-    LaunchedEffect(Unit) {
-        while (true) {
-            when (sensorType) {
-                "SHT40" -> {
-                    temperature = 22f + (Math.random() * 5).toFloat()
-                    humidity = (Math.random() * 100).toFloat()
-                }
-                "LUX" -> {
-                    lux = (100..10000).random().toFloat()
-                }
-                "LIS2DH" -> {
-                    x = (-10..10).random().toFloat()
-                    y = (-10..10).random().toFloat()
-                    z = (-10..10).random().toFloat()
-                }
-                "Soil" -> {
-                    nitrogen = (10..100).random().toFloat()
-                    phosphorus = (10..100).random().toFloat()
-                    potassium = (10..100).random().toFloat()
-                    moisture = (0..100).random().toFloat()
-                    temperature = 22f + (Math.random() * 5).toFloat()
-                    electricConductivity = Random.nextDouble(0.1, 2.0).toFloat()
-                    ph = Random.nextDouble(5.5, 7.5).toFloat()
-                }
-                "Speed & Distance" -> {
-                    speed = (0..100).random().toFloat()
-                    distance = (0..500).random().toFloat()
-                }
-            }
-            delay(500)
+    // Collect devices flow
+    val devices by viewModel.devices.collectAsState()
+
+    // Find the current device and its latest data
+    val currentDevice = devices.find { it.address == deviceAddress }
+    val currentSensorData = currentDevice?.sensorData
+    val activity = context as Activity
+
+    var displayData by remember { mutableStateOf<List<Pair<String, String>>>(emptyList()) }
+
+    // Update display data whenever currentSensorData changes
+    LaunchedEffect(currentSensorData) {
+        displayData = when (currentSensorData) {
+            is BluetoothScanViewModel.SHT40Data -> listOf(
+                "Temperature" to "${currentSensorData.temperature}°C",
+                "Humidity" to "${currentSensorData.humidity}%"
+            )
+            is BluetoothScanViewModel.LIS2DHData -> listOf(
+                "X-Axis" to "${currentSensorData.x} m/s²",
+                "Y-Axis" to "${currentSensorData.y} m/s²",
+                "Z-Axis" to "${currentSensorData.z} m/s²"
+            )
+            is BluetoothScanViewModel.SoilSensorData -> listOf(
+                "Nitrogen" to "${currentSensorData.nitrogen} mg/kg",
+                "Phosphorus" to "${currentSensorData.phosphorus} mg/kg",
+                "Potassium" to "${currentSensorData.potassium} mg/kg",
+                "Moisture" to "${currentSensorData.moisture}%",
+                "Temperature" to "${currentSensorData.temperature}°C",
+                "Electric Conductivity" to "${currentSensorData.ec} mS/cm",
+                "pH" to "${currentSensorData.pH}"
+            )
+            is BluetoothScanViewModel.LuxData -> listOf(
+                "Light Intensity" to "${currentSensorData.calculatedLux} LUX"
+            )
+            null -> emptyList()
         }
+    }
+
+    // Start scanning when the screen is launched
+    LaunchedEffect(Unit) {
+        viewModel.startScan(activity)
     }
     Box(
         modifier = Modifier
@@ -121,7 +105,10 @@ fun AdvertisingDataScreen(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.Top
             ) {
-                IconButton(onClick = { navController.popBackStack() }) {
+                IconButton(onClick = {
+                    viewModel.stopScan() // Stop scanning when leaving the screen
+                    navController.popBackStack()
+                }) {
                     Icon(
                         imageVector = Icons.Default.ArrowBack,
                         contentDescription = "Back",
@@ -143,13 +130,14 @@ fun AdvertisingDataScreen(
                         modifier = Modifier.size(40.dp)
                     )
                 }
-
             }
 
             Spacer(modifier = Modifier.height(16.dp))
 
             Surface(
-                modifier = Modifier.width(365.dp).height(49.dp),
+                modifier = Modifier
+                    .width(365.dp)
+                    .height(49.dp),
                 shape = RoundedCornerShape(16.dp),
                 color = Color(0xFF0A8AE6),
                 tonalElevation = 8.dp
@@ -169,7 +157,9 @@ fun AdvertisingDataScreen(
             }
 
             Surface(
-                modifier = Modifier.width(365.dp).height(49.dp),
+                modifier = Modifier
+                    .width(365.dp)
+                    .height(49.dp),
                 shape = RoundedCornerShape(16.dp),
                 color = Color(0xFF0A8AE6),
                 tonalElevation = 8.dp
@@ -179,7 +169,6 @@ fun AdvertisingDataScreen(
                         .background(Brush.verticalGradient(colors = listOf(Color(0xFF2A9EE5), Color(0xFF076FB8))))
                         .padding(16.dp)
                 ) {
-                    val device = null
                     Text(
                         text = "Node ID: ${deviceId ?: "Unknown"}",
                         fontSize = 16.sp,
@@ -191,52 +180,52 @@ fun AdvertisingDataScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // Use the new ResponsiveDataCards function
+            // Display sensor data using ResponsiveDataCards
             ResponsiveDataCards(
                 sensorType = sensorType,
-                data = when (sensorType) {
-                    "SHT40" -> listOf("Temperature" to "${temperature.toInt()}°C", "Humidity" to "${humidity.toInt()}%")
-                    "LUX" -> listOf("Light Intensity" to "$lux LUX")
-                    "LIS2DH" -> listOf("X-Axis" to "$x m/s²", "Y-Axis" to "$y m/s²", "Z-Axis" to "$z m/s²")
-                    "Soil" -> listOf(
-                        "Nitrogen" to "$nitrogen mg/kg",
-                        "Phosphorus" to "$phosphorus mg/kg",
-                        "Potassium" to "$potassium mg/kg",
-                        "Moisture" to "$moisture%",
-                        "Temperature" to "${temperature.toInt()}°C",
-                        "Electric Conductivity" to "$electricConductivity mS/cm",
-                        "pH" to "$ph"
-                    )
-                    "Speed & Distance" -> listOf("Speed" to "$speed km/h", "Distance" to "$distance km")
-                    else -> emptyList()
-                }
+                data = displayData
             )
-
-
-
 
             Spacer(modifier = Modifier.height(32.dp))
 
-//            Box(
-//                modifier = Modifier.size(200.dp).background(Color.Transparent, shape = CircleShape),
-//                contentAlignment = Alignment.Center
-//            ) {
-//                SunWithRayAnimation(lux = lux)
-//            }
+            // Show sun animation only for LUX sensor
+            if (currentSensorData is BluetoothScanViewModel.LuxData) {
+                Box(
+                    modifier = Modifier
+                        .size(200.dp)
+                        .background(Color.Transparent),
+                    contentAlignment = Alignment.Center
+                ) {
+                    SunWithRayAnimation(lux = currentSensorData.calculatedLux)
+                }
+            }
 
             Spacer(modifier = Modifier.height(16.dp))
 
             Button(
                 onClick = { },
-                modifier = Modifier.fillMaxWidth().height(48.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(48.dp),
                 shape = RoundedCornerShape(12.dp)
             ) {
-                Text(text = "DOWNLOAD DATA", color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                Text(
+                    text = "DOWNLOAD DATA",
+                    color = Color.White,
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Bold
+                )
             }
         }
     }
-}
 
+    // Clean up when leaving the screen
+    DisposableEffect(Unit) {
+        onDispose {
+            viewModel.stopScan()
+        }
+    }
+}
 
 @Composable
 fun ResponsiveDataCards(sensorType: String, data: List<Pair<String, String>>) {

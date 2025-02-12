@@ -1,3 +1,5 @@
+package com.example.ble_jetpackcompose
+
 import android.Manifest
 import android.app.Activity
 import android.bluetooth.BluetoothAdapter
@@ -7,6 +9,7 @@ import android.bluetooth.le.ScanCallback
 import android.bluetooth.le.ScanFilter
 import android.bluetooth.le.ScanResult
 import android.bluetooth.le.ScanSettings
+import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -28,7 +31,7 @@ import kotlinx.coroutines.launch
 
 
 
-class BluetoothScanViewModel(private val context: Context) : ViewModel() {
+class BluetoothScanViewModel<T>(private val context: Context) : ViewModel() {
     private val _devices = MutableStateFlow<List<BLEDevice>>(emptyList())
     val devices = _devices.asStateFlow()
 
@@ -93,7 +96,7 @@ class BluetoothScanViewModel(private val context: Context) : ViewModel() {
                     PackageManager.PERMISSION_GRANTED
         }
     }
-    private val scanDuration = 10000L // 10 seconds
+    private val scanDuration = 20000L // 10 seconds
 
 
     fun startScan(activity: Activity) {
@@ -143,28 +146,29 @@ class BluetoothScanViewModel(private val context: Context) : ViewModel() {
                 val scanRecord = result.scanRecord ?: return
                 val manufacturerData = scanRecord.manufacturerSpecificData
 
-                // Try to get manufacturer data first
-                val deviceId = when {
+                // Extract manufacturer data and device ID
+                val manufacturerDataBytes: ByteArray?
+                val deviceId: String
+
+                when {
                     // Check manufacturer specific data
                     manufacturerData?.size() ?: 0 > 0 -> {
                         val key = manufacturerData.keyAt(0)
-                        val data = manufacturerData.get(key)
-                        if (data?.isNotEmpty() == true) {
-                            val id = data[0].toUByte().toInt()
-                            id.toString()
+                        manufacturerDataBytes = manufacturerData.get(key)
+                        deviceId = if (manufacturerDataBytes?.isNotEmpty() == true) {
+                            manufacturerDataBytes[0].toUByte().toString()
                         } else {
                             "Unknown ID"
                         }
                     }
                     // Fallback to scan record bytes if no manufacturer data
                     scanRecord.bytes?.isNotEmpty() == true -> {
-                        // Look for the correct position of device ID in scan record
-                        // You might need to adjust this based on your device's advertising format
-                        val id = scanRecord.bytes[0].toUByte().toInt()
-                        id.toString()
+                        manufacturerDataBytes = scanRecord.bytes
+                        deviceId = manufacturerDataBytes[0].toUByte().toString()
                     }
                     else -> {
-                        "Unknown ID"
+                        manufacturerDataBytes = null
+                        deviceId = "Unknown ID"
                     }
                 }
 
@@ -173,34 +177,141 @@ class BluetoothScanViewModel(private val context: Context) : ViewModel() {
                     return
                 }
 
+                // Determine device type based on name or other characteristics
+                val deviceType = determineDeviceType(manufacturerDataBytes)
+                // Parse sensor-specific data
+                val sensorData = manufacturerDataBytes?.let { data ->
+                    parseDeviceData(data, deviceType)
+                }
+
                 val bleDevice = BLEDevice(
                     name = device.name ?: "Unknown Device",
                     address = device.address,
                     rssi = result.rssi.toString(),
-                    deviceId = deviceId
+                    deviceId = deviceId,
+                    sensorData = sensorData,
+                    deviceType = deviceType
                 )
 
-
                 viewModelScope.launch {
-                    val currentDevices = _devices.value
-                    val existingDeviceIndex =
-                        currentDevices.indexOfFirst { it.address == device.address }
-
-                    val updatedDevices = if (existingDeviceIndex != -1) {
-                        currentDevices.toMutableList().apply {
-                            this[existingDeviceIndex] = bleDevice
-                        }
-                    } else {
-                        currentDevices + bleDevice
-                    }
-
-                    _devices.value = updatedDevices
-                    persistentDevices = updatedDevices
+                    updateDevicesList(bleDevice)
                 }
             } catch (e: SecurityException) {
             } catch (e: Exception) {
             }
         }
+    }
+
+    private fun determineDeviceType(manufacturerData: ByteArray?): String {
+        return when {
+            (manufacturerData?.size ?: 0) >= 11 -> "Soil Sensor"
+            (manufacturerData?.size ?: 0) >= 7 -> "LIS2DH"
+            (manufacturerData?.size ?: 0) >= 5 -> "SHT40"
+            (manufacturerData?.size ?: 0) >= 3 -> "LUX"
+            else -> "Unknown"
+        }
+    }
+
+
+
+    private fun parseDeviceData(data: ByteArray, deviceType: String): SensorData? {
+        return try {
+            when (deviceType) {
+                "SHT40" -> {
+                    if (data.size >= 5) {
+                        SHT40Data(
+                            temperature = "${data[1].toUByte()}.${data[2].toUByte()}",
+                            humidity = "${data[3].toUByte()}.${data[4].toUByte()}"
+                        )
+                    } else null
+                }
+                "LIS2DH" -> {
+                    if (data.size >= 7) {
+                        LIS2DHData(
+                            x = "${data[1].toUByte()}.${data[2].toUByte()}",
+                            y = "${data[3].toUByte()}.${data[4].toUByte()}",
+                            z = "${data[5].toUByte()}.${data[6].toUByte()}"
+                        )
+                    } else null
+                }
+                "Soil Sensor" -> {
+                    if (data.size >= 11) {
+                        SoilSensorData(
+                            nitrogen = data[1].toUByte().toString(),
+                            phosphorus = data[2].toUByte().toString(),
+                            potassium = data[3].toUByte().toString(),
+                            moisture = data[4].toUByte().toString(),
+                            temperature = "${data[5].toUByte()}.${data[6].toUByte()}",
+                            ec = "${data[7].toUByte()}.${data[8].toUByte()}",
+                            pH = "${data[9].toUByte()}.${data[10].toUByte()}"
+                        )
+                    } else null
+                }
+                "LUX" -> {
+                    if (data.size >= 3) {
+                        val temp = "${data[1].toUByte()}.${data[2].toUByte()}".toFloat()
+                        LuxData(calculatedLux = temp * 60)
+                    } else null
+                }
+                else -> null
+            }
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    // Data classes for different sensor types
+    sealed class SensorData
+
+    data class SHT40Data(
+        val temperature: String,
+        val humidity: String
+    ) : SensorData()
+
+    data class LIS2DHData(
+        val x: String,
+        val y: String,
+        val z: String
+    ) : SensorData()
+
+    data class SoilSensorData(
+        val nitrogen: String,
+        val phosphorus: String,
+        val potassium: String,
+        val moisture: String,
+        val temperature: String,
+        val ec: String,
+        val pH: String
+    ) : SensorData()
+
+    data class LuxData(
+        val calculatedLux: Float
+    ) : SensorData()
+
+    // Update BLEDevice class to include sensor data
+    data class BLEDevice(
+        val name: String,
+        val address: String,
+        val rssi: String,
+        val deviceId: String,
+        val sensorData: SensorData? = null,
+        val deviceType: String
+    )
+
+    private fun updateDevicesList(newDevice: BLEDevice) {
+        val currentDevices = _devices.value
+        val existingDeviceIndex = currentDevices.indexOfFirst { it.address == newDevice.address }
+
+        val updatedDevices = if (existingDeviceIndex != -1) {
+            currentDevices.toMutableList().apply {
+                this[existingDeviceIndex] = newDevice
+            }
+        } else {
+            currentDevices + newDevice
+        }
+
+        _devices.value = updatedDevices
+        persistentDevices = updatedDevices
     }
 
     fun stopScan() {

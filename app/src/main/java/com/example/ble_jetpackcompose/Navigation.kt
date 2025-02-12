@@ -1,12 +1,13 @@
 package com.example.ble_jetpackcompose
 
-import BluetoothScanViewModel
+import androidx.activity.ComponentActivity
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -132,29 +133,34 @@ fun AppNavigation(navController: NavHostController) {
                 }
             )
         }
+
         composable(
-            "advertising/{deviceName}/{deviceAddress}/{sensorType}/{deviceId}",
+            route = "advertising/{deviceName}/{deviceAddress}/{sensorType}/{deviceId}",
             arguments = listOf(
                 navArgument("deviceName") { type = NavType.StringType },
                 navArgument("deviceAddress") { type = NavType.StringType },
-                navArgument("sensorType") { type = NavType.StringType }
+                navArgument("sensorType") { type = NavType.StringType },
+                navArgument("deviceId") { type = NavType.StringType }
             )
         ) { backStackEntry ->
-            val context = LocalContext.current
-            val contentResolver = context.contentResolver
-
-            val deviceName = backStackEntry.arguments?.getString("deviceName") ?: "Unknown Device"
+            val deviceName = backStackEntry.arguments?.getString("deviceName") ?: ""
             val deviceAddress = backStackEntry.arguments?.getString("deviceAddress") ?: ""
-            val sensorType = backStackEntry.arguments?.getString("sensorType") ?: "Unknown"
-            val deviceId = backStackEntry.arguments?.getString("deviceId") ?: "Unknown ID"
+            val sensorType = backStackEntry.arguments?.getString("sensorType") ?: ""
+            val deviceId = backStackEntry.arguments?.getString("deviceId") ?: ""
+
+            // Get the device from the ViewModel using the address
+            val viewModel: BluetoothScanViewModel<Any?> = viewModel(factory = BluetoothScanViewModelFactory(LocalContext.current))
+            val devices by viewModel.devices.collectAsState()
+            val device = devices.find { it.address == deviceAddress }
 
             AdvertisingDataScreen(
-                navController = navController,
-                contentResolver = contentResolver,
-                deviceName = deviceName,
+                contentResolver = LocalContext.current.contentResolver,
                 deviceAddress = deviceAddress,
+                deviceName = deviceName,
+                navController = navController,
                 sensorType = sensorType,
-                deviceId = deviceId
+                deviceId = deviceId,
+                sensorData = device?.sensorData
             )
         }
 
@@ -173,7 +179,7 @@ fun AppNavigation(navController: NavHostController) {
 
 
         composable("home_screen") {
-            val bluetoothViewModel = BluetoothScanViewModel(context = LocalContext.current)
+            val bluetoothViewModel = BluetoothScanViewModel<Any>(context = LocalContext.current)
             MainScreen(
                 viewModel = authViewModel,
                 navController = navController,

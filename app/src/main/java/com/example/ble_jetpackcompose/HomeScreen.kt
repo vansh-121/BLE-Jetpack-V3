@@ -1,6 +1,5 @@
 package com.example.ble_jetpackcompose
 
-import BluetoothScanViewModel
 import android.Manifest
 import android.app.Activity
 import android.content.Context
@@ -61,7 +60,8 @@ fun MainScreen(
     viewModel: AuthViewModel,
     onSignOut: () -> Unit,
     navController: NavHostController,
-    bluetoothViewModel: BluetoothScanViewModel,
+    bluetoothViewModel: BluetoothScanViewModel<Any>,
+
 
 //    goToSettings : () -> Unit
 ) {
@@ -113,7 +113,23 @@ fun MainScreen(
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
             // Your existing TopAppBar code...
-
+            androidx.compose.material.TopAppBar(
+                backgroundColor = Color.White,
+                elevation = 8.dp
+            ) {
+                Box(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "BLE Sense ",
+                        color = Color.Black,
+                        style = MaterialTheme.typography.h6,
+                        textAlign = TextAlign.Center
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.height(16.dp))
             LazyColumn(
                 modifier = Modifier
                     .weight(1f)
@@ -314,17 +330,27 @@ private fun checkPermission(context: Context, permission: String): Boolean {
     ) == PackageManager.PERMISSION_GRANTED
 }
 @Composable
-fun BluetoothDeviceItem(device: BLEDevice, navController: NavHostController, selectedSensor: String) {
+fun BluetoothDeviceItem(device: BluetoothScanViewModel.BLEDevice, navController: NavHostController, selectedSensor: String) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp)
             .clickable {
-                navController.navigate("advertising/${device.name}/${device.address}/${selectedSensor}/${device.deviceId}")
+                navController.navigate(
+                    "advertising/${
+                        device.name.replace("/", "-")
+                    }/${
+                        device.address
+                    }/${
+                        selectedSensor.ifEmpty { "SHT40" }
+                    }/${
+                        device.deviceId
+                    }"
+                )
             },
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // Replace Box with Icon in a Container
+        // Icon box remains the same
         Box(
             modifier = Modifier
                 .size(48.dp)
@@ -335,14 +361,14 @@ fun BluetoothDeviceItem(device: BLEDevice, navController: NavHostController, sel
                 painter = painterResource(id = R.drawable.bluetooth),
                 contentDescription = "Bluetooth Device",
                 modifier = Modifier.size(24.dp),
-                tint = Color(0xFF2196F3)  // Material Blue color
+                tint = Color(0xFF2196F3)
             )
         }
 
         Spacer(modifier = Modifier.width(12.dp))
         Column {
             Text(
-                text = device.name ?: "Unknown Device",
+                text = device.name,
                 style = MaterialTheme.typography.subtitle1
             )
             Text(
@@ -353,6 +379,38 @@ fun BluetoothDeviceItem(device: BLEDevice, navController: NavHostController, sel
                 text = "Signal Strength: ${device.rssi} dBm",
                 style = MaterialTheme.typography.caption
             )
+
+            // Display sensor data based on selected sensor type
+            device.sensorData?.let { sensorData ->
+                Text(
+                    text = when {
+                        // If no sensor is selected or SHT40 is selected, show temperature and humidity
+                        selectedSensor.isEmpty() || selectedSensor == "SHT40" -> when (sensorData) {
+                            is BluetoothScanViewModel.SHT40Data ->
+                                "Temp: ${sensorData.temperature}°C, Humidity: ${sensorData.humidity}%"
+                            is BluetoothScanViewModel.SoilSensorData ->
+                                "Temp: ${sensorData.temperature}°C, Moisture: ${sensorData.moisture}%"
+                            is BluetoothScanViewModel.LIS2DHData ->
+                                "X: ${sensorData.x}, Y: ${sensorData.y}, Z: ${sensorData.z}"
+                            is BluetoothScanViewModel.LuxData ->
+                                "Light: ${sensorData.calculatedLux} LUX"
+                            else -> "No sensor data"
+                        }
+                        // Show specific sensor data based on selection
+                        selectedSensor == "LIS2DH" && sensorData is BluetoothScanViewModel.LIS2DHData ->
+                            "X: ${sensorData.x}, Y: ${sensorData.y}, Z: ${sensorData.z}"
+                        selectedSensor == "Soil Sensor" && sensorData is BluetoothScanViewModel.SoilSensorData ->
+                            "N: ${sensorData.nitrogen}, P: ${sensorData.phosphorus}, K: ${sensorData.potassium}\n" +
+                                    "Moisture: ${sensorData.moisture}%, Temp: ${sensorData.temperature}°C\n" +
+                                    "EC: ${sensorData.ec}, pH: ${sensorData.pH}"
+                        selectedSensor == "LUX" && sensorData is BluetoothScanViewModel.LuxData ->
+                            "Light: ${sensorData.calculatedLux} LUX"
+                        else -> "Incompatible sensor type"
+                    },
+                    style = MaterialTheme.typography.caption,
+                    color = MaterialTheme.colors.primary
+                )
+            }
         }
     }
 }
