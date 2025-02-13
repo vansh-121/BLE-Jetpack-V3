@@ -21,6 +21,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.ble_jetpackcompose.BLEDevice
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -47,6 +48,25 @@ class BluetoothScanViewModel<T>(private val context: Context) : ViewModel() {
         // Initialize _devices with any previously stored devices
         _devices.value = persistentDevices
     }
+
+    private val scanSettings by lazy {
+        ScanSettings.Builder()
+            .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
+            .setPhy(ScanSettings.PHY_LE_ALL_SUPPORTED)
+            .setCallbackType(ScanSettings.CALLBACK_TYPE_ALL_MATCHES)
+            .setMatchMode(ScanSettings.MATCH_MODE_AGGRESSIVE)
+            .setNumOfMatches(ScanSettings.MATCH_NUM_MAX_ADVERTISEMENT)
+            .setReportDelay(0L)
+            .setLegacy(false)
+            .build()
+    }
+
+    private val scanFilters by lazy {
+        listOf(ScanFilter.Builder().build())
+    }
+
+    // Use a job to manage scanning lifecycle
+    private var scanJob: Job? = null
 
 
     private fun checkAndEnableBluetoothAndLocation(activity: Activity) {
@@ -99,39 +119,21 @@ class BluetoothScanViewModel<T>(private val context: Context) : ViewModel() {
     private val scanDuration = 20000L // 10 seconds
 
 
+
     fun startScan(activity: Activity) {
+        if (_isScanning.value) return  // Prevent multiple scan sessions
+
         checkAndEnableBluetoothAndLocation(activity)
+        if (!hasBluetoothPermissions()) return
 
-        // Check Bluetooth permissions
-        if (!hasBluetoothPermissions()) {
-            return
-        }
-
-        viewModelScope.launch {
+        scanJob?.cancel() // Cancel any existing scan
+        scanJob = viewModelScope.launch {
             try {
-                val scanFilters = listOf(
-                    ScanFilter.Builder()
-                        .build()
-                )
-
-                val scanSettings = ScanSettings.Builder()
-                    .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
-                    .setPhy(ScanSettings.PHY_LE_ALL_SUPPORTED)
-                    .setCallbackType(ScanSettings.CALLBACK_TYPE_ALL_MATCHES)
-                    .setMatchMode(ScanSettings.MATCH_MODE_AGGRESSIVE)
-                    .setNumOfMatches(ScanSettings.MATCH_NUM_MAX_ADVERTISEMENT)
-                    .setReportDelay(0L)
-                    .setLegacy(false)
-                    .build()
-
-
-
                 bluetoothLeScanner?.startScan(scanFilters, scanSettings, scanCallback)
                 _isScanning.value = true
 
                 delay(scanDuration)
                 stopScan()
-
             } catch (e: SecurityException) {
                 _isScanning.value = false
             }
@@ -253,6 +255,18 @@ class BluetoothScanViewModel<T>(private val context: Context) : ViewModel() {
                         LuxData(calculatedLux = temp * 60)
                     } else null
                 }
+                "Speed Distance" -> {
+                        if (data.size >= 5) {
+                            SDTData(
+                                speed = "${data[1].toUByte()}.${data[2].toUByte()}",
+                                distance = "${data[3].toUByte()}.${data[4].toUByte()}"
+                            )
+                        } else null
+
+                }
+
+
+
                 else -> null
             }
         } catch (e: Exception) {
@@ -288,6 +302,13 @@ class BluetoothScanViewModel<T>(private val context: Context) : ViewModel() {
         val calculatedLux: Float
     ) : SensorData()
 
+    data class SDTData(
+        val speed: String,
+        val distance: String
+    ) : SensorData()
+
+
+
     // Update BLEDevice class to include sensor data
     data class BLEDevice(
         val name: String,
@@ -299,36 +320,43 @@ class BluetoothScanViewModel<T>(private val context: Context) : ViewModel() {
     )
 
     private fun updateDevicesList(newDevice: BLEDevice) {
-        val currentDevices = _devices.value
-        val existingDeviceIndex = currentDevices.indexOfFirst { it.address == newDevice.address }
+        viewModelScope.launch {
+            val currentDevices = _devices.value
+            val updatedDevices = currentDevices.toMutableList()
 
-        val updatedDevices = if (existingDeviceIndex != -1) {
-            currentDevices.toMutableList().apply {
-                this[existingDeviceIndex] = newDevice
+            val existingIndex = updatedDevices.indexOfFirst { it.address == newDevice.address }
+            if (existingIndex != -1) {
+                updatedDevices[existingIndex] = newDevice
+            } else {
+                updatedDevices.add(newDevice)
             }
-        } else {
-            currentDevices + newDevice
-        }
 
-        _devices.value = updatedDevices
-        persistentDevices = updatedDevices
+            _devices.emit(updatedDevices)
+            persistentDevices = updatedDevices
+        }
     }
 
     fun stopScan() {
+        scanJob?.cancel()
         try {
             bluetoothLeScanner?.stopScan(scanCallback)
         } catch (e: SecurityException) {
+            // Handle exception
+        } finally {
+            _isScanning.value = false
         }
     }
-
     fun clearDevices() {
-        _devices.value = emptyList()
-        persistentDevices = emptyList()
+        viewModelScope.launch {
+            _devices.emit(emptyList())
+            persistentDevices = emptyList()
+        }
     }
 
     override fun onCleared() {
         super.onCleared()
         stopScan()
+        clearDevices()
     }
 
     companion object {

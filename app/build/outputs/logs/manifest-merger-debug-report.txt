@@ -1,9 +1,9 @@
 -- Merging decision tree log ---
 manifest
-ADDED from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\src\main\AndroidManifest.xml:2:1-52:12
-INJECTED from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\src\main\AndroidManifest.xml:2:1-52:12
-INJECTED from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\src\main\AndroidManifest.xml:2:1-52:12
-INJECTED from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\src\main\AndroidManifest.xml:2:1-52:12
+ADDED from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\src\main\AndroidManifest.xml:2:1-57:12
+INJECTED from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\src\main\AndroidManifest.xml:2:1-57:12
+INJECTED from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\src\main\AndroidManifest.xml:2:1-57:12
+INJECTED from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\src\main\AndroidManifest.xml:2:1-57:12
 MERGED from [com.google.accompanist:accompanist-navigation-animation:0.30.1] C:\Users\DELL\.gradle\caches\8.9\transforms\c64453f5adbaa121f0f12b25f1c872cb\transformed\accompanist-navigation-animation-0.30.1\AndroidManifest.xml:17:1-25:12
 MERGED from [androidx.navigation:navigation-common:2.7.0] C:\Users\DELL\.gradle\caches\8.9\transforms\489b2fcd6e7e414dd1fa6219f477cac3\transformed\navigation-common-2.7.0\AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.navigation:navigation-runtime:2.7.0] C:\Users\DELL\.gradle\caches\8.9\transforms\bb73a8323771410ac105ad95cc811b55\transformed\navigation-runtime-2.7.0\AndroidManifest.xml:17:1-22:12
@@ -144,8 +144,8 @@ ADDED from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\src\main\An
 	android:name
 		ADDED from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\src\main\AndroidManifest.xml:11:22-75
 application
-ADDED from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\src\main\AndroidManifest.xml:16:5-50:19
-INJECTED from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\src\main\AndroidManifest.xml:16:5-50:19
+ADDED from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\src\main\AndroidManifest.xml:16:5-55:19
+INJECTED from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\src\main\AndroidManifest.xml:16:5-55:19
 MERGED from [com.google.android.material:material:1.9.0] C:\Users\DELL\.gradle\caches\8.9\transforms\829b93a50d82b3ab49f671e9524dabae\transformed\material-1.9.0\AndroidManifest.xml:24:5-20
 MERGED from [com.google.android.material:material:1.9.0] C:\Users\DELL\.gradle\caches\8.9\transforms\829b93a50d82b3ab49f671e9524dabae\transformed\material-1.9.0\AndroidManifest.xml:24:5-20
 MERGED from [androidx.constraintlayout:constraintlayout:2.0.1] C:\Users\DELL\.gradle\caches\8.9\transforms\437825ab7b333d30e9988b35be6ac949\transformed\constraintlayout-2.0.1\AndroidManifest.xml:9:5-20
@@ -197,43 +197,51 @@ MERGED from [com.google.android.play:core-common:2.0.3] C:\Users\DELL\.gradle\ca
 	android:appComponentFactory
 		ADDED from [androidx.core:core:1.15.0] C:\Users\DELL\.gradle\caches\8.9\transforms\5528f48779f9f69ca9223a2bcb58d298\transformed\core-1.15.0\AndroidManifest.xml:28:18-86
 	android:supportsRtl
-		ADDED from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\src\main\AndroidManifest.xml:23:9-35
+		ADDED from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\src\main\AndroidManifest.xml:25:9-35
 	android:label
-		ADDED from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\src\main\AndroidManifest.xml:21:9-41
+		ADDED from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\src\main\AndroidManifest.xml:23:9-41
+	android:hardwareAccelerated
+		ADDED from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\src\main\AndroidManifest.xml:19:9-43
 	android:fullBackupContent
-		ADDED from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\src\main\AndroidManifest.xml:19:9-54
+		ADDED from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\src\main\AndroidManifest.xml:21:9-54
 	android:roundIcon
-		ADDED from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\src\main\AndroidManifest.xml:22:9-54
+		ADDED from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\src\main\AndroidManifest.xml:24:9-54
 	tools:targetApi
-		ADDED from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\src\main\AndroidManifest.xml:25:9-29
+		ADDED from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\src\main\AndroidManifest.xml:27:9-29
+	android:largeHeap
+		ADDED from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\src\main\AndroidManifest.xml:20:9-33
 	android:icon
-		ADDED from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\src\main\AndroidManifest.xml:20:9-43
+		ADDED from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\src\main\AndroidManifest.xml:22:9-43
 	android:allowBackup
 		ADDED from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\src\main\AndroidManifest.xml:17:9-35
 	android:theme
-		ADDED from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\src\main\AndroidManifest.xml:24:9-55
+		ADDED from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\src\main\AndroidManifest.xml:26:9-55
 	android:dataExtractionRules
 		ADDED from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\src\main\AndroidManifest.xml:18:9-65
 activity#com.example.ble_jetpackcompose.MainActivity
-ADDED from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\src\main\AndroidManifest.xml:39:9-49:20
+ADDED from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\src\main\AndroidManifest.xml:42:9-54:20
 	android:label
-		ADDED from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\src\main\AndroidManifest.xml:42:13-45
+		ADDED from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\src\main\AndroidManifest.xml:47:13-45
+	android:launchMode
+		ADDED from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\src\main\AndroidManifest.xml:46:13-44
+	android:hardwareAccelerated
+		ADDED from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\src\main\AndroidManifest.xml:45:13-47
 	android:exported
-		ADDED from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\src\main\AndroidManifest.xml:41:13-36
+		ADDED from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\src\main\AndroidManifest.xml:44:13-36
 	android:theme
-		ADDED from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\src\main\AndroidManifest.xml:43:13-59
+		ADDED from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\src\main\AndroidManifest.xml:48:13-59
 	android:name
-		ADDED from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\src\main\AndroidManifest.xml:40:13-41
+		ADDED from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\src\main\AndroidManifest.xml:43:13-41
 intent-filter#action:name:android.intent.action.MAIN+category:name:android.intent.category.LAUNCHER
-ADDED from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\src\main\AndroidManifest.xml:44:13-48:29
+ADDED from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\src\main\AndroidManifest.xml:49:13-53:29
 action#android.intent.action.MAIN
-ADDED from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\src\main\AndroidManifest.xml:45:17-69
+ADDED from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\src\main\AndroidManifest.xml:50:17-69
 	android:name
-		ADDED from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\src\main\AndroidManifest.xml:45:25-66
+		ADDED from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\src\main\AndroidManifest.xml:50:25-66
 category#android.intent.category.LAUNCHER
-ADDED from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\src\main\AndroidManifest.xml:47:17-77
+ADDED from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\src\main\AndroidManifest.xml:52:17-77
 	android:name
-		ADDED from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\src\main\AndroidManifest.xml:47:27-74
+		ADDED from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\src\main\AndroidManifest.xml:52:27-74
 uses-sdk
 INJECTED from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\src\main\AndroidManifest.xml reason: use-sdk injection requested
 INJECTED from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\src\main\AndroidManifest.xml

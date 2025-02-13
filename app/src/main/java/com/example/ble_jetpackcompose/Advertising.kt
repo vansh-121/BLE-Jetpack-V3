@@ -29,7 +29,6 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.style.TextAlign
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-
 @Composable
 fun AdvertisingDataScreen(
     contentResolver: ContentResolver,
@@ -40,58 +39,79 @@ fun AdvertisingDataScreen(
     deviceId: String,
     sensorData: BluetoothScanViewModel.SensorData? = null
 ) {
-    // Get ViewModel instance using the remember helper
     val context = LocalContext.current
-    val viewModel = remember {
-        BluetoothScanViewModel<Any?>(context)
+    // Use viewModel() instead of remember for proper lifecycle management
+    val viewModel: BluetoothScanViewModel<Any?> = viewModel()
+    val activity = LocalContext.current as Activity as Activity
+    // Use derivedStateOf for computed values
+    val devices by viewModel.devices.collectAsState()
+    val currentDevice by remember(devices, deviceAddress) {
+        derivedStateOf { devices.find { it.address == deviceAddress } }
     }
 
-    // Collect devices flow
-    val devices by viewModel.devices.collectAsState()
+    // Memoize display data calculation
+    val displayData by remember(currentDevice?.sensorData) {
+        derivedStateOf {
+            when (val sensorData = currentDevice?.sensorData) {
+                is BluetoothScanViewModel.SHT40Data -> listOf(
+                    "Temperature" to "${sensorData.temperature}°C",
+                    "Humidity" to "${sensorData.humidity}%"
+                )
+                is BluetoothScanViewModel.LIS2DHData -> listOf(
+                    "X-Axis" to "${sensorData.x} m/s²",
+                    "Y-Axis" to "${sensorData.y} m/s²",
+                    "Z-Axis" to "${sensorData.z} m/s²"
+                )
+                is BluetoothScanViewModel.SoilSensorData -> listOf(
+                    "Nitrogen" to "${sensorData.nitrogen} mg/kg",
+                    "Phosphorus" to "${sensorData.phosphorus} mg/kg",
+                    "Potassium" to "${sensorData.potassium} mg/kg",
+                    "Moisture" to "${sensorData.moisture}%",
+                    "Temperature" to "${sensorData.temperature}°C",
+                    "Electric Conductivity" to "${sensorData.ec} mS/cm",
+                    "pH" to "${sensorData.pH}"
+                )
+                is BluetoothScanViewModel.LuxData -> listOf(
+                    "Light Intensity" to "${sensorData.calculatedLux} LUX"
+                )
 
-    // Find the current device and its latest data
-    val currentDevice = devices.find { it.address == deviceAddress }
-    val currentSensorData = currentDevice?.sensorData
-    val activity = context as Activity
+                is BluetoothScanViewModel.SDTData -> listOf(
+                    "Speed" to "${sensorData.speed}m/s",
+                    "Distance" to "${sensorData.distance}m"
+                )
 
-    var displayData by remember { mutableStateOf<List<Pair<String, String>>>(emptyList()) }
 
-    // Update display data whenever currentSensorData changes
-    LaunchedEffect(currentSensorData) {
-        displayData = when (currentSensorData) {
-            is BluetoothScanViewModel.SHT40Data -> listOf(
-                "Temperature" to "${currentSensorData.temperature}°C",
-                "Humidity" to "${currentSensorData.humidity}%"
-            )
-            is BluetoothScanViewModel.LIS2DHData -> listOf(
-                "X-Axis" to "${currentSensorData.x} m/s²",
-                "Y-Axis" to "${currentSensorData.y} m/s²",
-                "Z-Axis" to "${currentSensorData.z} m/s²"
-            )
-            is BluetoothScanViewModel.SoilSensorData -> listOf(
-                "Nitrogen" to "${currentSensorData.nitrogen} mg/kg",
-                "Phosphorus" to "${currentSensorData.phosphorus} mg/kg",
-                "Potassium" to "${currentSensorData.potassium} mg/kg",
-                "Moisture" to "${currentSensorData.moisture}%",
-                "Temperature" to "${currentSensorData.temperature}°C",
-                "Electric Conductivity" to "${currentSensorData.ec} mS/cm",
-                "pH" to "${currentSensorData.pH}"
-            )
-            is BluetoothScanViewModel.LuxData -> listOf(
-                "Light Intensity" to "${currentSensorData.calculatedLux} LUX"
-            )
-            null -> emptyList()
+                null -> emptyList()
+
+
+            }
         }
     }
 
-    // Start scanning when the screen is launched
+    // Start scanning only when needed
     LaunchedEffect(Unit) {
-        viewModel.startScan(activity)
+        activity?.let { safeActivity ->
+            viewModel.startScan(safeActivity)
+        }
     }
+
+
+    // Clean up resources when leaving screen
+    DisposableEffect(navController) {
+        onDispose {
+            viewModel.stopScan()
+            viewModel.clearDevices() // Clear device list when leaving
+        }
+    }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Brush.verticalGradient(colors = listOf(Color(0xFF0A74DA), Color(0xFFADD8E6))))
+            .background(
+                Brush.verticalGradient(
+                    colors = listOf(Color(0xFF0A74DA), Color(0xFFADD8E6))
+                )
+            )
             .padding(horizontal = 16.dp, vertical = 8.dp),
         contentAlignment = Alignment.Center
     ) {
@@ -100,87 +120,24 @@ fun AdvertisingDataScreen(
             verticalArrangement = Arrangement.SpaceEvenly,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.Top
-            ) {
-                IconButton(onClick = {
-                    viewModel.stopScan() // Stop scanning when leaving the screen
-                    navController.popBackStack()
-                }) {
-                    Icon(
-                        imageVector = Icons.Default.ArrowBack,
-                        contentDescription = "Back",
-                        tint = Color.White
-                    )
-                }
-                Text(
-                    text = "Advertising Data",
-                    fontSize = 28.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.White,
-                    modifier = Modifier.padding(vertical = 8.dp),
-                    textAlign = TextAlign.Center
-                )
-                IconButton(onClick = { navController.navigate("chart_screen") }) {
-                    Image(
-                        painter = painterResource(id = R.drawable.graph),
-                        contentDescription = "Graph Icon",
-                        modifier = Modifier.size(40.dp)
-                    )
-                }
-            }
+            // Header
+            HeaderSection(
+                navController = navController,
+                viewModel = viewModel
+            )
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            Surface(
-                modifier = Modifier
-                    .width(365.dp)
-                    .height(49.dp),
-                shape = RoundedCornerShape(16.dp),
-                color = Color(0xFF0A8AE6),
-                tonalElevation = 8.dp
-            ) {
-                Box(
-                    modifier = Modifier
-                        .background(Brush.verticalGradient(colors = listOf(Color(0xFF2A9EE5), Color(0xFF076FB8))))
-                        .padding(16.dp)
-                ) {
-                    Text(
-                        text = "Device Name: $deviceName ($deviceAddress)",
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Medium,
-                        color = Color.White
-                    )
-                }
-            }
-
-            Surface(
-                modifier = Modifier
-                    .width(365.dp)
-                    .height(49.dp),
-                shape = RoundedCornerShape(16.dp),
-                color = Color(0xFF0A8AE6),
-                tonalElevation = 8.dp
-            ) {
-                Box(
-                    modifier = Modifier
-                        .background(Brush.verticalGradient(colors = listOf(Color(0xFF2A9EE5), Color(0xFF076FB8))))
-                        .padding(16.dp)
-                ) {
-                    Text(
-                        text = "Node ID: ${deviceId ?: "Unknown"}",
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Medium,
-                        color = Color.White
-                    )
-                }
-            }
+            // Device Info Cards
+            DeviceInfoSection(
+                deviceName = deviceName,
+                deviceAddress = deviceAddress,
+                deviceId = deviceId
+            )
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // Display sensor data using ResponsiveDataCards
+            // Sensor Data Cards
             ResponsiveDataCards(
                 sensorType = sensorType,
                 data = displayData
@@ -188,42 +145,130 @@ fun AdvertisingDataScreen(
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            // Show sun animation only for LUX sensor
-            if (currentSensorData is BluetoothScanViewModel.LuxData) {
-                Box(
-                    modifier = Modifier
-                        .size(200.dp)
-                        .background(Color.Transparent),
-                    contentAlignment = Alignment.Center
-                ) {
-                    SunWithRayAnimation(lux = currentSensorData.calculatedLux)
-                }
+            // Conditional LUX Animation
+            if (currentDevice?.sensorData is BluetoothScanViewModel.LuxData) {
+                LuxAnimationSection(
+                    luxData = currentDevice?.sensorData as BluetoothScanViewModel.LuxData
+                )
             }
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            Button(
-                onClick = { },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(48.dp),
-                shape = RoundedCornerShape(12.dp)
-            ) {
-                Text(
-                    text = "DOWNLOAD DATA",
-                    color = Color.White,
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Bold
-                )
-            }
+            // Download Button
+            DownloadButton()
         }
     }
+}
 
-    // Clean up when leaving the screen
-    DisposableEffect(Unit) {
-        onDispose {
-            viewModel.stopScan()
+@Composable
+private fun HeaderSection(
+    navController: NavController,
+    viewModel: BluetoothScanViewModel<Any?>
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        IconButton(
+            onClick = {
+                viewModel.stopScan()
+                navController.popBackStack()
+            }
+        ) {
+            Icon(
+                imageVector = Icons.Default.ArrowBack,
+                contentDescription = "Back",
+                tint = Color.White
+            )
         }
+
+        Text(
+            text = "Advertising Data",
+            fontSize = 28.sp,
+            fontWeight = FontWeight.Bold,
+            color = Color.White,
+            modifier = Modifier.padding(vertical = 8.dp)
+        )
+
+        IconButton(
+            onClick = { navController.navigate("chart_screen") }
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.graph),
+                contentDescription = "Graph Icon",
+                modifier = Modifier.size(40.dp)
+            )
+        }
+    }
+}
+
+@Composable
+private fun DeviceInfoSection(
+    deviceName: String,
+    deviceAddress: String,
+    deviceId: String
+) {
+    InfoCard(text = "Device Name: $deviceName ($deviceAddress)")
+    Spacer(modifier = Modifier.height(8.dp))
+    InfoCard(text = "Node ID: ${deviceId ?: "Unknown"}")
+}
+
+@Composable
+private fun InfoCard(text: String) {
+    Surface(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(49.dp),
+        shape = RoundedCornerShape(16.dp),
+        color = Color(0xFF0A8AE6)
+    ) {
+        Box(
+            modifier = Modifier
+                .background(
+                    Brush.verticalGradient(
+                        colors = listOf(Color(0xFF2A9EE5), Color(0xFF076FB8))
+                    )
+                )
+                .padding(16.dp)
+        ) {
+            Text(
+                text = text,
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Medium,
+                color = Color.White
+            )
+        }
+    }
+}
+
+@Composable
+private fun LuxAnimationSection(luxData: BluetoothScanViewModel.LuxData) {
+    Box(
+        modifier = Modifier
+            .size(200.dp)
+            .background(Color.Transparent),
+        contentAlignment = Alignment.Center
+    ) {
+        SunWithRayAnimation(lux = luxData.calculatedLux)
+    }
+}
+
+@Composable
+private fun DownloadButton() {
+    Button(
+        onClick = { },
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(48.dp),
+        shape = RoundedCornerShape(12.dp)
+    ) {
+        Text(
+            text = "DOWNLOAD DATA",
+            color = Color.White,
+            fontSize = 14.sp,
+            fontWeight = FontWeight.Bold
+        )
     }
 }
 

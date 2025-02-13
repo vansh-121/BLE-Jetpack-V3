@@ -388,23 +388,36 @@ fun BluetoothDeviceItem(device: BluetoothScanViewModel.BLEDevice, navController:
                         selectedSensor.isEmpty() || selectedSensor == "SHT40" -> when (sensorData) {
                             is BluetoothScanViewModel.SHT40Data ->
                                 "Temp: ${sensorData.temperature}°C, Humidity: ${sensorData.humidity}%"
+
                             is BluetoothScanViewModel.SoilSensorData ->
                                 "Temp: ${sensorData.temperature}°C, Moisture: ${sensorData.moisture}%"
+
                             is BluetoothScanViewModel.LIS2DHData ->
                                 "X: ${sensorData.x}, Y: ${sensorData.y}, Z: ${sensorData.z}"
+
                             is BluetoothScanViewModel.LuxData ->
                                 "Light: ${sensorData.calculatedLux} LUX"
+
+                            is BluetoothScanViewModel.SDTData ->
+                                "Temp: ${sensorData.speed}m/s, Humidity: ${sensorData.distance}m"
+
                             else -> "No sensor data"
                         }
                         // Show specific sensor data based on selection
                         selectedSensor == "LIS2DH" && sensorData is BluetoothScanViewModel.LIS2DHData ->
                             "X: ${sensorData.x}, Y: ${sensorData.y}, Z: ${sensorData.z}"
+
                         selectedSensor == "Soil Sensor" && sensorData is BluetoothScanViewModel.SoilSensorData ->
                             "N: ${sensorData.nitrogen}, P: ${sensorData.phosphorus}, K: ${sensorData.potassium}\n" +
                                     "Moisture: ${sensorData.moisture}%, Temp: ${sensorData.temperature}°C\n" +
                                     "EC: ${sensorData.ec}, pH: ${sensorData.pH}"
+
                         selectedSensor == "LUX" && sensorData is BluetoothScanViewModel.LuxData ->
                             "Light: ${sensorData.calculatedLux} LUX"
+
+                        selectedSensor == "Speed & Distance" && sensorData is BluetoothScanViewModel.SDTData ->
+                            "Speed: ${sensorData.speed}m/s, Distance: ${sensorData.distance}m"
+
                         else -> "Incompatible sensor type"
                     },
                     style = MaterialTheme.typography.caption,
