@@ -1,19 +1,35 @@
 package com.example.ble_jetpackcompose
 
 import android.app.Activity
-import android.content.ContentResolver
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -22,27 +38,23 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.text.style.TextAlign
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+
 @Composable
 fun AdvertisingDataScreen(
-    contentResolver: ContentResolver,
     deviceAddress: String,
     deviceName: String,
     navController: NavController,
-    sensorType: String,
-    deviceId: String,
-    sensorData: BluetoothScanViewModel.SensorData? = null
+    deviceId: String
 ) {
-    val context = LocalContext.current
+    LocalContext.current
     // Use viewModel() instead of remember for proper lifecycle management
-    val viewModel: BluetoothScanViewModel<Any?> = viewModel()
-    val activity = LocalContext.current as Activity as Activity
+    val viewModel: BluetoothScanViewModel = viewModel()
+    val activity = LocalContext.current as Activity
     // Use derivedStateOf for computed values
     val devices by viewModel.devices.collectAsState()
     val currentDevice by remember(devices, deviceAddress) {
@@ -69,7 +81,7 @@ fun AdvertisingDataScreen(
                     "Moisture" to "${sensorData.moisture}%",
                     "Temperature" to "${sensorData.temperature}°C",
                     "Electric Conductivity" to "${sensorData.ec} mS/cm",
-                    "pH" to "${sensorData.pH}"
+                    "pH" to sensorData.pH
                 )
                 is BluetoothScanViewModel.LuxData -> listOf(
                     "Light Intensity" to "${sensorData.calculatedLux} LUX"
@@ -90,7 +102,7 @@ fun AdvertisingDataScreen(
 
     // Start scanning only when needed
     LaunchedEffect(Unit) {
-        activity?.let { safeActivity ->
+        activity.let { safeActivity ->
             viewModel.startScan(safeActivity)
         }
     }
@@ -139,7 +151,6 @@ fun AdvertisingDataScreen(
 
             // Sensor Data Cards
             ResponsiveDataCards(
-                sensorType = sensorType,
                 data = displayData
             )
 
@@ -163,7 +174,7 @@ fun AdvertisingDataScreen(
 @Composable
 private fun HeaderSection(
     navController: NavController,
-    viewModel: BluetoothScanViewModel<Any?>
+    viewModel: BluetoothScanViewModel
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -177,7 +188,7 @@ private fun HeaderSection(
             }
         ) {
             Icon(
-                imageVector = Icons.Default.ArrowBack,
+                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                 contentDescription = "Back",
                 tint = Color.White
             )
@@ -211,7 +222,7 @@ private fun DeviceInfoSection(
 ) {
     InfoCard(text = "Device Name: $deviceName ($deviceAddress)")
     Spacer(modifier = Modifier.height(8.dp))
-    InfoCard(text = "Node ID: ${deviceId ?: "Unknown"}")
+    InfoCard(text = "Node ID: $deviceId")
 }
 
 @Composable
@@ -273,7 +284,7 @@ private fun DownloadButton() {
 }
 
 @Composable
-fun ResponsiveDataCards(sensorType: String, data: List<Pair<String, String>>) {
+fun ResponsiveDataCards(data: List<Pair<String, String>>) {
     when (data.size) {
         1 -> { // Single card, centered
             Box(
@@ -419,16 +430,14 @@ fun DataCard(label: String, value: String) {
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun AdvertisingDataScreenPreview() {
-    val deviceName = ""
-    AdvertisingDataScreen(
-        contentResolver = LocalContext.current.contentResolver,
-        deviceAddress = TODO(),
-        deviceName = deviceName,
-        navController = TODO(),
-        sensorType = TODO(),
-        deviceId = TODO(),
-    )
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun AdvertisingDataScreenPreview() {
+//    val deviceName = ""
+//    AdvertisingDataScreen(
+//        deviceAddress = TODO(),
+//        deviceName = deviceName,
+//        navController = TODO(),
+//        deviceId = TODO(),
+//    )
+//}

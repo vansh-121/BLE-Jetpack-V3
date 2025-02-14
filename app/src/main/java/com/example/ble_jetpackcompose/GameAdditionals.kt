@@ -333,7 +333,7 @@ fun generateRandomPosition(radius: Float): Offset {
 
 //@OptIn(ExperimentalComposeUiApi::class) // Opting into experimental API @Composable
 @Composable
-fun ScratchCardScreen(modifier: Modifier = Modifier) {
+fun ScratchCardScreen() {
     val overlayImage = ImageBitmap.imageResource(id = R.drawable.scratch)
     val baseImage = ImageBitmap.imageResource(id = R.drawable.inner)
 
@@ -345,7 +345,7 @@ fun ScratchCardScreen(modifier: Modifier = Modifier) {
 
     LaunchedEffect(Unit) {
         val stepSize = canvasSizePx / 8
-        var scratchedArea = 0f
+        var scratchedArea: Float
         canvasSizePx * canvasSizePx
 
         // Zigzag pattern
@@ -394,10 +394,7 @@ fun ScratchCardScreen(modifier: Modifier = Modifier) {
         ScratchCanvas(
             overlayImage = overlayImage,
             baseImage = baseImage,
-            movedOffset = null,
-            onMovedOffset = { _, _ -> },
             currentPath = currentPathState.value.path,
-            currentPathThickness = currentPathState.value.width,
             modifier = Modifier
                 .align(alignment = TopStart)
                 .size(300.dp)
@@ -416,10 +413,7 @@ fun ScratchCardScreen(modifier: Modifier = Modifier) {
 fun ScratchCanvas(
     overlayImage: ImageBitmap,
     baseImage: ImageBitmap,
-    movedOffset: Offset?,
-    onMovedOffset: (Float, Float) -> Unit,
     currentPath: Path,
-    currentPathThickness: Float,
     modifier: Modifier = Modifier
 ) {
     Canvas(

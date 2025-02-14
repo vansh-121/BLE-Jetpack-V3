@@ -1,13 +1,11 @@
 package com.example.ble_jetpackcompose
 
-import androidx.activity.ComponentActivity
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.ui.platform.LocalContext
-import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -145,22 +143,19 @@ fun AppNavigation(navController: NavHostController) {
         ) { backStackEntry ->
             val deviceName = backStackEntry.arguments?.getString("deviceName") ?: ""
             val deviceAddress = backStackEntry.arguments?.getString("deviceAddress") ?: ""
-            val sensorType = backStackEntry.arguments?.getString("sensorType") ?: ""
+            backStackEntry.arguments?.getString("sensorType") ?: ""
             val deviceId = backStackEntry.arguments?.getString("deviceId") ?: ""
 
             // Get the device from the ViewModel using the address
-            val viewModel: BluetoothScanViewModel<Any?> = viewModel(factory = BluetoothScanViewModelFactory(LocalContext.current))
+            val viewModel: BluetoothScanViewModel = viewModel(factory = BluetoothScanViewModelFactory(LocalContext.current))
             val devices by viewModel.devices.collectAsState()
-            val device = devices.find { it.address == deviceAddress }
+            devices.find { it.address == deviceAddress }
 
             AdvertisingDataScreen(
-                contentResolver = LocalContext.current.contentResolver,
                 deviceAddress = deviceAddress,
                 deviceName = deviceName,
                 navController = navController,
-                sensorType = sensorType,
-                deviceId = deviceId,
-                sensorData = device?.sensorData
+                deviceId = deviceId
             )
         }
 
@@ -179,14 +174,10 @@ fun AppNavigation(navController: NavHostController) {
 
 
         composable("home_screen") {
-            val bluetoothViewModel = BluetoothScanViewModel<Any>(context = LocalContext.current)
+            val bluetoothViewModel = BluetoothScanViewModel(context = LocalContext.current)
             MainScreen(
-                viewModel = authViewModel,
                 navController = navController,
-                bluetoothViewModel = bluetoothViewModel,
-                onSignOut = {
-                    authViewModel.signOut() // This will trigger the Idle state and handle navigation
-                }
+                bluetoothViewModel = bluetoothViewModel
             )
         }
     }

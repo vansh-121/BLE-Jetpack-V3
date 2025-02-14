@@ -57,10 +57,8 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun MainScreen(
-    viewModel: AuthViewModel,
-    onSignOut: () -> Unit,
     navController: NavHostController,
-    bluetoothViewModel: BluetoothScanViewModel<Any>,
+    bluetoothViewModel: BluetoothScanViewModel,
 
 
 //    goToSettings : () -> Unit
@@ -71,7 +69,7 @@ fun MainScreen(
     val isPermissionGranted = remember { mutableStateOf(false) }
     val isScanning = remember { mutableStateOf(false) }
     var expanded by remember { mutableStateOf(false) }
-    val sensorTypes = listOf("SHT40", "LIS2DH", "Soil Sensor", "Weather", "LUX", "Speed & Distance")
+    val sensorTypes = listOf("SHT40", "LIS2DH", "Soil Sensor", "Weather", "LUX", "Speed Distance")
     var selectedSensor by remember { mutableStateOf(sensorTypes[0]) }
     var showAllDevices by remember { mutableStateOf(false) }
 
@@ -229,7 +227,10 @@ fun MainScreen(
 //                                    BluetoothDeviceItem(device)
 //                                    Divider()
                                 // Show only first 4 devices initially
-                                val devicesToShow = if (showAllDevices) bluetoothDevices else bluetoothDevices.take(4)
+                                val devicesToShow =
+                                    if (showAllDevices) bluetoothDevices else bluetoothDevices.take(
+                                        4
+                                    )
                                 devicesToShow.forEach { device ->
                                     BluetoothDeviceItem(device, navController, selectedSensor)
                                     Divider()
@@ -255,7 +256,8 @@ fun MainScreen(
                                 }
                             }
                         }
-                    }}
+                    }
+                }
 
 
                 item {
@@ -263,7 +265,18 @@ fun MainScreen(
                 }
 
                 item {
-                    // Game Devices Card
+                    // Define the allowed game devices
+                    val allowedGameDevices = listOf(
+                        "Scarlet Witch", "Black Widow", "Captain Marvel", "Wasp", "Hela",
+                        "Hulk", "Thor", "Iron_Man", "Spider Man", "Captain America"
+                    )
+
+                    // Filter Bluetooth devices to show only the allowed game devices
+                    val gameDevices = bluetoothDevices.filter { it.name in allowedGameDevices }
+
+                    // Show only first 4 devices initially
+                    val devicesToShow = if (showAllDevices) gameDevices else gameDevices.take(4)
+
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -278,25 +291,73 @@ fun MainScreen(
                                 horizontalArrangement = Arrangement.SpaceBetween
                             ) {
                                 Text(
-                                    text = "Game Devices",
+                                    text = "Game Devices (${gameDevices.size})",
                                     style = MaterialTheme.typography.h6
                                 )
-                                Icon(
-                                    imageVector = Icons.Default.MoreVert,
-                                    contentDescription = "More options",
-                                    modifier = Modifier.clickable { /* More options logic */ }
-                                )
+                                IconButton(
+                                    onClick = {
+                                        if (isPermissionGranted.value && !isScanning.value) {
+                                            bluetoothViewModel.startScan(activity)
+                                            isScanning.value = true
+                                        }
+                                    }
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Refresh,
+                                        contentDescription = "Refresh"
+                                    )
+                                }
                             }
                             Spacer(modifier = Modifier.height(16.dp))
-                            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                                repeat(3) {
-                                    GameSignalItem()
+
+                            if (!isPermissionGranted.value) {
+                                Text(
+                                    "Bluetooth permissions required",
+                                    textAlign = TextAlign.Center,
+                                    modifier = Modifier.fillMaxWidth()
+                                )
+                            } else if (gameDevices.isEmpty()) {
+                                Column(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
+                                    if (isScanning.value) {
+                                        CircularProgressIndicator()
+                                        Spacer(modifier = Modifier.height(8.dp))
+                                        Text("Scanning for game devices...")
+                                    } else {
+                                        Text("No game devices found")
+                                    }
+                                }
+                            } else {
+                                devicesToShow.forEach { device ->
+                                    BluetoothDeviceItem(device, navController, selectedSensor)
+                                    Divider()
+                                }
+
+                                // Show "Show More" button if there are more than 4 devices
+                                if (gameDevices.size > 4) {
+                                    Box(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(vertical = 8.dp)
+                                            .clickable { showAllDevices = !showAllDevices }
+                                            .background(Color.LightGray, RoundedCornerShape(8.dp)),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Text(
+                                            text = if (showAllDevices) "Show Less" else "Show More",
+                                            modifier = Modifier.padding(12.dp),
+                                            textAlign = TextAlign.Center
+                                        )
+                                    }
                                 }
                             }
                         }
                     }
                 }
             }
+
             Box {
                 // Bottom Navigation
                 CustomBottomNavigation(
@@ -314,13 +375,10 @@ private fun checkBluetoothPermissions(context: Context): Boolean {
         checkPermission(context, Manifest.permission.BLUETOOTH_SCAN) &&
                 checkPermission(context, Manifest.permission.BLUETOOTH_CONNECT) &&
                 checkPermission(context, Manifest.permission.ACCESS_FINE_LOCATION)
-    } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+    } else
         checkPermission(context, Manifest.permission.BLUETOOTH) &&
                 checkPermission(context, Manifest.permission.BLUETOOTH_ADMIN) &&
                 checkPermission(context, Manifest.permission.ACCESS_FINE_LOCATION)
-    } else {
-        checkPermission(context, Manifest.permission.ACCESS_FINE_LOCATION)
-    }
 }
 
 private fun checkPermission(context: Context, permission: String): Boolean {
@@ -384,26 +442,35 @@ fun BluetoothDeviceItem(device: BluetoothScanViewModel.BLEDevice, navController:
             device.sensorData?.let { sensorData ->
                 Text(
                     text = when {
-                        // If no sensor is selected or SHT40 is selected, show temperature and humidity
-                        selectedSensor.isEmpty() || selectedSensor == "SHT40" -> when (sensorData) {
-                            is BluetoothScanViewModel.SHT40Data ->
-                                "Temp: ${sensorData.temperature}°C, Humidity: ${sensorData.humidity}%"
+                        // If no sensor is selected, show data based on device type
+                        selectedSensor.isEmpty() -> when (device.deviceType) {
+                            "SHT40" -> (sensorData as? BluetoothScanViewModel.SHT40Data)?.let {
+                                "Temp: ${it.temperature}°C, Humidity: ${it.humidity}%"
+                            } ?: "No data"
 
-                            is BluetoothScanViewModel.SoilSensorData ->
-                                "Temp: ${sensorData.temperature}°C, Moisture: ${sensorData.moisture}%"
+                            "LIS2DH" -> (sensorData as? BluetoothScanViewModel.LIS2DHData)?.let {
+                                "X: ${it.x}, Y: ${it.y}, Z: ${it.z}"
+                            } ?: "No data"
 
-                            is BluetoothScanViewModel.LIS2DHData ->
-                                "X: ${sensorData.x}, Y: ${sensorData.y}, Z: ${sensorData.z}"
+                            "Soil Sensor" -> (sensorData as? BluetoothScanViewModel.SoilSensorData)?.let {
+                                "Temp: ${it.temperature}°C, Moisture: ${it.moisture}%"
+                            } ?: "No data"
 
-                            is BluetoothScanViewModel.LuxData ->
-                                "Light: ${sensorData.calculatedLux} LUX"
+                            "LUX" -> (sensorData as? BluetoothScanViewModel.LuxData)?.let {
+                                "Light: ${it.calculatedLux} LUX"
+                            } ?: "No data"
 
-                            is BluetoothScanViewModel.SDTData ->
-                                "Temp: ${sensorData.speed}m/s, Humidity: ${sensorData.distance}m"
+                            "Speed & Distance" -> (sensorData as? BluetoothScanViewModel.SDTData)?.let {
+                                "Speed: ${it.speed}m/s, Distance: ${it.distance}m"
+                            } ?: "No data"
 
-                            else -> "No sensor data"
+                            else -> "Unknown sensor type"
                         }
+
                         // Show specific sensor data based on selection
+                        selectedSensor == "SHT40" && sensorData is BluetoothScanViewModel.SHT40Data ->
+                            "Temp: ${sensorData.temperature}°C, Humidity: ${sensorData.humidity}%"
+
                         selectedSensor == "LIS2DH" && sensorData is BluetoothScanViewModel.LIS2DHData ->
                             "X: ${sensorData.x}, Y: ${sensorData.y}, Z: ${sensorData.z}"
 
@@ -424,55 +491,6 @@ fun BluetoothDeviceItem(device: BluetoothScanViewModel.BLEDevice, navController:
                     color = MaterialTheme.colors.primary
                 )
             }
-        }
-    }
-}
-@Composable
-private fun DeviceItem() {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 6.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Box(
-            modifier = Modifier
-                .size(48.dp)
-                .background(Color.Gray, RoundedCornerShape(8.dp))
-        )
-        Spacer(modifier = Modifier.width(12.dp))
-        Column(
-            modifier = Modifier.weight(1f),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(14.dp)
-                    .clip(RoundedCornerShape(4.dp))
-                    .background(
-                        brush = Brush.linearGradient(
-                            colors = listOf(
-                                colorResource(id = R.color.gradient1),
-                                colorResource(id = R.color.gradient2)
-                            )
-                        )
-                    )
-            )
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(14.dp)
-                    .clip(RoundedCornerShape(4.dp))
-                    .background(
-                        brush = Brush.linearGradient(
-                            colors = listOf(
-                                colorResource(id = R.color.gradient1),
-                                colorResource(id = R.color.gradient2)
-                            )
-                        )
-                    )
-            )
         }
     }
 }

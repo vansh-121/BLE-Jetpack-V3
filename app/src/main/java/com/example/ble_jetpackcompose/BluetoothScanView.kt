@@ -1,6 +1,6 @@
 package com.example.ble_jetpackcompose
 
-import android.Manifest
+import android.Manifest.*
 import android.app.Activity
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothManager
@@ -9,18 +9,15 @@ import android.bluetooth.le.ScanCallback
 import android.bluetooth.le.ScanFilter
 import android.bluetooth.le.ScanResult
 import android.bluetooth.le.ScanSettings
-import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.LocationManager
 import android.os.Build
 import android.provider.Settings
-import android.util.Log
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.ble_jetpackcompose.BLEDevice
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -32,7 +29,7 @@ import kotlinx.coroutines.launch
 
 
 
-class BluetoothScanViewModel<T>(private val context: Context) : ViewModel() {
+class BluetoothScanViewModel(private val context: Context) : ViewModel() {
     private val _devices = MutableStateFlow<List<BLEDevice>>(emptyList())
     val devices = _devices.asStateFlow()
 
@@ -41,7 +38,6 @@ class BluetoothScanViewModel<T>(private val context: Context) : ViewModel() {
         bluetoothManager.adapter?.bluetoothLeScanner
     }
     private val _isScanning = MutableStateFlow(false)
-    val isScanning = _isScanning.asStateFlow()
 
 
     init {
@@ -71,12 +67,9 @@ class BluetoothScanViewModel<T>(private val context: Context) : ViewModel() {
 
     private fun checkAndEnableBluetoothAndLocation(activity: Activity) {
         val bluetoothManager = context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
-        val bluetoothAdapter = bluetoothManager.adapter
+        val bluetoothAdapter = bluetoothManager.adapter ?: return
 
         // Check Bluetooth availability
-        if (bluetoothAdapter == null) {
-            return
-        }
 
         // Check and request to enable Bluetooth if disabled
         if (!bluetoothAdapter.isEnabled) {
@@ -85,7 +78,7 @@ class BluetoothScanViewModel<T>(private val context: Context) : ViewModel() {
         }
 
         // Check location permission
-        if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(context, permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return
         }
 
@@ -103,9 +96,9 @@ class BluetoothScanViewModel<T>(private val context: Context) : ViewModel() {
     private fun hasBluetoothPermissions(): Boolean {
         val permissions = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             arrayOf(
-                android.Manifest.permission.BLUETOOTH_SCAN,
-                android.Manifest.permission.BLUETOOTH_CONNECT,
-                android.Manifest.permission.ACCESS_FINE_LOCATION
+                permission.BLUETOOTH_SCAN,
+                permission.BLUETOOTH_CONNECT,
+                permission.ACCESS_FINE_LOCATION
             )
         } else {
             TODO("VERSION.SDK_INT < S")
@@ -154,7 +147,7 @@ class BluetoothScanViewModel<T>(private val context: Context) : ViewModel() {
 
                 when {
                     // Check manufacturer specific data
-                    manufacturerData?.size() ?: 0 > 0 -> {
+                    (manufacturerData?.size() ?: 0) > 0 -> {
                         val key = manufacturerData.keyAt(0)
                         manufacturerDataBytes = manufacturerData.get(key)
                         deviceId = if (manufacturerDataBytes?.isNotEmpty() == true) {
@@ -198,8 +191,8 @@ class BluetoothScanViewModel<T>(private val context: Context) : ViewModel() {
                 viewModelScope.launch {
                     updateDevicesList(bleDevice)
                 }
-            } catch (e: SecurityException) {
-            } catch (e: Exception) {
+            } catch (_: SecurityException) {
+            } catch (_: Exception) {
             }
         }
     }
@@ -208,6 +201,7 @@ class BluetoothScanViewModel<T>(private val context: Context) : ViewModel() {
         return when {
             (manufacturerData?.size ?: 0) >= 11 -> "Soil Sensor"
             (manufacturerData?.size ?: 0) >= 7 -> "LIS2DH"
+            (manufacturerData?.size ?: 0) >= 6 -> "Speed Distance"  // Moved before SHT40
             (manufacturerData?.size ?: 0) >= 5 -> "SHT40"
             (manufacturerData?.size ?: 0) >= 3 -> "LUX"
             else -> "Unknown"
@@ -256,12 +250,12 @@ class BluetoothScanViewModel<T>(private val context: Context) : ViewModel() {
                     } else null
                 }
                 "Speed Distance" -> {
-                        if (data.size >= 5) {
-                            SDTData(
-                                speed = "${data[1].toUByte()}.${data[2].toUByte()}",
-                                distance = "${data[3].toUByte()}.${data[4].toUByte()}"
-                            )
-                        } else null
+                    if (data.size >= 5) {
+                        SDTData(
+                            speed = "${data[1].toUByte()}.${data[2].toUByte()}",
+                            distance = "${data[3].toUByte()}.${data[4].toUByte()}"
+                        )
+                    } else null
 
                 }
 

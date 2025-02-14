@@ -42,17 +42,14 @@ fun RegisterScreen(
     var isEmailValid by remember { mutableStateOf(false) }
     var isPasswordValid by remember { mutableStateOf(false) }
     var isConfirmPasswordValid by remember { mutableStateOf(false) }
-    val focusManager = LocalFocusManager.current
+    LocalFocusManager.current
 
     val authState by viewModel.authState.collectAsState()
 
     // Define custom colors (matching login screen)
     val primaryColor = Color(0xFF007AFF)
-    val backgroundColor = Color(0xFFF2F2F7)
     val textFieldBgColor = Color(0xFFFFFFFF)
     val secondaryTextColor = Color(0xFF8E8E93)
-    val successColor = Color(0xFF34C759)
-    val errorColor = Color(0xFFFF3B30)
 
     fun validateUsername(value: String): Boolean {
         return value.length >= 3 && value.matches(Regex("^[a-zA-Z0-9_]+$"))
@@ -308,7 +305,7 @@ fun RegisterScreen(
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Divider(
+            HorizontalDivider(
                 modifier = Modifier.weight(1f),
                 color = Color.LightGray
             )
@@ -322,7 +319,7 @@ fun RegisterScreen(
                     fontWeight = FontWeight.Bold
                 )
             )
-            Divider(
+            HorizontalDivider(
                 modifier = Modifier.weight(1f),
                 color = Color.LightGray
             )

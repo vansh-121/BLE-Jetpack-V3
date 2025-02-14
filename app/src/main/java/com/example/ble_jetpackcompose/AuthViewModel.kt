@@ -14,11 +14,11 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
 sealed class AuthState {
-    object Idle : AuthState()
-    object Loading : AuthState()
+    data object Idle : AuthState()
+    data object Loading : AuthState()
     data class Success(val user: FirebaseUser) : AuthState()
     data class Error(val message: String) : AuthState()
-    object PasswordResetEmailSent : AuthState() // New state for password reset
+    data object PasswordResetEmailSent : AuthState() // New state for password reset
 }
 
 class AuthViewModel : ViewModel() {
@@ -28,13 +28,12 @@ class AuthViewModel : ViewModel() {
     val authState: StateFlow<AuthState> = _authState
 
     // Current user state
-    private val _currentUser = MutableStateFlow<FirebaseUser?>(auth.currentUser)
-    val currentUser: StateFlow<FirebaseUser?> = _currentUser
+    private val _currentUser = MutableStateFlow(auth.currentUser)
 
     init {
         // Initialize current user and listen for changes
         updateCurrentUser()
-        auth.addAuthStateListener { firebaseAuth ->
+        auth.addAuthStateListener {
             updateCurrentUser()
         }
     }
@@ -50,12 +49,6 @@ class AuthViewModel : ViewModel() {
 
     // Get current user
     fun checkCurrentUser(): FirebaseUser? = auth.currentUser
-
-    // Check if user is anonymous
-    fun isAnonymousUser(): Boolean = auth.currentUser?.isAnonymous ?: false
-
-    // Get user email
-    fun getUserEmail(): String = auth.currentUser?.email ?: ""
 
     // Check if user is authenticated
     fun isUserAuthenticated(): Boolean = auth.currentUser != null

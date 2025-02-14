@@ -16,8 +16,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 
@@ -28,7 +26,6 @@ fun ModernSettingsScreen(
 ) {
     val backgroundColor = Color(0xFFF2F2F7)
     val cardBackground = Color.White
-    val authState by viewModel.authState.collectAsState()
     val currentUser = viewModel.checkCurrentUser()
 
     Scaffold(
