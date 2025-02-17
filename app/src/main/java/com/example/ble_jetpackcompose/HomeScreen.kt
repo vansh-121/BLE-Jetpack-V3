@@ -69,7 +69,7 @@ fun MainScreen(
     val isPermissionGranted = remember { mutableStateOf(false) }
     val isScanning = remember { mutableStateOf(false) }
     var expanded by remember { mutableStateOf(false) }
-    val sensorTypes = listOf("SHT40", "LIS2DH", "Soil Sensor", "Weather", "LUX", "Speed Distance")
+    val sensorTypes = listOf("SHT40", "LIS2DH", "Soil Sensor", "Weather", "LUX", "Speed Distance", "Object Detector")
     var selectedSensor by remember { mutableStateOf(sensorTypes[0]) }
     var showAllDevices by remember { mutableStateOf(false) }
 
@@ -456,6 +456,10 @@ fun BluetoothDeviceItem(device: BluetoothScanViewModel.BLEDevice, navController:
                                 "Temp: ${it.temperature}°C, Moisture: ${it.moisture}%"
                             } ?: "No data"
 
+                            "Object Detector" -> (sensorData as? BluetoothScanViewModel.ObjectDetectorData)?.let {
+                                "Object Status: ${it.detection}"
+                            } ?: "No data"
+
                             "LUX" -> (sensorData as? BluetoothScanViewModel.LuxData)?.let {
                                 "Light: ${it.calculatedLux} LUX"
                             } ?: "No data"
@@ -463,6 +467,8 @@ fun BluetoothDeviceItem(device: BluetoothScanViewModel.BLEDevice, navController:
                             "Speed & Distance" -> (sensorData as? BluetoothScanViewModel.SDTData)?.let {
                                 "Speed: ${it.speed}m/s, Distance: ${it.distance}m"
                             } ?: "No data"
+
+
 
                             else -> "Unknown sensor type"
                         }
@@ -481,6 +487,9 @@ fun BluetoothDeviceItem(device: BluetoothScanViewModel.BLEDevice, navController:
 
                         selectedSensor == "LUX" && sensorData is BluetoothScanViewModel.LuxData ->
                             "Light: ${sensorData.calculatedLux} LUX"
+
+                        selectedSensor == "Object Detector" && sensorData is BluetoothScanViewModel.ObjectDetectorData ->
+                            "Object Detected: ${sensorData.detection} "
 
                         selectedSensor == "Speed & Distance" && sensorData is BluetoothScanViewModel.SDTData ->
                             "Speed: ${sensorData.speed}m/s, Distance: ${sensorData.distance}m"

@@ -92,6 +92,10 @@ fun AdvertisingDataScreen(
                     "Distance" to "${sensorData.distance}m"
                 )
 
+                is BluetoothScanViewModel.ObjectDetectorData -> listOf(
+                    "Object Detected" to "${sensorData.detection}m/s",
+                )
+
 
                 null -> emptyList()
 

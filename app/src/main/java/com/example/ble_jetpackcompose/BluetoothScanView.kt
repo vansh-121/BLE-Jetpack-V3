@@ -204,6 +204,7 @@ class BluetoothScanViewModel(private val context: Context) : ViewModel() {
             (manufacturerData?.size ?: 0) >= 6 -> "Speed Distance"  // Moved before SHT40
             (manufacturerData?.size ?: 0) >= 5 -> "SHT40"
             (manufacturerData?.size ?: 0) >= 3 -> "LUX"
+            (manufacturerData?.size ?: 0) >= 2 -> "Object Detector"  // Moved before SHT40
             else -> "Unknown"
         }
     }
@@ -249,6 +250,15 @@ class BluetoothScanViewModel(private val context: Context) : ViewModel() {
                         LuxData(calculatedLux = temp * 60)
                     } else null
                 }
+
+                "Object Detector" -> {
+                    if (data.size >= 2) {
+                        ObjectDetectorData(
+                            detection = "${data[1].toInt() != 0}",
+                        )
+                    } else null
+                }
+
                 "Speed Distance" -> {
                     if (data.size >= 5) {
                         SDTData(
@@ -256,6 +266,8 @@ class BluetoothScanViewModel(private val context: Context) : ViewModel() {
                             distance = "${data[3].toUByte()}.${data[4].toUByte()}"
                         )
                     } else null
+
+
 
                 }
 
@@ -301,6 +313,9 @@ class BluetoothScanViewModel(private val context: Context) : ViewModel() {
         val distance: String
     ) : SensorData()
 
+    data class ObjectDetectorData(
+        val detection: String,
+    ) : SensorData()
 
 
     // Update BLEDevice class to include sensor data
