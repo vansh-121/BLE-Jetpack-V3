@@ -51,30 +51,31 @@ fun AdvertisingDataScreen(
     navController: NavController,
     deviceId: String
 ) {
-    LocalContext.current
-    // Use viewModel() instead of remember for proper lifecycle management
+    val context = LocalContext.current
+    // Use viewModel() for proper lifecycle management
     val viewModel: BluetoothScanViewModel = viewModel()
-    val activity = LocalContext.current as Activity
-    // Use derivedStateOf for computed values
+    val activity = context as Activity
+
+    // Collect the device list from the ViewModel
     val devices by viewModel.devices.collectAsState()
     val currentDevice by remember(devices, deviceAddress) {
         derivedStateOf { devices.find { it.address == deviceAddress } }
     }
 
-    // Memoize display data calculation
+    // Prepare display data based on the sensor data type
     val displayData by remember(currentDevice?.sensorData) {
         derivedStateOf {
             when (val sensorData = currentDevice?.sensorData) {
-                is BluetoothScanViewModel.SHT40Data -> listOf(
+                is BluetoothScanViewModel.SensorData.SHT40Data -> listOf(
                     "Temperature" to "${sensorData.temperature}°C",
                     "Humidity" to "${sensorData.humidity}%"
                 )
-                is BluetoothScanViewModel.LIS2DHData -> listOf(
+                is BluetoothScanViewModel.SensorData.LIS2DHData -> listOf(
                     "X-Axis" to "${sensorData.x} m/s²",
                     "Y-Axis" to "${sensorData.y} m/s²",
                     "Z-Axis" to "${sensorData.z} m/s²"
                 )
-                is BluetoothScanViewModel.SoilSensorData -> listOf(
+                is BluetoothScanViewModel.SensorData.SoilSensorData -> listOf(
                     "Nitrogen" to "${sensorData.nitrogen} mg/kg",
                     "Phosphorus" to "${sensorData.phosphorus} mg/kg",
                     "Potassium" to "${sensorData.potassium} mg/kg",
@@ -83,40 +84,31 @@ fun AdvertisingDataScreen(
                     "Electric Conductivity" to "${sensorData.ec} mS/cm",
                     "pH" to sensorData.pH
                 )
-                is BluetoothScanViewModel.LuxData -> listOf(
+                is BluetoothScanViewModel.SensorData.LuxData -> listOf(
                     "Light Intensity" to "${sensorData.calculatedLux} LUX"
                 )
-
-                is BluetoothScanViewModel.SDTData -> listOf(
-                    "Speed" to "${sensorData.speed}m/s",
-                    "Distance" to "${sensorData.distance}m"
+                is BluetoothScanViewModel.SensorData.SDTData -> listOf(
+                    "Speed" to "${sensorData.speed} m/s",
+                    "Distance" to "${sensorData.distance} m"
                 )
-
-                is BluetoothScanViewModel.ObjectDetectorData -> listOf(
-                    "Object Detected" to "${sensorData.detection}m/s",
+                is BluetoothScanViewModel.SensorData.ObjectDetectorData -> listOf(
+                    "Object Detected" to sensorData.detection.toString()
                 )
-
-
                 null -> emptyList()
-
-
             }
         }
     }
 
-    // Start scanning only when needed
+    // Start scanning when the screen is composed
     LaunchedEffect(Unit) {
-        activity.let { safeActivity ->
-            viewModel.startScan(safeActivity)
-        }
+        viewModel.startScan(activity)
     }
 
-
-    // Clean up resources when leaving screen
+    // Clean up when leaving the screen
     DisposableEffect(navController) {
         onDispose {
             viewModel.stopScan()
-            viewModel.clearDevices() // Clear device list when leaving
+            viewModel.clearDevices()
         }
     }
 
@@ -161,9 +153,9 @@ fun AdvertisingDataScreen(
             Spacer(modifier = Modifier.height(32.dp))
 
             // Conditional LUX Animation
-            if (currentDevice?.sensorData is BluetoothScanViewModel.LuxData) {
+            if (currentDevice?.sensorData is BluetoothScanViewModel.SensorData.LuxData) {
                 LuxAnimationSection(
-                    luxData = currentDevice?.sensorData as BluetoothScanViewModel.LuxData
+                    luxData = currentDevice?.sensorData as BluetoothScanViewModel.SensorData.LuxData
                 )
             }
 
@@ -258,7 +250,7 @@ private fun InfoCard(text: String) {
 }
 
 @Composable
-private fun LuxAnimationSection(luxData: BluetoothScanViewModel.LuxData) {
+private fun LuxAnimationSection(luxData: BluetoothScanViewModel.SensorData.LuxData) {
     Box(
         modifier = Modifier
             .size(200.dp)
@@ -313,7 +305,7 @@ fun ResponsiveDataCards(data: List<Pair<String, String>>) {
                 modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                data.chunked(2).forEach { rowItems -> // Split the list into chunks of 2
+                data.chunked(2).forEach { rowItems ->
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceEvenly
@@ -322,7 +314,7 @@ fun ResponsiveDataCards(data: List<Pair<String, String>>) {
                             DataCard(label = label, value = value)
                         }
                     }
-                    Spacer(modifier = Modifier.height(16.dp)) // Add space between rows
+                    Spacer(modifier = Modifier.height(16.dp))
                 }
             }
         }
@@ -350,7 +342,7 @@ fun SunWithRayAnimation(
     // Calculate ray lengths for different stages
     val rayLengths = listOf(
         10.dp,   // Stage 0: Minimal rays
-        100.dp,   // Stage 1: Short rays
+        100.dp,  // Stage 1: Short rays
         150.dp,  // Stage 2: Medium rays
         200.dp   // Stage 3: Long rays
     )
@@ -395,6 +387,7 @@ fun SunWithRayAnimation(
         )
     }
 }
+
 @Composable
 fun DataCard(label: String, value: String) {
     Surface(
@@ -433,15 +426,3 @@ fun DataCard(label: String, value: String) {
         }
     }
 }
-
-//@Preview(showBackground = true)
-//@Composable
-//fun AdvertisingDataScreenPreview() {
-//    val deviceName = ""
-//    AdvertisingDataScreen(
-//        deviceAddress = TODO(),
-//        deviceName = deviceName,
-//        navController = TODO(),
-//        deviceId = TODO(),
-//    )
-//}

@@ -69,7 +69,7 @@ fun MainScreen(
     val isPermissionGranted = remember { mutableStateOf(false) }
     val isScanning = remember { mutableStateOf(false) }
     var expanded by remember { mutableStateOf(false) }
-    val sensorTypes = listOf("SHT40", "LIS2DH", "Soil Sensor", "Weather", "LUX", "Speed Distance", "Object Detector")
+    val sensorTypes = listOf("SHT40", "LIS2DH", "Soil Sensor", "Weather", "LUX", "Speed Distance", "Metal Detector")
     var selectedSensor by remember { mutableStateOf(sensorTypes[0]) }
     var showAllDevices by remember { mutableStateOf(false) }
 
@@ -388,27 +388,23 @@ private fun checkPermission(context: Context, permission: String): Boolean {
     ) == PackageManager.PERMISSION_GRANTED
 }
 @Composable
-fun BluetoothDeviceItem(device: BluetoothScanViewModel.BLEDevice, navController: NavHostController, selectedSensor: String) {
+fun BluetoothDeviceItem(
+    device: BluetoothScanViewModel.BluetoothDevice,
+    navController: NavHostController,
+    selectedSensor: String
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp)
             .clickable {
                 navController.navigate(
-                    "advertising/${
-                        device.name.replace("/", "-")
-                    }/${
-                        device.address
-                    }/${
-                        selectedSensor.ifEmpty { "SHT40" }
-                    }/${
-                        device.deviceId
-                    }"
+                    "advertising/${device.name.replace("/", "-")}/${device.address}/${selectedSensor.ifEmpty { "SHT40" }}/${device.deviceId}"
                 )
             },
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // Icon box remains the same
+        // Icon box
         Box(
             modifier = Modifier
                 .size(48.dp)
@@ -433,67 +429,38 @@ fun BluetoothDeviceItem(device: BluetoothScanViewModel.BLEDevice, navController:
                 text = "Address: ${device.address}",
                 style = MaterialTheme.typography.caption
             )
-            Text(
-                text = "Signal Strength: ${device.rssi} dBm",
-                style = MaterialTheme.typography.caption
-            )
-
             // Display sensor data based on selected sensor type
             device.sensorData?.let { sensorData ->
                 Text(
                     text = when {
-                        // If no sensor is selected, show data based on device type
-                        selectedSensor.isEmpty() -> when (device.deviceType) {
-                            "SHT40" -> (sensorData as? BluetoothScanViewModel.SHT40Data)?.let {
-                                "Temp: ${it.temperature}°C, Humidity: ${it.humidity}%"
-                            } ?: "No data"
-
-                            "LIS2DH" -> (sensorData as? BluetoothScanViewModel.LIS2DHData)?.let {
-                                "X: ${it.x}, Y: ${it.y}, Z: ${it.z}"
-                            } ?: "No data"
-
-                            "Soil Sensor" -> (sensorData as? BluetoothScanViewModel.SoilSensorData)?.let {
-                                "Temp: ${it.temperature}°C, Moisture: ${it.moisture}%"
-                            } ?: "No data"
-
-                            "Object Detector" -> (sensorData as? BluetoothScanViewModel.ObjectDetectorData)?.let {
-                                "Object Status: ${it.detection}"
-                            } ?: "No data"
-
-                            "LUX" -> (sensorData as? BluetoothScanViewModel.LuxData)?.let {
-                                "Light: ${it.calculatedLux} LUX"
-                            } ?: "No data"
-
-                            "Speed & Distance" -> (sensorData as? BluetoothScanViewModel.SDTData)?.let {
-                                "Speed: ${it.speed}m/s, Distance: ${it.distance}m"
-                            } ?: "No data"
-
-
-
-                            else -> "Unknown sensor type"
+                        // If no sensor is selected, show data based on sensor data type
+                        selectedSensor.isEmpty() -> when {
+                            sensorData is BluetoothScanViewModel.SensorData.SHT40Data ->
+                                "Temp: ${sensorData.temperature}°C, Humidity: ${sensorData.humidity}%"
+                            sensorData is BluetoothScanViewModel.SensorData.LIS2DHData ->
+                                "X: ${sensorData.x}, Y: ${sensorData.y}, Z: ${sensorData.z}"
+                            sensorData is BluetoothScanViewModel.SensorData.SoilSensorData ->
+                                "Temp: ${sensorData.temperature}°C, Moisture: ${sensorData.moisture}%"
+                            sensorData is BluetoothScanViewModel.SensorData.LuxData ->
+                                "Light: ${sensorData.calculatedLux} LUX"
+                            sensorData is BluetoothScanViewModel.SensorData.ObjectDetectorData ->
+                                "Metal Detected: ${if (sensorData.detection) "Yes" else "No"}"
+                            else -> "No data"
                         }
 
                         // Show specific sensor data based on selection
-                        selectedSensor == "SHT40" && sensorData is BluetoothScanViewModel.SHT40Data ->
+                        selectedSensor == "SHT40" && sensorData is BluetoothScanViewModel.SensorData.SHT40Data ->
                             "Temp: ${sensorData.temperature}°C, Humidity: ${sensorData.humidity}%"
-
-                        selectedSensor == "LIS2DH" && sensorData is BluetoothScanViewModel.LIS2DHData ->
+                        selectedSensor == "Metal Detector" && sensorData is BluetoothScanViewModel.SensorData.ObjectDetectorData ->
+                            "Metal Detected: ${if (sensorData.detection) "Yes" else "No"}"
+                        selectedSensor == "LIS2DH" && sensorData is BluetoothScanViewModel.SensorData.LIS2DHData ->
                             "X: ${sensorData.x}, Y: ${sensorData.y}, Z: ${sensorData.z}"
-
-                        selectedSensor == "Soil Sensor" && sensorData is BluetoothScanViewModel.SoilSensorData ->
+                        selectedSensor == "Soil Sensor" && sensorData is BluetoothScanViewModel.SensorData.SoilSensorData ->
                             "N: ${sensorData.nitrogen}, P: ${sensorData.phosphorus}, K: ${sensorData.potassium}\n" +
                                     "Moisture: ${sensorData.moisture}%, Temp: ${sensorData.temperature}°C\n" +
                                     "EC: ${sensorData.ec}, pH: ${sensorData.pH}"
-
-                        selectedSensor == "LUX" && sensorData is BluetoothScanViewModel.LuxData ->
+                        selectedSensor == "LUX" && sensorData is BluetoothScanViewModel.SensorData.LuxData ->
                             "Light: ${sensorData.calculatedLux} LUX"
-
-                        selectedSensor == "Object Detector" && sensorData is BluetoothScanViewModel.ObjectDetectorData ->
-                            "Object Detected: ${sensorData.detection} "
-
-                        selectedSensor == "Speed & Distance" && sensorData is BluetoothScanViewModel.SDTData ->
-                            "Speed: ${sensorData.speed}m/s, Distance: ${sensorData.distance}m"
-
                         else -> "Incompatible sensor type"
                     },
                     style = MaterialTheme.typography.caption,
@@ -503,6 +470,7 @@ fun BluetoothDeviceItem(device: BluetoothScanViewModel.BLEDevice, navController:
         }
     }
 }
+
 
 @Composable
 private fun GameSignalItem() {
