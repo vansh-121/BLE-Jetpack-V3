@@ -68,6 +68,7 @@ class BluetoothScanViewModel(private val context: Context) : ViewModel() {
 
     data class BluetoothDevice(
         val name: String,
+        val rssi: String,
         val address: String,
         val deviceId: String,
         val sensorData: SensorData? = null
@@ -105,7 +106,6 @@ class BluetoothScanViewModel(private val context: Context) : ViewModel() {
 
     // Region: Scan Callback
     private fun createScanCallback(): ScanCallback = object : ScanCallback() {
-        @SuppressLint("MissingPermission")
         override fun onScanResult(callbackType: Int, result: ScanResult) {
             result.device?.let { device ->
                 if (device.address.isNullOrEmpty() || device.name.isNullOrEmpty()) return
@@ -116,6 +116,7 @@ class BluetoothScanViewModel(private val context: Context) : ViewModel() {
                 val bluetoothDevice = BluetoothDevice(
                     name = device.name ?: "Unknown",
                     address = device.address,
+                    rssi = result.rssi.toString(),
                     deviceId = sensorData?.deviceId ?: "Unknown",
                     sensorData = sensorData
                 )
@@ -209,22 +210,32 @@ class BluetoothScanViewModel(private val context: Context) : ViewModel() {
         name?.contains("Activity", ignoreCase = true) == true -> "LIS2DH"
         name?.contains("SOIL", ignoreCase = true) == true -> "Soil Sensor"
         name?.contains("Speed", ignoreCase = true) == true -> "SPEED_DISTANCE"
-        name?.contains("METAL", ignoreCase = true) == true -> "Metal Detector"
+        name?.contains("Object", ignoreCase = true) == true -> "Metal Detector"
         else -> null
     }
 
-    private fun updateDevice(newDevice: BluetoothDevice) {
+    private fun updateDevice(newDevice: BluetoothDevice, sensorData: SensorData? = null) {
         _devices.update { devices ->
             val existingDeviceIndex = devices.indexOfFirst { it.address == newDevice.address }
             if (existingDeviceIndex >= 0) {
                 devices.toMutableList().apply {
-                    this[existingDeviceIndex] = newDevice
+                    val updatedDevice = if (sensorData != null) {
+                        this[existingDeviceIndex].copy(sensorData = sensorData)
+                    } else {
+                        newDevice
+                    }
+                    this[existingDeviceIndex] = updatedDevice
                 }
             } else {
-                devices + newDevice
+                devices + if (sensorData != null) {
+                    newDevice.copy(sensorData = sensorData)
+                } else {
+                    newDevice
+                }
             }
         }
     }
+
 
     fun clearDevices() {
         _devices.value = emptyList()

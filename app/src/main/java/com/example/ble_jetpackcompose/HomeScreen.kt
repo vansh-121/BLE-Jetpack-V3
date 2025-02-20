@@ -429,6 +429,12 @@ fun BluetoothDeviceItem(
                 text = "Address: ${device.address}",
                 style = MaterialTheme.typography.caption
             )
+
+            Text(
+                text = "Signal Strength: ${device.rssi} dBm",
+                style = MaterialTheme.typography.caption
+            )
+
             // Display sensor data based on selected sensor type
             device.sensorData?.let { sensorData ->
                 Text(
@@ -445,6 +451,9 @@ fun BluetoothDeviceItem(
                                 "Light: ${sensorData.calculatedLux} LUX"
                             sensorData is BluetoothScanViewModel.SensorData.ObjectDetectorData ->
                                 "Metal Detected: ${if (sensorData.detection) "Yes" else "No"}"
+                            sensorData is BluetoothScanViewModel.SensorData.SDTData ->
+                                "Speed: ${sensorData.speed}m/s, Distance: ${sensorData.distance}m"
+
                             else -> "No data"
                         }
 
@@ -461,6 +470,10 @@ fun BluetoothDeviceItem(
                                     "EC: ${sensorData.ec}, pH: ${sensorData.pH}"
                         selectedSensor == "LUX" && sensorData is BluetoothScanViewModel.SensorData.LuxData ->
                             "Light: ${sensorData.calculatedLux} LUX"
+
+                        selectedSensor == "Speed Distance" && sensorData is BluetoothScanViewModel.SensorData.SDTData ->
+                            "Speed: ${sensorData.speed}m/s, Distance: ${sensorData.distance}m"
+
                         else -> "Incompatible sensor type"
                     },
                     style = MaterialTheme.typography.caption,

@@ -1,5 +1,7 @@
 package com.example.ble_jetpackcompose
 
+import android.app.Activity
+import android.app.Application
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -25,42 +27,129 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.TableChart
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-
+import kotlinx.coroutines.flow.map
 
 @Composable
-fun ChartScreen(navController: NavController) {
-    val sensorData = listOf(
-        "Temperature" to "38°C",
-        "Calculated lux" to "1349.4 lux",
-        "Humidity" to "67.39%",
-        "Pressure" to "1013 hPa",
-        "Altitude" to "500m",
-        "CO2 Levels" to "400 ppm"
-    )
+fun ChartScreen(
+    navController: NavController,
+    deviceAddress: String? = null
+) {
+    val context = LocalContext.current
+    val application = context.applicationContext as Application
+    val factory = remember { BluetoothScanViewModelFactory(application) }
+    val viewModel: BluetoothScanViewModel = viewModel(factory = factory)
+
+    // Collect temperature data from the device
+    val temperatureData by remember(deviceAddress) {
+        viewModel.devices
+            .map { devices ->
+                devices
+                    .find { it.address == deviceAddress }
+                    ?.sensorData
+                    ?.let { data ->
+                        when (data) {
+                            is BluetoothScanViewModel.SensorData.SHT40Data -> {
+                                data.temperature.toFloatOrNull() ?: 0f
+                            }
+
+                            is BluetoothScanViewModel.SensorData.SoilSensorData -> {
+                                data.temperature.toFloatOrNull() ?: 0f
+                            }
+
+                            else -> null
+                        }
+                    }
+            }
+    }.collectAsState(initial = null)
+
+    // Store historical temperature values
+    val temperatureHistory = remember { mutableStateListOf<Float>() }
+
+
+    // Start scanning when entering the screen
+    LaunchedEffect(Unit) {
+        viewModel.startScan(context as Activity)
+    }
+
+    val isReceivingData = remember { mutableStateOf(false) }
+
+    LaunchedEffect(temperatureData) {
+        temperatureData?.let {
+            isReceivingData.value = true
+        }
+    }
+
+// Update the waiting message to be more informative
+    if (!isReceivingData.value) {
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                "Waiting for temperature data...",
+                modifier = Modifier.padding(vertical = 32.dp)
+            )
+            Text(
+                "Make sure the device is connected and sending data",
+                fontSize = 14.sp,
+                color = Color.Gray,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(horizontal = 16.dp)
+            )
+        }
+    }
+
+
+    // Update history when new temperature data arrives
+    LaunchedEffect(temperatureData) {
+        temperatureData?.let { temp ->
+            if (temperatureHistory.size >= 10) {
+                temperatureHistory.removeAt(0)
+            }
+            temperatureHistory.add(temp)
+        }
+    }
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Chart", fontSize = 25.sp, fontWeight = FontWeight.Bold) },
+                title = {
+                    Text(
+                        "Temperature Chart",
+                        fontSize = 25.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                },
                 navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack()}) {
+                    IconButton(onClick = { navController.popBackStack() }) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                     }
                 },
                 actions = {
-                    IconButton(onClick = { /* Handle Excel Export */ }) {
+                    IconButton(onClick = { /* Handle Export */ }) {
                         Icon(Icons.Default.TableChart, contentDescription = "Export")
                     }
-                    IconButton(onClick = { /* Handle Other Action */ }) {
+                    IconButton(onClick = { /* Handle Options */ }) {
                         Icon(Icons.AutoMirrored.Filled.List, contentDescription = "Options")
                     }
                 },
@@ -77,75 +166,110 @@ fun ChartScreen(navController: NavController) {
                 )
                 .padding(paddingValues)
         ) {
-            LazyColumn(
+            Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(horizontal = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
+                    .padding(16.dp)
             ) {
-                items(sensorData) { (title, value) ->
-                    SensorCard(
-                        title = title,
-                        value = value,
-                        dataPoints = listOf(38f, 36f, 39f, 37f, 40f),
-                        onClick = {
-                            // Navigate to ChartScreen2 with title and value
-                            navController.navigate("chart_screen_2/$title/$value")
+                // Temperature Chart Card
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(300.dp),
+                    elevation = 4.dp
+                ) {
+                    Column(
+                        modifier = Modifier.padding(16.dp)
+                    ) {
+                        Text(
+                            "Real-time Temperature",
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            "Current: ${temperatureData?.toString() ?: "N/A"}°C",
+                            fontSize = 16.sp,
+                            color = Color.Gray
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        // Temperature Graph
+                        if (temperatureHistory.isNotEmpty()) {
+                            Canvas(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(200.dp)
+                            ) {
+                                val points = temperatureHistory.toList()
+                                if (points.isNotEmpty()) {
+                                    val maxTemp = points.maxOrNull() ?: 0f
+                                    val minTemp = (points.minOrNull() ?: 0f).coerceAtMost(maxTemp - 1f)  // Ensure range
+                                    val tempRange = (maxTemp - minTemp).coerceAtLeast(1f)
+
+                                    val stepX = size.width / (points.size.coerceAtLeast(2) - 1)
+                                    val heightPadding = size.height * 0.1f // 10% padding top and bottom
+
+                                    // Draw axis
+                                    drawLine(
+                                        color = Color.Gray,
+                                        start = Offset(0f, size.height - heightPadding),
+                                        end = Offset(size.width, size.height - heightPadding),
+                                        strokeWidth = 1f
+                                    )
+
+                                    // Draw points and lines
+                                    for (i in 0 until points.size - 1) {
+                                        val x1 = i * stepX
+                                        val x2 = (i + 1) * stepX
+                                        val y1 = heightPadding + (size.height - 2 * heightPadding) *
+                                                (1 - (points[i] - minTemp) / tempRange)
+                                        val y2 = heightPadding + (size.height - 2 * heightPadding) *
+                                                (1 - (points[i + 1] - minTemp) / tempRange)
+
+                                        // Draw line between points
+                                        drawLine(
+                                            color = Color(0xFF0A74DA),
+                                            start = Offset(x1, y1),
+                                            end = Offset(x2, y2),
+                                            strokeWidth = 4f,
+                                            pathEffect = PathEffect.cornerPathEffect(10f)
+                                        )
+
+                                        // Draw points
+                                        drawCircle(
+                                            color = Color(0xFF0A74DA),
+                                            radius = 6f,
+                                            center = Offset(x1, y1)
+                                        )
+                                    }
+
+                                    // Draw last point
+                                    if (points.isNotEmpty()) {
+                                        val lastX = (points.size - 1) * stepX
+                                        val lastY = heightPadding + (size.height - 2 * heightPadding) *
+                                                (1 - (points.last() - minTemp) / tempRange)
+                                        drawCircle(
+                                            color = Color(0xFF0A74DA),
+                                            radius = 6f,
+                                            center = Offset(lastX, lastY)
+                                        )
+                                    }
+                                }
+                            }
+                        } else {
+                            Text(
+                                "Waiting for temperature data...",
+                                modifier = Modifier.padding(vertical = 32.dp)
+                            )
                         }
-                    )
+                    }
                 }
             }
-        }
-    }
-}
 
-@Composable
-fun SensorCard(
-    title: String,
-    value: String,
-    dataPoints: List<Float>,
-    onClick: () -> Unit
-) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp)
-            .clickable { onClick() },
-        shape = RoundedCornerShape(16.dp),
-        elevation = 4.dp,
-        backgroundColor = Color.White
-    ) {
-        Column(
-            modifier = Modifier.padding(16.dp)
-        ) {
-            Text(title, fontSize = 18.sp, fontWeight = FontWeight.SemiBold, color = Color.Black)
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(value, fontSize = 16.sp, color = Color.Gray)
 
-            Spacer(modifier = Modifier.height(8.dp))
 
-            // 📊 Draw Simple Line Graph
-            Canvas(modifier = Modifier.fillMaxWidth().height(100.dp)) {
-                val stepX = size.width / (dataPoints.size - 1)
-                val maxY = dataPoints.maxOrNull() ?: 1f
-                val minY = dataPoints.minOrNull() ?: 0f
-                val rangeY = maxY - minY
 
-                for (i in 0 until dataPoints.size - 1) {
-                    val x1 = i * stepX
-                    val y1 = size.height - ((dataPoints[i] - minY) / rangeY) * size.height
-                    val x2 = (i + 1) * stepX
-                    val y2 = size.height - ((dataPoints[i + 1] - minY) / rangeY) * size.height
-
-                    drawLine(
-                        color = Color.Blue,
-                        start = Offset(x1, y1),
-                        end = Offset(x2, y2),
-                        strokeWidth = 4f,
-                        pathEffect = PathEffect.cornerPathEffect(10f)
-                    )
-                }
-            }
         }
     }
 }

@@ -49,7 +49,8 @@ fun AdvertisingDataScreen(
     deviceAddress: String,
     deviceName: String,
     navController: NavController,
-    deviceId: String
+    deviceId: String,
+
 ) {
     val context = LocalContext.current
     // Use viewModel() for proper lifecycle management
@@ -131,7 +132,8 @@ fun AdvertisingDataScreen(
             // Header
             HeaderSection(
                 navController = navController,
-                viewModel = viewModel
+                viewModel = viewModel,
+                deviceAddress = deviceAddress
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -170,7 +172,8 @@ fun AdvertisingDataScreen(
 @Composable
 private fun HeaderSection(
     navController: NavController,
-    viewModel: BluetoothScanViewModel
+    viewModel: BluetoothScanViewModel,
+    deviceAddress: String // Add this parameter
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -199,7 +202,9 @@ private fun HeaderSection(
         )
 
         IconButton(
-            onClick = { navController.navigate("chart_screen") }
+            onClick = {
+                navController.navigate("chart_screen/$deviceAddress")
+            }
         ) {
             Image(
                 painter = painterResource(id = R.drawable.graph),

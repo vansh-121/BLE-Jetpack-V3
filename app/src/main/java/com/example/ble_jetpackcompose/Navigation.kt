@@ -1,5 +1,6 @@
 package com.example.ble_jetpackcompose
 
+import android.app.Application
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -17,6 +18,8 @@ fun AppNavigation(navController: NavHostController) {
     // Initialize AuthViewModel
     val authViewModel: AuthViewModel = viewModel()
     val authState by authViewModel.authState.collectAsState()
+    val context = LocalContext.current
+    val application = context.applicationContext as Application
 
     // Check authentication state when the app starts
     LaunchedEffect(Unit) {
@@ -147,7 +150,7 @@ fun AppNavigation(navController: NavHostController) {
             val deviceId = backStackEntry.arguments?.getString("deviceId") ?: ""
 
             // Get the device from the ViewModel using the address
-            val viewModel: BluetoothScanViewModel = viewModel(factory = BluetoothScanViewModelFactory(LocalContext.current))
+            val viewModel: BluetoothScanViewModel = viewModel(factory = BluetoothScanViewModelFactory(application))
             val devices by viewModel.devices.collectAsState()
             devices.find { it.address == deviceAddress }
 
@@ -160,8 +163,18 @@ fun AppNavigation(navController: NavHostController) {
         }
 
 
-        composable("chart_screen") {
-            ChartScreen(navController = navController)
+        composable(
+            route = "chart_screen/{deviceAddress}",
+            arguments = listOf(
+                navArgument("deviceAddress") {
+                    type = NavType.StringType
+                }
+            )
+        ) { backStackEntry ->
+            ChartScreen(
+                navController = navController,
+                deviceAddress = backStackEntry.arguments?.getString("deviceAddress")
+            )
         }
 
 
