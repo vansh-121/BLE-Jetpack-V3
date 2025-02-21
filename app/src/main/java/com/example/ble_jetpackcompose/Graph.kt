@@ -1,3 +1,5 @@
+//greaph.kt
+
 package com.example.ble_jetpackcompose
 
 import android.app.Activity
@@ -59,32 +61,21 @@ fun ChartScreen(
     val factory = remember { BluetoothScanViewModelFactory(application) }
     val viewModel: BluetoothScanViewModel = viewModel(factory = factory)
 
-    // Collect temperature data from the device
-    val temperatureData by remember(deviceAddress) {
+    // Collect sensor data from the device
+    val sensorData by remember(deviceAddress) {
         viewModel.devices
             .map { devices ->
-                devices
-                    .find { it.address == deviceAddress }
-                    ?.sensorData
-                    ?.let { data ->
-                        when (data) {
-                            is BluetoothScanViewModel.SensorData.SHT40Data -> {
-                                data.temperature.toFloatOrNull() ?: 0f
-                            }
-
-                            is BluetoothScanViewModel.SensorData.SoilSensorData -> {
-                                data.temperature.toFloatOrNull() ?: 0f
-                            }
-
-                            else -> null
-                        }
-                    }
+                devices.find { it.address == deviceAddress }?.sensorData
             }
     }.collectAsState(initial = null)
 
-    // Store historical temperature values
-    val temperatureHistory = remember { mutableStateListOf<Float>() }
+    // Extract temperature and humidity from SHT40 data
+    val temperatureData = (sensorData as? BluetoothScanViewModel.SensorData.SHT40Data)?.temperature?.toFloatOrNull()
+    val humidityData = (sensorData as? BluetoothScanViewModel.SensorData.SHT40Data)?.humidity?.toFloatOrNull()
 
+    // Store historical temperature and humidity values
+    val temperatureHistory = remember { mutableStateListOf<Float>() }
+    val humidityHistory = remember { mutableStateListOf<Float>() }
 
     // Start scanning when entering the screen
     LaunchedEffect(Unit) {
@@ -93,40 +84,26 @@ fun ChartScreen(
 
     val isReceivingData = remember { mutableStateOf(false) }
 
-    LaunchedEffect(temperatureData) {
-        temperatureData?.let {
+    LaunchedEffect(sensorData) {
+        if (temperatureData != null || humidityData != null) {
             isReceivingData.value = true
         }
     }
 
-// Update the waiting message to be more informative
-    if (!isReceivingData.value) {
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(
-                "Waiting for temperature data...",
-                modifier = Modifier.padding(vertical = 32.dp)
-            )
-            Text(
-                "Make sure the device is connected and sending data",
-                fontSize = 14.sp,
-                color = Color.Gray,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.padding(horizontal = 16.dp)
-            )
-        }
-    }
-
-
-    // Update history when new temperature data arrives
-    LaunchedEffect(temperatureData) {
-        temperatureData?.let { temp ->
-            if (temperatureHistory.size >= 10) {
+    // Update history when new data arrives
+    LaunchedEffect(temperatureData, humidityData) {
+        temperatureData?.let {
+            if (temperatureHistory.size >= 20) {
                 temperatureHistory.removeAt(0)
             }
-            temperatureHistory.add(temp)
+            temperatureHistory.add(it)
+        }
+
+        humidityData?.let {
+            if (humidityHistory.size >= 20) {
+                humidityHistory.removeAt(0)
+            }
+            humidityHistory.add(it)
         }
     }
 
@@ -135,7 +112,7 @@ fun ChartScreen(
             TopAppBar(
                 title = {
                     Text(
-                        "Temperature Chart",
+                        "SHT40 Sensor Data",
                         fontSize = 25.sp,
                         fontWeight = FontWeight.Bold
                     )
@@ -169,113 +146,139 @@ fun ChartScreen(
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(16.dp)
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                // Temperature Chart Card
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(300.dp),
-                    elevation = 4.dp
-                ) {
+                // Temperature Graph
+                SensorGraphCard(
+                    title = "Temperature (°C)",
+                    currentValue = temperatureData,
+                    history = temperatureHistory,
+                    color = Color(0xFF0A74DA)
+                )
+
+                // Humidity Graph
+                SensorGraphCard(
+                    title = "Humidity (%)",
+                    currentValue = humidityData,
+                    history = humidityHistory,
+                    color = Color(0xFF4CAF50)
+                )
+
+                // Waiting message
+                if (!isReceivingData.value) {
                     Column(
-                        modifier = Modifier.padding(16.dp)
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
-                            "Real-time Temperature",
-                            fontSize = 18.sp,
-                            fontWeight = FontWeight.SemiBold
+                            "Waiting for sensor data...",
+                            modifier = Modifier.padding(vertical = 32.dp)
                         )
-                        Spacer(modifier = Modifier.height(8.dp))
                         Text(
-                            "Current: ${temperatureData?.toString() ?: "N/A"}°C",
-                            fontSize = 16.sp,
-                            color = Color.Gray
+                            "Make sure the device is connected and sending data",
+                            fontSize = 14.sp,
+                            color = Color.Gray,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.padding(horizontal = 16.dp)
                         )
-                        Spacer(modifier = Modifier.height(16.dp))
-
-                        // Temperature Graph
-                        if (temperatureHistory.isNotEmpty()) {
-                            Canvas(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(200.dp)
-                            ) {
-                                val points = temperatureHistory.toList()
-                                if (points.isNotEmpty()) {
-                                    val maxTemp = points.maxOrNull() ?: 0f
-                                    val minTemp = (points.minOrNull() ?: 0f).coerceAtMost(maxTemp - 1f)  // Ensure range
-                                    val tempRange = (maxTemp - minTemp).coerceAtLeast(1f)
-
-                                    val stepX = size.width / (points.size.coerceAtLeast(2) - 1)
-                                    val heightPadding = size.height * 0.1f // 10% padding top and bottom
-
-                                    // Draw axis
-                                    drawLine(
-                                        color = Color.Gray,
-                                        start = Offset(0f, size.height - heightPadding),
-                                        end = Offset(size.width, size.height - heightPadding),
-                                        strokeWidth = 1f
-                                    )
-
-                                    // Draw points and lines
-                                    for (i in 0 until points.size - 1) {
-                                        val x1 = i * stepX
-                                        val x2 = (i + 1) * stepX
-                                        val y1 = heightPadding + (size.height - 2 * heightPadding) *
-                                                (1 - (points[i] - minTemp) / tempRange)
-                                        val y2 = heightPadding + (size.height - 2 * heightPadding) *
-                                                (1 - (points[i + 1] - minTemp) / tempRange)
-
-                                        // Draw line between points
-                                        drawLine(
-                                            color = Color(0xFF0A74DA),
-                                            start = Offset(x1, y1),
-                                            end = Offset(x2, y2),
-                                            strokeWidth = 4f,
-                                            pathEffect = PathEffect.cornerPathEffect(10f)
-                                        )
-
-                                        // Draw points
-                                        drawCircle(
-                                            color = Color(0xFF0A74DA),
-                                            radius = 6f,
-                                            center = Offset(x1, y1)
-                                        )
-                                    }
-
-                                    // Draw last point
-                                    if (points.isNotEmpty()) {
-                                        val lastX = (points.size - 1) * stepX
-                                        val lastY = heightPadding + (size.height - 2 * heightPadding) *
-                                                (1 - (points.last() - minTemp) / tempRange)
-                                        drawCircle(
-                                            color = Color(0xFF0A74DA),
-                                            radius = 6f,
-                                            center = Offset(lastX, lastY)
-                                        )
-                                    }
-                                }
-                            }
-                        } else {
-                            Text(
-                                "Waiting for temperature data...",
-                                modifier = Modifier.padding(vertical = 32.dp)
-                            )
-                        }
                     }
                 }
             }
-
-
-
-
         }
     }
 }
-//
-//@Preview(showBackground = true)
-//@Composable
-//fun PreviewChartScreen() {
-//    ChartScreen()
-//}
+
+@Composable
+fun SensorGraphCard(title: String, currentValue: Float?, history: List<Float>, color: Color) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(300.dp),
+        elevation = 4.dp
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp)
+        ) {
+            Text(
+                title,
+                fontSize = 18.sp,
+                fontWeight = FontWeight.SemiBold
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                "Current: ${currentValue?.toString() ?: "N/A"}",
+                fontSize = 16.sp,
+                color = Color.Gray
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+
+            if (history.isNotEmpty()) {
+                Canvas(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(200.dp)
+                ) {
+                    val points = history.toList()
+                    if (points.isNotEmpty()) {
+                        val maxValue = points.maxOrNull() ?: 0f
+                        val minValue = (points.minOrNull() ?: 0f).coerceAtMost(maxValue - 1f)
+                        val range = (maxValue - minValue).coerceAtLeast(1f)
+
+                        val stepX = size.width / (points.size.coerceAtLeast(2) - 1)
+                        val heightPadding = size.height * 0.1f
+
+                        // Draw axis
+                        drawLine(
+                            color = Color.Gray,
+                            start = Offset(0f, size.height - heightPadding),
+                            end = Offset(size.width, size.height - heightPadding),
+                            strokeWidth = 1f
+                        )
+
+                        // Draw points and lines
+                        for (i in 0 until points.size - 1) {
+                            val x1 = i * stepX
+                            val x2 = (i + 1) * stepX
+                            val y1 = heightPadding + (size.height - 2 * heightPadding) *
+                                    (1 - (points[i] - minValue) / range)
+                            val y2 = heightPadding + (size.height - 2 * heightPadding) *
+                                    (1 - (points[i + 1] - minValue) / range)
+
+                            // Draw line between points
+                            drawLine(
+                                color = color,
+                                start = Offset(x1, y1),
+                                end = Offset(x2, y2),
+                                strokeWidth = 4f,
+                                pathEffect = PathEffect.cornerPathEffect(10f)
+                            )
+
+                            // Draw points
+                            drawCircle(
+                                color = color,
+                                radius = 6f,
+                                center = Offset(x1, y1)
+                            )
+                        }
+
+                        // Draw last point
+                        val lastX = (points.size - 1) * stepX
+                        val lastY = heightPadding + (size.height - 2 * heightPadding) *
+                                (1 - (points.last() - minValue) / range)
+                        drawCircle(
+                            color = color,
+                            radius = 6f,
+                            center = Offset(lastX, lastY)
+                        )
+                    }
+                }
+            } else {
+                Text(
+                    "Waiting for data...",
+                    modifier = Modifier.padding(vertical = 32.dp)
+                )
+            }
+        }
+    }
+}

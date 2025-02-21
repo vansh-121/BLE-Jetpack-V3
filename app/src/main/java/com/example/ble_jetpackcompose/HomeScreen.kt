@@ -73,35 +73,36 @@ fun MainScreen(
     var selectedSensor by remember { mutableStateOf(sensorTypes[0]) }
     var showAllDevices by remember { mutableStateOf(false) }
 
-
     LaunchedEffect(Unit) {
         isPermissionGranted.value = checkBluetoothPermissions(context)
-        if (isPermissionGranted.value) {
-            bluetoothViewModel.startScan(activity)
-        }
-    }
-
-// Remove the periodic scanning LaunchedEffect as it's causing the "no devices found" issue
-// Instead, add this single scanning block:
-    LaunchedEffect(isPermissionGranted.value) {
-        if (isPermissionGranted.value) {
-            bluetoothViewModel.startScan(activity)
-        }
-    }
-
-    // Handle scan timeout
-    LaunchedEffect(isScanning.value) {
-        if (isScanning.value) {
-            delay(3000) // 10 seconds scan timeout
+        if (isPermissionGranted.value && isScanning.value) {
+            bluetoothViewModel.startPeriodicScan(activity)
             bluetoothViewModel.stopScan()
             isScanning.value = false
         }
     }
 
+// Remove the periodic scanning LaunchedEffect as it's causing the "no devices found" issue
+//// Instead, add this single scanning block:
+//    LaunchedEffect(isPermissionGranted.value) {
+//        if (isPermissionGranted.value) {
+//            bluetoothViewModel.startScan(activity)
+//        }
+//    }
+
+    // Handle scan timeout
+//    LaunchedEffect(isScanning.value) {
+//        if (isScanning.value) {
+////            delay(3000) // 10 seconds scan timeout
+//            bluetoothViewModel.stopScan()
+//            isScanning.value = false
+//        }
+//    }
+
     BluetoothPermissionHandler(
         onPermissionsGranted = {
             isPermissionGranted.value = true
-            bluetoothViewModel.startScan(activity)
+//            bluetoothViewModel.startScan(activity)
             isScanning.value = true
         })
     Box(
@@ -296,9 +297,12 @@ fun MainScreen(
                                 )
                                 IconButton(
                                     onClick = {
-                                        if (isPermissionGranted.value && !isScanning.value) {
-                                            bluetoothViewModel.startScan(activity)
-                                            isScanning.value = true
+                                        if (isPermissionGranted.value && isScanning.value) {
+                                            bluetoothViewModel.startPeriodicScan(activity)
+//                                            delay(10000) // 10 seconds scan timeout
+                                            bluetoothViewModel.stopScan()
+                                            isScanning.value = false
+
                                         }
                                     }
                                 ) {

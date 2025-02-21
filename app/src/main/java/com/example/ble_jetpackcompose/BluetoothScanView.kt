@@ -10,16 +10,31 @@ import android.bluetooth.le.ScanResult
 import android.bluetooth.le.ScanSettings
 import android.content.Context
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 
 class BluetoothScanViewModel(private val context: Context) : ViewModel() {
     private val _devices = MutableStateFlow<List<BluetoothDevice>>(emptyList())
     val devices: StateFlow<List<BluetoothDevice>> = _devices.asStateFlow()
 
     private var scanCallback: ScanCallback? = null
+
+    private val _isScanning = MutableStateFlow(false)
+    val isScanning: StateFlow<Boolean> = _isScanning.asStateFlow()
+    private var scanJob: Job? = null
+
+    // Configure scan intervals
+    companion object {
+        private const val SCAN_PERIOD = 10000L // 10 seconds
+        private const val SCAN_INTERVAL = 30000L // 30 seconds between scans
+    }
 
     // Region: Data Classes and Sealed Classes
     sealed class SensorData {
@@ -73,6 +88,24 @@ class BluetoothScanViewModel(private val context: Context) : ViewModel() {
         val deviceId: String,
         val sensorData: SensorData? = null
     )
+
+    fun startPeriodicScan(activity: Activity) {
+        if (_isScanning.value) return
+
+        scanJob?.cancel()
+        scanJob = viewModelScope.launch {
+            while (isActive) {
+                _isScanning.value = true
+                startScan(activity)
+                delay(SCAN_PERIOD) // 10 seconds
+                stopScan()
+                _isScanning.value = false
+                delay(SCAN_INTERVAL) // 30 seconds
+            }
+        }
+    }
+
+
 
     // Region: Scanner Management
     @SuppressLint("MissingPermission")
@@ -243,6 +276,7 @@ class BluetoothScanViewModel(private val context: Context) : ViewModel() {
 
     override fun onCleared() {
         super.onCleared()
+        scanJob?.cancel()
         stopScan()
         clearDevices()
     }
