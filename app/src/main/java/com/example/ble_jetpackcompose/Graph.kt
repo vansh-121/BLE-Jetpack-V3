@@ -50,6 +50,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import kotlinx.coroutines.flow.map
+//greaph.kt
 
 @Composable
 fun ChartScreen(
@@ -69,13 +70,17 @@ fun ChartScreen(
             }
     }.collectAsState(initial = null)
 
-    // Extract temperature and humidity from SHT40 data
+    // Extract all sensor data
     val temperatureData = (sensorData as? BluetoothScanViewModel.SensorData.SHT40Data)?.temperature?.toFloatOrNull()
     val humidityData = (sensorData as? BluetoothScanViewModel.SensorData.SHT40Data)?.humidity?.toFloatOrNull()
+    val speedData = (sensorData as? BluetoothScanViewModel.SensorData.SDTData)?.speed?.toFloatOrNull()
+    val distanceData = (sensorData as? BluetoothScanViewModel.SensorData.SDTData)?.distance?.toFloatOrNull()
 
-    // Store historical temperature and humidity values
+    // Store historical values for all measurements
     val temperatureHistory = remember { mutableStateListOf<Float>() }
     val humidityHistory = remember { mutableStateListOf<Float>() }
+    val speedHistory = remember { mutableStateListOf<Float>() }
+    val distanceHistory = remember { mutableStateListOf<Float>() }
 
     // Start scanning when entering the screen
     LaunchedEffect(Unit) {
@@ -85,25 +90,31 @@ fun ChartScreen(
     val isReceivingData = remember { mutableStateOf(false) }
 
     LaunchedEffect(sensorData) {
-        if (temperatureData != null || humidityData != null) {
+        if (temperatureData != null || humidityData != null || speedData != null || distanceData != null) {
             isReceivingData.value = true
         }
     }
 
     // Update history when new data arrives
-    LaunchedEffect(temperatureData, humidityData) {
+    LaunchedEffect(temperatureData, humidityData, speedData, distanceData) {
         temperatureData?.let {
-            if (temperatureHistory.size >= 20) {
-                temperatureHistory.removeAt(0)
-            }
+            if (temperatureHistory.size >= 20) temperatureHistory.removeAt(0)
             temperatureHistory.add(it)
         }
 
         humidityData?.let {
-            if (humidityHistory.size >= 20) {
-                humidityHistory.removeAt(0)
-            }
+            if (humidityHistory.size >= 20) humidityHistory.removeAt(0)
             humidityHistory.add(it)
+        }
+
+        speedData?.let {
+            if (speedHistory.size >= 20) speedHistory.removeAt(0)
+            speedHistory.add(it)
+        }
+
+        distanceData?.let {
+            if (distanceHistory.size >= 20) distanceHistory.removeAt(0)
+            distanceHistory.add(it)
         }
     }
 
@@ -112,7 +123,7 @@ fun ChartScreen(
             TopAppBar(
                 title = {
                     Text(
-                        "SHT40 Sensor Data",
+                        "Sensor Data Graphs",
                         fontSize = 25.sp,
                         fontWeight = FontWeight.Bold
                     )
@@ -143,52 +154,75 @@ fun ChartScreen(
                 )
                 .padding(paddingValues)
         ) {
-            Column(
+            LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                // Temperature Graph
-                SensorGraphCard(
-                    title = "Temperature (°C)",
-                    currentValue = temperatureData,
-                    history = temperatureHistory,
-                    color = Color(0xFF0A74DA)
-                )
+                if (sensorData is BluetoothScanViewModel.SensorData.SHT40Data) {
+                    item {
+                        SensorGraphCard(
+                            title = "Temperature (°C)",
+                            currentValue = temperatureData,
+                            history = temperatureHistory,
+                            color = Color(0xFF0A74DA)
+                        )
+                    }
+                    item {
+                        SensorGraphCard(
+                            title = "Humidity (%)",
+                            currentValue = humidityData,
+                            history = humidityHistory,
+                            color = Color(0xFF4CAF50)
+                        )
+                    }
+                }
 
-                // Humidity Graph
-                SensorGraphCard(
-                    title = "Humidity (%)",
-                    currentValue = humidityData,
-                    history = humidityHistory,
-                    color = Color(0xFF4CAF50)
-                )
+                if (sensorData is BluetoothScanViewModel.SensorData.SDTData) {
+                    item {
+                        SensorGraphCard(
+                            title = "Speed (m/s)",
+                            currentValue = speedData,
+                            history = speedHistory,
+                            color = Color(0xFFE91E63)
+                        )
+                    }
+                    item {
+                        SensorGraphCard(
+                            title = "Distance (m)",
+                            currentValue = distanceData,
+                            history = distanceHistory,
+                            color = Color(0xFFFF9800)
+                        )
+                    }
+                }
 
                 // Waiting message
                 if (!isReceivingData.value) {
-                    Column(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Text(
-                            "Waiting for sensor data...",
-                            modifier = Modifier.padding(vertical = 32.dp)
-                        )
-                        Text(
-                            "Make sure the device is connected and sending data",
-                            fontSize = 14.sp,
-                            color = Color.Gray,
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier.padding(horizontal = 16.dp)
-                        )
+                    item {
+                        Column(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(
+                                "Waiting for sensor data...",
+                                modifier = Modifier.padding(vertical = 32.dp)
+                            )
+                            Text(
+                                "Make sure the device is connected and sending data",
+                                fontSize = 14.sp,
+                                color = Color.Gray,
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.padding(horizontal = 16.dp)
+                            )
+                        }
                     }
                 }
             }
         }
     }
 }
-
 @Composable
 fun SensorGraphCard(title: String, currentValue: Float?, history: List<Float>, color: Color) {
     Card(

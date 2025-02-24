@@ -1,6 +1,6 @@
 package com.example.ble_jetpackcompose
 
-import android.Manifest.*
+import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.bluetooth.BluetoothAdapter
@@ -9,6 +9,9 @@ import android.bluetooth.le.ScanCallback
 import android.bluetooth.le.ScanResult
 import android.bluetooth.le.ScanSettings
 import android.content.Context
+import android.content.pm.PackageManager
+import android.os.Build
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Job
@@ -138,26 +141,63 @@ class BluetoothScanViewModel(private val context: Context) : ViewModel() {
             .build()
 
     // Region: Scan Callback
+    // Region: Scan Callback
     private fun createScanCallback(): ScanCallback = object : ScanCallback() {
+        @SuppressLint("MissingPermission")
         override fun onScanResult(callbackType: Int, result: ScanResult) {
-            result.device?.let { device ->
-                if (device.address.isNullOrEmpty() || device.name.isNullOrEmpty()) return
+            try {
+                // Check required permissions first
+                if (!hasRequiredPermissions()) {
+                    return
+                }
 
-                val deviceType = determineDeviceType(device.name)
-                val sensorData = parseAdvertisingData(result, deviceType)
+                result.device?.let { device ->
+                    try {
+                        // Check if we can access device properties
+                        val deviceName = device.name
+                        val deviceAddress = device.address
 
-                val bluetoothDevice = BluetoothDevice(
-                    name = device.name ?: "Unknown",
-                    address = device.address,
-                    rssi = result.rssi.toString(),
-                    deviceId = sensorData?.deviceId ?: "Unknown",
-                    sensorData = sensorData
-                )
+                        if (deviceAddress.isNullOrEmpty() || deviceName.isNullOrEmpty()) return
 
-                updateDevice(bluetoothDevice)
+                        val deviceType = determineDeviceType(deviceName)
+                        val sensorData = parseAdvertisingData(result, deviceType)
+
+                        val bluetoothDevice = BluetoothDevice(
+                            name = deviceName,
+                            address = deviceAddress,
+                            rssi = result.rssi.toString(),
+                            deviceId = sensorData?.deviceId ?: "Unknown",
+                            sensorData = sensorData
+                        )
+
+                        updateDevice(bluetoothDevice)
+                    } catch (e: SecurityException) {
+                        Log.e("BLEScan", "Security exception while accessing device properties", e)
+                    }
+                }
+            } catch (e: SecurityException) {
+                Log.e("BLEScan", "Security exception in scan callback", e)
             }
         }
+
+        override fun onScanFailed(errorCode: Int) {
+            super.onScanFailed(errorCode)
+            Log.e("BLEScan", "Scan failed with error code: $errorCode")
+        }
     }
+
+
+    private fun hasRequiredPermissions(): Boolean {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            context.checkSelfPermission(Manifest.permission.BLUETOOTH_SCAN) == PackageManager.PERMISSION_GRANTED &&
+                    context.checkSelfPermission(Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED
+        } else {
+            context.checkSelfPermission(Manifest.permission.BLUETOOTH) == PackageManager.PERMISSION_GRANTED &&
+                    context.checkSelfPermission(Manifest.permission.BLUETOOTH_ADMIN) == PackageManager.PERMISSION_GRANTED &&
+                    context.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+        }
+    }
+
 
     // Region: Data Parsing
     fun parseAdvertisingData(result: ScanResult, deviceType: String?): SensorData? {
