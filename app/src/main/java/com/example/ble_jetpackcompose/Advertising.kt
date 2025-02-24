@@ -393,6 +393,7 @@ fun SunWithRayAnimation(
     }
 }
 
+
 @Composable
 fun DataCard(label: String, value: String) {
     Surface(

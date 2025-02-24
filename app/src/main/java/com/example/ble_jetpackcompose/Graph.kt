@@ -75,12 +75,18 @@ fun ChartScreen(
     val humidityData = (sensorData as? BluetoothScanViewModel.SensorData.SHT40Data)?.humidity?.toFloatOrNull()
     val speedData = (sensorData as? BluetoothScanViewModel.SensorData.SDTData)?.speed?.toFloatOrNull()
     val distanceData = (sensorData as? BluetoothScanViewModel.SensorData.SDTData)?.distance?.toFloatOrNull()
+    val xAxisData = (sensorData as? BluetoothScanViewModel.SensorData.LIS2DHData)?.x?.toFloatOrNull()
+    val yAxisData = (sensorData as? BluetoothScanViewModel.SensorData.LIS2DHData)?.y?.toFloatOrNull()
+    val zAxisData = (sensorData as? BluetoothScanViewModel.SensorData.LIS2DHData)?.z?.toFloatOrNull()
 
     // Store historical values for all measurements
     val temperatureHistory = remember { mutableStateListOf<Float>() }
     val humidityHistory = remember { mutableStateListOf<Float>() }
     val speedHistory = remember { mutableStateListOf<Float>() }
     val distanceHistory = remember { mutableStateListOf<Float>() }
+    val xAxisHistory = remember { mutableStateListOf<Float>() }
+    val yAxisHistory = remember { mutableStateListOf<Float>() }
+    val zAxisHistory = remember { mutableStateListOf<Float>() }
 
     // Start scanning when entering the screen
     LaunchedEffect(Unit) {
@@ -90,13 +96,14 @@ fun ChartScreen(
     val isReceivingData = remember { mutableStateOf(false) }
 
     LaunchedEffect(sensorData) {
-        if (temperatureData != null || humidityData != null || speedData != null || distanceData != null) {
+        if (temperatureData != null || humidityData != null || speedData != null ||
+            distanceData != null || xAxisData != null || yAxisData != null || zAxisData != null) {
             isReceivingData.value = true
         }
     }
 
     // Update history when new data arrives
-    LaunchedEffect(temperatureData, humidityData, speedData, distanceData) {
+    LaunchedEffect(temperatureData, humidityData, speedData, distanceData, xAxisData, yAxisData, zAxisData) {
         temperatureData?.let {
             if (temperatureHistory.size >= 20) temperatureHistory.removeAt(0)
             temperatureHistory.add(it)
@@ -115,6 +122,21 @@ fun ChartScreen(
         distanceData?.let {
             if (distanceHistory.size >= 20) distanceHistory.removeAt(0)
             distanceHistory.add(it)
+        }
+
+        xAxisData?.let {
+            if (xAxisHistory.size >= 20) xAxisHistory.removeAt(0)
+            xAxisHistory.add(it)
+        }
+
+        yAxisData?.let {
+            if (yAxisHistory.size >= 20) yAxisHistory.removeAt(0)
+            yAxisHistory.add(it)
+        }
+
+        zAxisData?.let {
+            if (zAxisHistory.size >= 20) zAxisHistory.removeAt(0)
+            zAxisHistory.add(it)
         }
     }
 
@@ -198,6 +220,33 @@ fun ChartScreen(
                     }
                 }
 
+                if (sensorData is BluetoothScanViewModel.SensorData.LIS2DHData) {
+                    item {
+                        SensorGraphCard(
+                            title = "X-Axis Acceleration (m/s²)",
+                            currentValue = xAxisData,
+                            history = xAxisHistory,
+                            color = Color(0xFFE53935)  // Deep Red
+                        )
+                    }
+                    item {
+                        SensorGraphCard(
+                            title = "Y-Axis Acceleration (m/s²)",
+                            currentValue = yAxisData,
+                            history = yAxisHistory,
+                            color = Color(0xFF43A047)  // Deep Green
+                        )
+                    }
+                    item {
+                        SensorGraphCard(
+                            title = "Z-Axis Acceleration (m/s²)",
+                            currentValue = zAxisData,
+                            history = zAxisHistory,
+                            color = Color(0xFF1E88E5)  // Deep Blue
+                        )
+                    }
+                }
+
                 // Waiting message
                 if (!isReceivingData.value) {
                     item {
@@ -223,6 +272,9 @@ fun ChartScreen(
         }
     }
 }
+
+
+
 @Composable
 fun SensorGraphCard(title: String, currentValue: Float?, history: List<Float>, color: Color) {
     Card(
