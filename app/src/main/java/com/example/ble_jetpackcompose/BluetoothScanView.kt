@@ -22,6 +22,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import java.util.concurrent.ConcurrentHashMap
 
 class BluetoothScanViewModel(private val context: Context) : ViewModel() {
     private val _devices = MutableStateFlow<List<BluetoothDevice>>(emptyList())
@@ -33,11 +34,21 @@ class BluetoothScanViewModel(private val context: Context) : ViewModel() {
     val isScanning: StateFlow<Boolean> = _isScanning.asStateFlow()
     private var scanJob: Job? = null
 
+    // Historical data storage - using ConcurrentHashMap for thread safety
+    private val deviceHistoricalData = ConcurrentHashMap<String, MutableList<HistoricalDataEntry>>()
+
     // Configure scan intervals
     companion object {
         private const val SCAN_PERIOD = 10000L // 10 seconds
         private const val SCAN_INTERVAL = 30000L // 30 seconds between scans
+        private const val MAX_HISTORY_ENTRIES_PER_DEVICE = 1000 // Limit entries to prevent memory issues
     }
+
+    // Data class to store historical data with timestamps
+    data class HistoricalDataEntry(
+        val timestamp: Long,
+        val sensorData: SensorData?
+    )
 
     // Region: Data Classes and Sealed Classes
     sealed class SensorData {
@@ -108,8 +119,6 @@ class BluetoothScanViewModel(private val context: Context) : ViewModel() {
         }
     }
 
-
-
     // Region: Scanner Management
     @SuppressLint("MissingPermission")
     fun startScan(activity: Activity) {
@@ -141,7 +150,6 @@ class BluetoothScanViewModel(private val context: Context) : ViewModel() {
             .build()
 
     // Region: Scan Callback
-    // Region: Scan Callback
     private fun createScanCallback(): ScanCallback = object : ScanCallback() {
         @SuppressLint("MissingPermission")
         override fun onScanResult(callbackType: Int, result: ScanResult) {
@@ -171,6 +179,11 @@ class BluetoothScanViewModel(private val context: Context) : ViewModel() {
                         )
 
                         updateDevice(bluetoothDevice)
+
+                        // Store data in history with timestamp
+                        sensorData?.let {
+                            storeHistoricalData(deviceAddress, it)
+                        }
                     } catch (e: SecurityException) {
                         Log.e("BLEScan", "Security exception while accessing device properties", e)
                     }
@@ -186,7 +199,6 @@ class BluetoothScanViewModel(private val context: Context) : ViewModel() {
         }
     }
 
-
     private fun hasRequiredPermissions(): Boolean {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             context.checkSelfPermission(Manifest.permission.BLUETOOTH_SCAN) == PackageManager.PERMISSION_GRANTED &&
@@ -198,6 +210,40 @@ class BluetoothScanViewModel(private val context: Context) : ViewModel() {
         }
     }
 
+    // Region: Historical Data Management
+    /**
+     * Stores sensor data with timestamp for a specific device
+     */
+    private fun storeHistoricalData(deviceAddress: String, sensorData: SensorData) {
+        // Get or create the device's history list
+        val deviceHistory = deviceHistoricalData.getOrPut(deviceAddress) {
+            ArrayList()
+        }
+
+        // Add new entry with current timestamp
+        deviceHistory.add(
+            HistoricalDataEntry(
+                timestamp = System.currentTimeMillis(),
+                sensorData = sensorData
+            )
+        )
+
+        // Trim if exceeds maximum size
+        if (deviceHistory.size > MAX_HISTORY_ENTRIES_PER_DEVICE) {
+            // Remove oldest entries
+            val excessEntries = deviceHistory.size - MAX_HISTORY_ENTRIES_PER_DEVICE
+            repeat(excessEntries) {
+                deviceHistory.removeAt(0)
+            }
+        }
+    }
+
+    /**
+     * Retrieves historical data for a specific device
+     */
+    fun getHistoricalDataForDevice(deviceAddress: String): List<HistoricalDataEntry> {
+        return deviceHistoricalData[deviceAddress]?.toList() ?: emptyList()
+    }
 
     // Region: Data Parsing
     fun parseAdvertisingData(result: ScanResult, deviceType: String?): SensorData? {
@@ -308,7 +354,6 @@ class BluetoothScanViewModel(private val context: Context) : ViewModel() {
             }
         }
     }
-
 
     fun clearDevices() {
         _devices.value = emptyList()

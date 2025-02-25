@@ -1,6 +1,10 @@
 package com.example.ble_jetpackcompose
 
 import android.app.Activity
+import android.content.Context
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -29,7 +33,9 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -38,11 +44,18 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.io.IOException
+import java.text.SimpleDateFormat
+import java.util.Date
 
 @Composable
 fun AdvertisingDataScreen(
@@ -50,7 +63,6 @@ fun AdvertisingDataScreen(
     deviceName: String,
     navController: NavController,
     deviceId: String,
-
 ) {
     val context = LocalContext.current
     // Use viewModel() for proper lifecycle management
@@ -164,10 +176,201 @@ fun AdvertisingDataScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             // Download Button
-            DownloadButton()
+            DownloadButton(
+                viewModel = viewModel,
+                deviceAddress = deviceAddress,
+                deviceName = deviceName,
+                deviceId = deviceId
+            )
         }
     }
 }
+
+
+
+@Composable
+private fun DownloadButton(
+    viewModel: BluetoothScanViewModel,
+    deviceAddress: String,
+    deviceName: String,
+    deviceId: String
+) {
+    val context = LocalContext.current
+    var isExporting by remember { mutableStateOf(false) }
+
+    // Create a launcher for the file creation
+    val createDocumentLauncher = rememberLauncherForActivityResult (
+        contract = ActivityResultContracts.CreateDocument("text/csv")
+    ) { uri ->
+        if (uri != null) {
+            isExporting = true
+            exportDataToCSV(context, uri, viewModel, deviceAddress, deviceName, deviceId) {
+                isExporting = false
+            }
+        }
+    }
+
+    Button(
+        onClick = {
+            // Generate a filename with device info and timestamp
+            val timestamp = SimpleDateFormat("yyyyMMdd_HHmmss", java.util.Locale.getDefault()).format(Date())
+            val filename = "sensor_data_${deviceId}_$timestamp.csv"
+            createDocumentLauncher.launch(filename)
+        },
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(48.dp),
+        shape = RoundedCornerShape(12.dp),
+        enabled = !isExporting
+    ) {
+        Text(
+            text = if (isExporting) "EXPORTING DATA..." else "DOWNLOAD DATA",
+            color = Color.White,
+            fontSize = 14.sp,
+            fontWeight = FontWeight.Bold
+        )
+    }
+}
+
+private fun exportDataToCSV(
+    context: Context,
+    uri: Uri,
+    viewModel: BluetoothScanViewModel,
+    deviceAddress: String,
+    deviceName: String,
+    deviceId: String,
+    onComplete: () -> Unit
+) {
+    // Launch the export process in an IO coroutine to avoid blocking the UI
+    kotlinx.coroutines.MainScope().launch {
+        withContext(Dispatchers.IO) {
+            try {
+                context.contentResolver.openOutputStream(uri)?.use { outputStream ->
+                    // Get historical data
+                    val historicalData = viewModel.getHistoricalDataForDevice(deviceAddress)
+
+                    if (historicalData.isEmpty()) {
+                        // If no historical data, add the current device data
+                        val devices = viewModel.devices.value
+                        val currentDevice = devices.find { it.address == deviceAddress }
+                        currentDevice?.sensorData?.let { sensorData ->
+                            val currentTime = System.currentTimeMillis()
+                            val entry = BluetoothScanViewModel.HistoricalDataEntry(
+                                timestamp = currentTime,
+                                sensorData = sensorData
+                            )
+                            historicalData.toMutableList().add(entry)
+                        }
+                    }
+
+                    // Create CSV header
+                    val headerBuilder = StringBuilder()
+                    headerBuilder.append("Timestamp,")
+                    headerBuilder.append("Device Name,")
+                    headerBuilder.append("Device Address,")
+                    headerBuilder.append("Node ID,")
+
+                    // Add sensor-specific headers
+                    val sensorType = if (historicalData.isNotEmpty()) historicalData[0].sensorData else null
+                    when (sensorType) {
+                        is BluetoothScanViewModel.SensorData.SHT40Data -> {
+                            headerBuilder.append("Temperature (°C),")
+                            headerBuilder.append("Humidity (%)")
+                        }
+                        is BluetoothScanViewModel.SensorData.LIS2DHData -> {
+                            headerBuilder.append("X-Axis (m/s²),")
+                            headerBuilder.append("Y-Axis (m/s²),")
+                            headerBuilder.append("Z-Axis (m/s²)")
+                        }
+                        is BluetoothScanViewModel.SensorData.SoilSensorData -> {
+                            headerBuilder.append("Nitrogen (mg/kg),")
+                            headerBuilder.append("Phosphorus (mg/kg),")
+                            headerBuilder.append("Potassium (mg/kg),")
+                            headerBuilder.append("Moisture (%),")
+                            headerBuilder.append("Temperature (°C),")
+                            headerBuilder.append("Electric Conductivity (mS/cm),")
+                            headerBuilder.append("pH")
+                        }
+                        is BluetoothScanViewModel.SensorData.LuxData -> {
+                            headerBuilder.append("Light Intensity (LUX)")
+                        }
+                        is BluetoothScanViewModel.SensorData.SDTData -> {
+                            headerBuilder.append("Speed (m/s),")
+                            headerBuilder.append("Distance (m)")
+                        }
+                        is BluetoothScanViewModel.SensorData.ObjectDetectorData -> {
+                            headerBuilder.append("Object Detected")
+                        }
+                        else -> {}
+                    }
+                    headerBuilder.append("\n")
+                    outputStream.write(headerBuilder.toString().toByteArray())
+
+                    // Format for timestamps
+                    val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", java.util.Locale.getDefault())
+
+                    // Write each data row
+                    historicalData.forEach { entry ->
+                        val dataBuilder = StringBuilder()
+                        // Add timestamp
+                        dataBuilder.append("${dateFormat.format(Date(entry.timestamp))},")
+                        // Add device info
+                        dataBuilder.append("$deviceName,")
+                        dataBuilder.append("$deviceAddress,")
+                        dataBuilder.append("$deviceId,")
+
+                        // Add sensor-specific data
+                        when (val sensorData = entry.sensorData) {
+                            is BluetoothScanViewModel.SensorData.SHT40Data -> {
+                                dataBuilder.append("${sensorData.temperature},")
+                                dataBuilder.append("${sensorData.humidity}")
+                            }
+                            is BluetoothScanViewModel.SensorData.LIS2DHData -> {
+                                dataBuilder.append("${sensorData.x},")
+                                dataBuilder.append("${sensorData.y},")
+                                dataBuilder.append("${sensorData.z}")
+                            }
+                            is BluetoothScanViewModel.SensorData.SoilSensorData -> {
+                                dataBuilder.append("${sensorData.nitrogen},")
+                                dataBuilder.append("${sensorData.phosphorus},")
+                                dataBuilder.append("${sensorData.potassium},")
+                                dataBuilder.append("${sensorData.moisture},")
+                                dataBuilder.append("${sensorData.temperature},")
+                                dataBuilder.append("${sensorData.ec},")
+                                dataBuilder.append("${sensorData.pH}")
+                            }
+                            is BluetoothScanViewModel.SensorData.LuxData -> {
+                                dataBuilder.append("${sensorData.calculatedLux}")
+                            }
+                            is BluetoothScanViewModel.SensorData.SDTData -> {
+                                dataBuilder.append("${sensorData.speed},")
+                                dataBuilder.append("${sensorData.distance}")
+                            }
+                            is BluetoothScanViewModel.SensorData.ObjectDetectorData -> {
+                                dataBuilder.append("${sensorData.detection}")
+                            }
+                            null -> {}
+                        }
+                        dataBuilder.append("\n")
+                        outputStream.write(dataBuilder.toString().toByteArray())
+
+                        // Flush periodically to avoid memory build-up
+                        if (historicalData.indexOf(entry) % 100 == 0) {
+                            outputStream.flush()
+                        }
+                    }
+                }
+            } catch (e: IOException) {
+                e.printStackTrace()
+            } finally {
+                withContext(Dispatchers.Main) {
+                    onComplete()
+                }
+            }
+        }
+    }
+}
+
 
 @Composable
 private fun HeaderSection(

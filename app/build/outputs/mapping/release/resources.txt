@@ -47,7 +47,6 @@ Marking id:tag_window_insets_animation_callback:2131296674 reachable: referenced
 Marking id:androidx_compose_ui_view_composition_context:2131296330 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
 Marking attr:actionOverflowMenuStyle:2130903073 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
 Marking id:hide_in_inspector_tag:2131296451 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
-Marking drawable:guess_the_character:2131165358 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
 Marking id:is_pooling_container_tag:2131296468 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
 Marking attr:motionEasingEmphasizedInterpolator:2130903817 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
 Marking id:snackbar_text:2131296636 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
@@ -75,6 +74,7 @@ Marking id:month_navigation_next:2131296515 reachable: referenced from C:\Users\
 Marking id:mtrl_calendar_day_selector_frame:2131296520 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
 Marking id:save_overlay_view:2131296592 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
 Marking id:visible_removing_fragment_view_tag:2131296718 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
+Marking drawable:guess_the_character:2131165358 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
 Marking layout:material_time_chip:2131492926 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
 Marking layout:material_time_input:2131492927 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
 Marking id:material_label:2131296498 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
@@ -91,22 +91,10 @@ Marking attr:windowSplashScreenAnimatedIcon:2130904206 reachable: referenced fro
 Marking attr:splashScreenIconSize:2130903975 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
 Marking id:special_effects_controller_view_tag:2131296640 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
 Marking drawable:common_full_open_on_phone:2131165320 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
+Marking drawable:monkey:2131165418 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
+Marking drawable:eyes:2131165346 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
 Marking attr:imageButtonStyle:2130903576 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
 Marking drawable:bg_remove_2:2131165308 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
-Marking id:pooling_container_listener_holder_tag:2131296574 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
-Marking raw:bgmusic:2131755008 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
-Marking drawable:background:2131165307 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
-Marking drawable:ble_games:2131165310 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
-Marking drawable:hunt_the_heroes:2131165361 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
-Marking drawable:hth:2131165360 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
-Marking drawable:search:2131165473 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
-Marking drawable:ttr:2131165481 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
-Marking drawable:gth:2131165357 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
-Marking drawable:home:2131165359 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
-Marking drawable:soundon:2131165476 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
-Marking drawable:soundoff:2131165475 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
-Marking drawable:google_g:2131165353 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
-Marking drawable:facebook_f_:2131165350 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
 Marking id:topPanel:2131296697 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
 Marking id:buttonPanel:2131296352 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
 Marking id:contentPanel:2131296376 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
@@ -130,8 +118,6 @@ Marking attr:lStar:2130903622 reachable: referenced from C:\Users\DELL\AndroidSt
 Marking string:mtrl_picker_navigate_to_current_year_description:2131820759 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
 Marking string:mtrl_picker_navigate_to_year_description:2131820760 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
 Marking layout:mtrl_calendar_year:2131492947 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
-Marking drawable:eyes:2131165346 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
-Marking drawable:monkey:2131165418 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
 Marking string:common_google_play_services_unknown_issue:2131820603 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
 Marking attr:toolbarStyle:2130904149 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
 Marking style:Widget_MaterialComponents_Toolbar:2131887192 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
@@ -150,6 +136,7 @@ Marking string:common_google_play_services_update_title:2131820607 reachable: re
 Marking string:common_google_play_services_install_title:2131820600 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
 Marking attr:nestedScrollViewStyle:2130903842 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
 Marking string:mtrl_chip_close_icon_content_description:2131820740 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
+Marking drawable:hunt_the_heroes:2131165361 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
 Marking dimen:design_textinput_caption_translate_y:2131099791 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
 Marking attr:motionDurationShort4:2130903811 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
 Marking attr:motionDurationMedium4:2130903807 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
@@ -172,8 +159,6 @@ Marking id:material_minute_tv:2131296500 reachable: referenced from C:\Users\DEL
 Marking id:material_hour_tv:2131296497 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
 Marking id:material_clock_hand:2131296491 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
 Marking id:selection_type:2131296627 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
-Marking font:helvetica:2131230721 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
-Marking font:helvetica_bold:2131230722 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
 Marking attr:editTextStyle:2130903424 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
 Marking string:indeterminate:2131820633 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
 Marking string:off:2131820792 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
@@ -185,10 +170,10 @@ Marking string:in_progress:2131820632 reachable: referenced from C:\Users\DELL\A
 Marking attr:chipStyle:2130903228 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
 Marking style:Widget_MaterialComponents_Chip_Action:2131887106 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
 Marking attr:dropDownListViewStyle:2130903418 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
-Marking drawable:settings:2131165474 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
-Marking drawable:gamepad:2131165351 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
-Marking drawable:bluetooth:2131165311 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
-Marking drawable:graph:2131165356 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
+Marking font:helvetica:2131230721 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
+Marking font:helvetica_bold:2131230722 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
+Marking drawable:google_g:2131165353 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
+Marking drawable:facebook_f_:2131165350 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
 Marking string:default_popup_window_title:2131820615 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
 Marking string:mtrl_picker_toggle_to_year_selection:2131820779 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
 Marking string:mtrl_picker_toggle_to_day_selection:2131820777 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
@@ -271,6 +256,8 @@ Marking layout:abc_action_bar_title_item:2131492864 reachable: referenced from C
 Marking id:action_bar_title:2131296310 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
 Marking id:action_bar_subtitle:2131296309 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
 Marking string:default_error_message:2131820614 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
+Marking drawable:bg_remove_ble:2131165309 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
+Marking color:btnColor:2131034156 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
 Marking drawable:design_password_eye:2131165344 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
 Marking string:password_toggle_content_description:2131820794 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
 Marking id:month_title:2131296517 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
@@ -348,9 +335,14 @@ Marking dimen:mtrl_textinput_counter_margin_start:2131100391 reachable: referenc
 Marking id:textinput_error:2131296686 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
 Marking id:textinput_helper_text:2131296687 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
 Marking id:textinput_placeholder:2131296688 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
+Marking drawable:bluetooth:2131165311 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
 Marking color:radar_color:2131034864 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
 Marking drawable:scratch:2131165472 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
 Marking drawable:inner:2131165386 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
+Marking drawable:jjack:2131165388 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
+Marking drawable:jack:2131165387 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
+Marking drawable:parrot:2131165470 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
+Marking drawable:pirate:2131165471 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
 Marking id:inspection_slot_table_set:2131296465 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
 Marking layout:material_clockface_view:2131492923 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
 Marking dimen:material_clock_hand_padding:2131100175 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
@@ -400,8 +392,16 @@ Marking drawable:abc_vector_test:2131165303 reachable: referenced from C:\Users\
 Marking drawable:abc_seekbar_track_material:2131165285 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
 Marking drawable:abc_list_divider_mtrl_alpha:2131165262 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
 Marking drawable:abc_dialog_material_background:2131165244 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
-Marking drawable:bg_remove_ble:2131165309 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
-Marking color:btnColor:2131034156 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
+Marking raw:bgmusic:2131755008 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
+Marking drawable:background:2131165307 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
+Marking drawable:ble_games:2131165310 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
+Marking drawable:hth:2131165360 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
+Marking drawable:search:2131165473 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
+Marking drawable:ttr:2131165481 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
+Marking drawable:gth:2131165357 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
+Marking drawable:home:2131165359 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
+Marking drawable:soundon:2131165476 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
+Marking drawable:soundoff:2131165475 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
 Marking string:exposed_dropdown_menu_content_description:2131820619 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
 Marking drawable:mtrl_dropdown_arrow:2131165431 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
 Marking attr:actionOverflowButtonStyle:2130903072 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
@@ -412,10 +412,10 @@ Marking id:design_menu_item_action_area_stub:2131296394 reachable: referenced fr
 Marking drawable:navigation_empty_icon:2131165456 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
 Marking id:split_action_bar:2131296643 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
 Marking id:action_context_bar:2131296312 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
-Marking drawable:jjack:2131165388 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
-Marking drawable:jack:2131165387 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
-Marking drawable:parrot:2131165470 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
-Marking drawable:pirate:2131165471 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
+Marking drawable:settings:2131165474 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
+Marking drawable:gamepad:2131165351 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
+Marking drawable:graph:2131165356 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
+Marking id:pooling_container_listener_holder_tag:2131296574 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
 Marking attr:recyclerViewStyle:2130903909 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
 Marking dimen:fastscroll_default_thickness:2131099794 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
 Marking dimen:fastscroll_minimum_range:2131099796 reachable: referenced from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\dex\release\minifyReleaseWithR8\classes.dex
@@ -454,6 +454,7 @@ verifyApp
 Iron_Man
 unavailable
 ​
+SPEED_DISTANCE
 android.graphics.drawable.ColorStateL...
 TAKEN
 $this$item
@@ -461,8 +462,8 @@ ECIES_P256_HKDF_HMAC_SHA256_AES128_CT...
 SOURCE_AUTOFILL
 Rgb565
 Compose:abandons
-google.com
 concreteTypeName
+google.com
 java.lang.CharSequence
 STOP
 com.google.protobuf.MapFieldSchemaFull
@@ -519,8 +520,8 @@ effectiveDirectAddress
 RESUMING_BY_EB
 UNREGISTERED_ON_API_CONSOLE
 CREDENTIAL_MISMATCH
-m
 OnClick
+m
 userId
 n
 p
@@ -545,6 +546,7 @@ PASSWORD_LOGIN_DISABLED
 Checkbox
 Multiply
 android:style
+SHT
 forExistingProvider
 Rgb
 ConfigurationContentLdr
@@ -557,6 +559,7 @@ androidx.view.accessibility.Accessibi...
 ASYMMETRIC_PRIVATE
 COMPLETING_WAITING_CHILDREN
 onWarmUpExpressIntegrityToken
+$btManager
 keyHandle
 Auth.Api.Identity.Authorization.API
 provider
@@ -584,11 +587,12 @@ totpEnrollmentInfo
 android:cancelable
 executor
 block
+$history
 enforcementState
-$this$Button
-byte
 TextSubstitution
+$this$Button
 DeletedGmail
+byte
 MISSING_RECAPTCHA_VERSION
 /createAuthUri
 MISSING_PHONE_NUMBER
@@ -658,8 +662,8 @@ ECIES_P256_HKDF_HMAC_SHA256_AES128_GC...
 0123456789ABCDEFGHIJKLMNOPQRSTUV
 API_NOT_CONNECTED
 newConfig
-Array
 RECONNECTION_TIMED_OUT
+Array
 DISCONNECTED
 yMMMM
 setValue
@@ -740,7 +744,6 @@ com.google.firebase.auth.internal.KEY...
 dialog.intent
 CLIENT_TELEMETRY
 INVALID_PHONE_NUMBER
-chart_screen_2/
 NET_CAPABILITY_PARTIAL_CONNECTIVITY
 $email
 _isTerminated
@@ -759,8 +762,8 @@ EXTRA_SKIP_FILE_OPERATION
 pair
 gravity
 verifyBeforeChangeEmail
-short
 Sentences
+short
 signinMethods
 startY
 startX
@@ -788,6 +791,7 @@ strokeLineJoin
 common_google_play_services_api_unava...
 .apk
 com.google.firebase.auth.internal.FIR...
+Object
 CHANNEL_CLOSED
 finalizeEnrollmentTime
 SharingStarted.Lazily
@@ -891,8 +895,8 @@ $UnsafeComparator
 Recomposer:animation
 BAD_PASSWORD
 com.google.firebase.auth.internal.CLI...
-getEmojiConsistencySet
 Wrap
+getEmojiConsistencySet
 warm.up.sid
 ExitTransition.KeepUntilTransitionsFi...
 event_timestamp
@@ -906,7 +910,6 @@ REMOVING
 Humidity
 NET_CAPABILITY_RCS
 common_google_play_services_restricte...
-Chart
 Decal
 getTokenRefactor__authenticator_logic...
 currentView
@@ -1020,10 +1023,9 @@ com.google.android.gms.availability
 Filled.TableChart
 $showTTHButton$delegate
 onBackStarted
-TopLeft
 phosphorus
+TopLeft
 androidx.fragment.extra.ACTIVITY_OPTI...
-chart_screen
 separator
 DM_ADMIN_BLOCKED
 notCompletedCount
@@ -1096,8 +1098,8 @@ com.google.android.gms.auth.api.inter...
 com.google.firebase.auth.internal.VER...
 min
 kotlinx.coroutines.channels.defaultBu...
-Logout
 Exclusion
+Logout
 getBoolean
 com.google.android.gms.auth.api.signi...
 service_esmobile
@@ -1126,8 +1128,8 @@ onRequestIntegrityToken
 com.google.firebase.auth.KEY_API_KEY
 WEB_VIEW_RELOAD_JS
 androidx.profileinstaller.action.INST...
-ON_START
 $showSearchImage$delegate
+ON_START
 KEY_COMPONENT_ACTIVITY_LAUNCHED_KEYS
 signInWithCredential
 USER_CANCEL
@@ -1136,6 +1138,7 @@ ResourcesCompat
 ASSUME_AES_GCM_SIV
 android.resource
 java.time.Instant
+$bluetoothLauncher
 profileInstalled
 18.5.1
 semanticAction
@@ -1148,8 +1151,8 @@ Compose:applyChanges
 Ȉ
 ERROR_MISSING_MULTI_FACTOR_SESSION
 RENAMED_TO
-speed
 ColorBurn
+speed
 DHKEM_X25519_HKDF_SHA256_HKDF_SHA256_...
 BottomSheetBehavior
 INVALID_ACCOUNT
@@ -1276,8 +1279,8 @@ game_loading
 TransformedResultImpl
 /sendVerificationCode
 fontMetrics
-LUX
 observeForever
+LUX
 onRequestExpressIntegrityToken
 getTokenRefactor__gaul_token_api_evolved
 androidx.activity.result.contract.act...
@@ -1379,6 +1382,7 @@ android:support:fragments
 GMSCORE_ENGINE_INITIALIZATION
 onAwaitInternalProcessResFunc
 Mouse
+$temperatureHistory
 Measuring
 FontProvider.getProvider
 Previous
@@ -1468,10 +1472,13 @@ Phone
 ANDROID_ONPLAY
 21.0.0
 firebear.identityToolkit
+$speedHistory
 androidx.activity.result.contract.ext...
 /token
+No
 arrayBaseOffset
 NO_NETWORK_FOUND
+$locationLauncher
 ERROR_MISSING_CONTINUE_URI
 layout_inflater
 Ok
@@ -1527,8 +1534,8 @@ ERROR_EMAIL_CHANGE_NEEDS_VERIFICATION
 dimen
 GoogleAuthService.API
 java.util.ListIterator
-Label
 SUCCESS_CACHE
+Label
 android.view.accessibility.extra.EXTR...
 confirmPasswordReset
 Outlined.Info
@@ -1558,6 +1565,7 @@ Up
 SERVICE_VERSION_UPDATE_REQUIRED
 getDescriptor
 userHandle
+N/A
 string
 MISSING_CODE
 kotlin.coroutines.jvm.internal.BaseCo...
@@ -1596,17 +1604,17 @@ DialogRedirect
 EmptyCoroutineContext
 periodSec
 oauthTokenSecret
-plat
 $item
+plat
 signInWithCustomToken
 com.google.android.gms.auth.account.d...
 android:showsDialog
 com.google
 kotlinx.coroutines.scheduler.core.poo...
 kotlinx.coroutines.scheduler.max.pool...
-double
 WEBVIEW_ENGINE_INITIALIATION
 openid
+double
 INSTANCE
 org.conscrypt.Conscrypt
 $onPositioned
@@ -1624,6 +1632,7 @@ kotlinx.coroutines.bufferedChannel.ex...
 androidx.browser.customtabs.extra.SHA...
 ADDED
 android.hardware.type.watch
+$onPermissionsGranted
 phoneResponseInfo
 account_capability_api
 errorMessage
@@ -1742,6 +1751,7 @@ serviceIntentCall
 %02d
 bt
 NET_CAPABILITY_EIMS
+SOIL
 com.google.protobuf.UnsafeUtil
 web.app
 androidx.view.accessibility.Accessibi...
@@ -1807,8 +1817,8 @@ PhoneAuthActivityStopCallback
 hl
 INVALID_PENDING_TOKEN
 AES256_GCM_RAW
-context
 creationTimestamp
+context
 uvBioEnroll
 type.googleapis.com/google.crypto.tin...
 com.google.android.gms.signin.interna...
@@ -1871,7 +1881,6 @@ ms
 mv
 Filled.Refresh
 ASYMMETRIC_PUBLIC
-Pressure
 entry
 android.settings.LOCATION_SOURCE_SETT...
 NET_CAPABILITY_VSIM
@@ -1879,8 +1888,8 @@ ERROR_MULTI_FACTOR_INFO_NOT_FOUND
 nm
 $selectedSensor$delegate
 ComplexColorCompat
-code
 potassium
+code
 ns
 keys
 androidx.compose.ui.semantics.testTag
@@ -1978,6 +1987,7 @@ android:changeBounds:windowY
 kotlinx.coroutines.flow.defaultConcur...
 uv
 ABORT_ERR
+BLEScan
 this
 REJECTED_CREDENTIAL
 SmsCodeBrowser.API
@@ -2002,6 +2012,7 @@ RESULT_ALREADY_INSTALLED
 FontsProvider
 Ȉဉ
 home_screen
+$xAxisHistory
 verifyAssertionRequest
 Auth.GOOGLE_SIGN_IN_API
 android.support.customtabs.extra.EXTR...
@@ -2116,8 +2127,8 @@ RESULT_IO_EXCEPTION
 intent
 NOT_SUPPORTED_ERR
 $searchX
-canHandleCodeInApp
 $searchY
+canHandleCodeInApp
 boolean
 log_session_id
 VanillaIceCream
@@ -2133,8 +2144,8 @@ layoutDirection
 googleSignInAccount
 signUpPassword
 playcore.integrity.version.minor
-optional
 CONNECTION_SUSPENDED_DURING_CALL
+optional
 DISPLAY_NAME
 textSelectionRange
 ACTION_PRESS_AND_HOLD
@@ -2184,15 +2195,16 @@ Optional
 com.google.firebase.components.Compon...
 Moisture
 SIGN_IN_FAILED
-gps
-com.google.android.gms.signin.interna...
 moisture
+com.google.android.gms.signin.interna...
+gps
 list
 success
 State
 End
 tokenType
 layoutDescription
+$distanceHistory
 com.google.android.gms.auth.account.I...
 child
 TOO_MANY_REQUESTS
@@ -2308,8 +2320,8 @@ NO_VALUE
 SECOND_FACTOR_LIMIT_EXCEEDED
 /emailLinkSignin
 kotlin.Annotation
-SkipSubtreeAndContinueTraversal
 com.google.android.gms.signin.interna...
+SkipSubtreeAndContinueTraversal
 com.google.android.gms.fido.u2f.inter...
 Auth
 Invalid
@@ -2328,7 +2340,6 @@ RENAMED_FROM
 initialExtras
 PS256
 DstOut
-500m
 common_google_play_services_sign_in_f...
 largeBlobs
 accessibility
@@ -2371,7 +2382,6 @@ Hint
 /signupNewUser
 1157920892103562487626974469494075735...
 CURVE25519
-67.39%
 Compose:Composer.dispose
 Compose
 Container
@@ -2421,6 +2431,7 @@ BOOL_LIST
 GCM
 endY
 endX
+$showEnableDialog
 BOOL
 com.google.android.gms.signin.interna...
 COMPLETING_RETRY
@@ -2471,6 +2482,7 @@ ERROR_UNVERIFIED_EMAIL
 serverAuthCode
 $forgotPasswordEmail$delegate
 FIXED32_LIST
+chart_screen/
 ERROR_USER_TOKEN_EXPIRED
 char
 APP_UID_MISMATCH
@@ -2489,6 +2501,7 @@ java.lang.Cloneable
 com.android.vending
 gcmSenderId
 Alpha8
+history
 ANDROID_OFFPLAY
 $device
 $selectedSensor
@@ -2517,7 +2530,6 @@ AccountNotPresent
 DstOver
 mAttachInfo
 classes.dex
-Altitude
 sign_in_credential
 Left
 common_google_play_services_sign_in_f...
@@ -2580,6 +2592,7 @@ recaptchaEnforcementState
 $password
 _queue
 GOOGLE_SERVER_UNAVAILABLE
+$isReceivingData
 unobfuscatedPhoneInfo
 InputConnectionCompat
 count
@@ -2589,6 +2602,7 @@ Role
 DISABLED
 ERROR_INVALID_PROVIDER_ID
 java.lang.annotation.Annotation
+$zAxisHistory
 android.permission.BLUETOOTH_CONNECT
 USER_CANCELLED
 font_weight
@@ -2602,8 +2616,8 @@ androidPackageName
 ProfileInstaller
 com.google.protobuf.GeneratedMessage
 java.lang.Boolean
-$switchState$delegate
 selector
+$switchState$delegate
 owner
 Speed
 com.google.android.gms.common.telemet...
@@ -2613,8 +2627,8 @@ ES384
 ERROR_PASSKEY_ENROLLMENT_NOT_FOUND
 SIGN_IN_INTENT
 UNSUPPORTED_TENANT_OPERATION
-searchButtonAnimation
 android.support.allowGeneratedReplies
+searchButtonAnimation
 DROP_OLDEST
 SetText
 /verifyPhoneNumber
@@ -2718,6 +2732,7 @@ SINT32_LIST
 PHOTO_URL
 PUBLICATION
 apiKey
+Activity
 HORIZONTAL_DIMENSION
 CENTER
 WEAK_PASSWORD
@@ -2807,8 +2822,8 @@ prefix
 LiveRegion
 getViewRootImpl
 permissions
-superclass
 delimiter
+superclass
 NotVerified
 ERROR_USER_MISMATCH
 NET_CAPABILITY_MCX
@@ -2908,8 +2923,8 @@ android:visibility:visibility
 TestTag
 GmsClient
 HMACSHA224
-int
 REMOTE_EXCEPTION
+int
 SHA256
 transports
 forceCodeForRefreshToken
@@ -2989,8 +3004,8 @@ CSLCompat
 is_user_verifying_platform_authentica...
 outputFieldName
 RESULT_OK
-androidx.core.view.inputmethod.Editor...
 info_hash
+androidx.core.view.inputmethod.Editor...
 add
 request.token.sid
 com.google.android.gms.phenotype
@@ -3053,8 +3068,8 @@ zzi
 zzh
 handle
 zzk
-zzj
 $this$graphicsLayer
+zzj
 zzm
 cesdb
 zzl
@@ -3133,7 +3148,6 @@ consumer_package
 HmacSha1
 com.google.android.auth.IAuthManagerS...
 kotlinx.coroutines.DefaultExecutor.ke...
-$activity
 Bearer
 Modifier
 Collapse
@@ -3226,6 +3240,7 @@ ERROR_MISSING_PHONE_NUMBER
 NestedScrollView
 XCHACHA20_POLY1305_RAW
 distance
+Yes
 android
 FETCH_ALLOWLIST
 java.lang.module.ModuleDescriptor
@@ -3252,6 +3267,7 @@ tileMode
 _isCompleted
 BOTTOM
 .sp
+$yAxisHistory
 ACTION_ARGUMENT_SELECTION_END_INT
 VERIFY_PIN_NATIVE
 connectivity
@@ -3327,6 +3343,7 @@ FETCH_TOKEN
 CANCELLED
 DropdownList
 editableText
+$humidityHistory
 CLOSED_EMPTY
 kotlin.collections.Iterator
 res/
@@ -3640,6 +3657,7 @@ technology
 voltage
 getAttributionTag
 Compose:onRemembered
+onPermissionsGranted
 topLeft
 statusBarsIgnoringVisibility
 REMOVED_TASK
@@ -3669,7 +3687,6 @@ java.lang.Double
 type.googleapis.com/google.crypto.tin...
 Hulk
 $isConfirmPasswordValid$delegate
-m/s
 clientDataJSON
 feature
 /deleteAccount
