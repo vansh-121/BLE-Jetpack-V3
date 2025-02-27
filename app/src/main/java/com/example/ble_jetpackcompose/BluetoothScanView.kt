@@ -185,17 +185,14 @@ class BluetoothScanViewModel(private val context: Context) : ViewModel() {
                             storeHistoricalData(deviceAddress, it)
                         }
                     } catch (e: SecurityException) {
-                        Log.e("BLEScan", "Security exception while accessing device properties", e)
                     }
                 }
             } catch (e: SecurityException) {
-                Log.e("BLEScan", "Security exception in scan callback", e)
             }
         }
 
         override fun onScanFailed(errorCode: Int) {
             super.onScanFailed(errorCode)
-            Log.e("BLEScan", "Scan failed with error code: $errorCode")
         }
     }
 
@@ -210,10 +207,6 @@ class BluetoothScanViewModel(private val context: Context) : ViewModel() {
         }
     }
 
-    // Region: Historical Data Management
-    /**
-     * Stores sensor data with timestamp for a specific device
-     */
     private fun storeHistoricalData(deviceAddress: String, sensorData: SensorData) {
         // Get or create the device's history list
         val deviceHistory = deviceHistoricalData.getOrPut(deviceAddress) {
@@ -238,9 +231,6 @@ class BluetoothScanViewModel(private val context: Context) : ViewModel() {
         }
     }
 
-    /**
-     * Retrieves historical data for a specific device
-     */
     fun getHistoricalDataForDevice(deviceAddress: String): List<HistoricalDataEntry> {
         return deviceHistoricalData[deviceAddress]?.toList() ?: emptyList()
     }
@@ -354,6 +344,7 @@ class BluetoothScanViewModel(private val context: Context) : ViewModel() {
             }
         }
     }
+
 
     fun clearDevices() {
         _devices.value = emptyList()

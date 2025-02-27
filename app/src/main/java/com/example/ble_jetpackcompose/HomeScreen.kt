@@ -73,6 +73,35 @@ fun MainScreen(
     var selectedSensor by remember { mutableStateOf(sensorTypes[0]) }
     var showAllDevices by remember { mutableStateOf(false) }
 
+//    LaunchedEffect(Unit) {
+//        isPermissionGranted.value = checkBluetoothPermissions(context)
+//        if (isPermissionGranted.value) {
+//            // Start scanning immediately, without checking isScanning state
+//            bluetoothViewModel.startPeriodicScan(activity)
+//            isScanning.value = true
+//
+//            // Optional: Add a timeout to stop scanning after some time
+//            delay(10000) // 10 seconds
+//            bluetoothViewModel.stopScan()
+//            isScanning.value = false
+//        }
+//    }
+//
+//
+//    LaunchedEffect(isPermissionGranted.value) {
+//        if (isPermissionGranted.value) {
+//            bluetoothViewModel.startPeriodicScan(activity)
+//            isScanning.value = true
+//        }
+//    }
+//
+//    BluetoothPermissionHandler(
+//        onPermissionsGranted = {
+//            isPermissionGranted.value = true
+////            bluetoothViewModel.startScan(activity)
+//            isScanning.value = true
+//        })
+
     LaunchedEffect(Unit) {
         isPermissionGranted.value = checkBluetoothPermissions(context)
         if (isPermissionGranted.value && isScanning.value) {
@@ -82,22 +111,6 @@ fun MainScreen(
         }
     }
 
-// Remove the periodic scanning LaunchedEffect as it's causing the "no devices found" issue
-//// Instead, add this single scanning block:
-//    LaunchedEffect(isPermissionGranted.value) {
-//        if (isPermissionGranted.value) {
-//            bluetoothViewModel.startScan(activity)
-//        }
-//    }
-
-    // Handle scan timeout
-//    LaunchedEffect(isScanning.value) {
-//        if (isScanning.value) {
-////            delay(3000) // 10 seconds scan timeout
-//            bluetoothViewModel.stopScan()
-//            isScanning.value = false
-//        }
-//    }
 
     BluetoothPermissionHandler(
         onPermissionsGranted = {
@@ -105,6 +118,10 @@ fun MainScreen(
 //            bluetoothViewModel.startScan(activity)
             isScanning.value = true
         })
+
+
+
+
     Box(
         modifier = Modifier
             .fillMaxSize()

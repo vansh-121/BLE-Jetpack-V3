@@ -148,7 +148,6 @@ fun AppNavigation(navController: NavHostController) {
             val deviceAddress = backStackEntry.arguments?.getString("deviceAddress") ?: ""
             backStackEntry.arguments?.getString("sensorType") ?: ""
             val deviceId = backStackEntry.arguments?.getString("deviceId") ?: ""
-
             // Get the device from the ViewModel using the address
             val viewModel: BluetoothScanViewModel = viewModel(factory = BluetoothScanViewModelFactory(application))
             val devices by viewModel.devices.collectAsState()
