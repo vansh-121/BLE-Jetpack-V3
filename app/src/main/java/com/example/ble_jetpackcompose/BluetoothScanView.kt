@@ -354,6 +354,5 @@ class BluetoothScanViewModel(private val context: Context) : ViewModel() {
         super.onCleared()
         scanJob?.cancel()
         stopScan()
-        clearDevices()
     }
 }

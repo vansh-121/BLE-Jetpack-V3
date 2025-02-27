@@ -1,6 +1,8 @@
 package com.example.ble_jetpackcompose
 
 import android.app.Application
+import androidx.activity.ComponentActivity
+import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -20,6 +22,8 @@ fun AppNavigation(navController: NavHostController) {
     val authState by authViewModel.authState.collectAsState()
     val context = LocalContext.current
     val application = context.applicationContext as Application
+    val activity = context as ComponentActivity
+    val bluetoothViewModel: BluetoothScanViewModel by activity.viewModels { BluetoothScanViewModelFactory(application)}
 
     // Check authentication state when the app starts
     LaunchedEffect(Unit) {
@@ -131,7 +135,8 @@ fun AppNavigation(navController: NavHostController) {
                     navController.navigate("first_screen") {
                         popUpTo("home_screen") { inclusive = true }
                     }
-                }
+                },
+                navController = navController
             )
         }
 
@@ -186,7 +191,7 @@ fun AppNavigation(navController: NavHostController) {
 
 
         composable("home_screen") {
-            val bluetoothViewModel = BluetoothScanViewModel(context = LocalContext.current)
+//            val bluetoothViewModel = BluetoothScanViewModel(context = LocalContext.current)
             MainScreen(
                 navController = navController,
                 bluetoothViewModel = bluetoothViewModel

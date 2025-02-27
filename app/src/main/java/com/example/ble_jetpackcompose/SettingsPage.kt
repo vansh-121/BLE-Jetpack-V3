@@ -14,15 +14,20 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 
 @Composable
 fun ModernSettingsScreen(
     viewModel: AuthViewModel = viewModel(),
-    onSignOut: () -> Unit
+    onSignOut: () -> Unit,
+    navController: NavHostController // Add NavHostController as a parameter
 ) {
     val backgroundColor = Color(0xFFF2F2F7)
     val cardBackground = Color.White
@@ -45,6 +50,10 @@ fun ModernSettingsScreen(
                 backgroundColor = backgroundColor,
                 elevation = 0.dp
             )
+        },
+        bottomBar = {
+            // Add the CustomBottomNavigation here
+            BottomNavigation(navController = navController)
         }
     ) { padding ->
         Column(
@@ -177,7 +186,6 @@ fun SettingsOptionsList(backgroundColor: Color) {
     }
 }
 
-// ... rest of your existing code for SettingsItemRow, SettingsItem, and SettingsItemType remains the same
 @Composable
 fun SettingsItemRow(item: SettingsItem) {
     var switchState by remember { mutableStateOf(false) }
@@ -242,6 +250,54 @@ fun SettingsItemRow(item: SettingsItem) {
     }
 }
 
+@Composable
+fun BottomNavigation(modifier: Modifier = Modifier, navController: NavHostController) {
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.destination?.route
+
+    BottomNavigation(
+        modifier = modifier,
+        backgroundColor = Color.White,
+        elevation = 8.dp
+    ) {
+        BottomNavigationItem(
+            icon = {
+                Icon(
+                    painter = painterResource(id = R.drawable.bluetooth),
+                    contentDescription = "Bluetooth",
+                    modifier = Modifier.size(24.dp)
+                )
+            },
+            selected = currentRoute == "home_screen", // Highlight if on Bluetooth screen
+            onClick = { navController.navigate("home_screen") }
+        )
+        BottomNavigationItem(
+            icon = {
+                Icon(
+                    painter = painterResource(id = R.drawable.gamepad),
+                    contentDescription = "Gameplay",
+                    modifier = Modifier.size(24.dp)
+                )
+            },
+            selected = currentRoute == "game_loading", // Highlight if on Gameplay screen
+            onClick = {
+                navController.navigate("game_loading")
+            }
+        )
+        BottomNavigationItem(
+            icon = {
+                Icon(
+                    painter = painterResource(id = R.drawable.settings),
+                    contentDescription = "Settings",
+                    modifier = Modifier.size(24.dp)
+                )
+            },
+            selected = currentRoute == "settings_screen", // Highlight if on Settings screen
+            onClick = { navController.navigate("settings_screen") }
+        )
+    }
+}
+
 // Data classes for settings
 data class SettingsItem(
     val icon: androidx.compose.ui.graphics.vector.ImageVector,
@@ -257,6 +313,7 @@ enum class SettingsItemType {
 @Preview(showBackground = true)
 @Composable
 fun ModernSettingsScreenPreview() {
-    ModernSettingsScreen(onSignOut = {})
+    // Mock NavController for preview
+    val navController = rememberNavController()
+    ModernSettingsScreen(onSignOut = {}, navController = navController)
 }
-

@@ -5,6 +5,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
+import androidx.activity.ComponentActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -35,6 +36,7 @@ import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -54,81 +56,52 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavHostController
 import kotlinx.coroutines.delay
-
 @Composable
 fun MainScreen(
     navController: NavHostController,
     bluetoothViewModel: BluetoothScanViewModel,
-
-
-//    goToSettings : () -> Unit
 ) {
     val bluetoothDevices by bluetoothViewModel.devices.collectAsState(initial = emptyList())
+    val isScanning by bluetoothViewModel.isScanning.collectAsState() // Use ViewModel's state
     val context = LocalContext.current
-    val activity = context as Activity
+
+    val activity = LocalContext.current as ComponentActivity
     val isPermissionGranted = remember { mutableStateOf(false) }
-    val isScanning = remember { mutableStateOf(false) }
     var expanded by remember { mutableStateOf(false) }
     val sensorTypes = listOf("SHT40", "LIS2DH", "Soil Sensor", "Weather", "LUX", "Speed Distance", "Metal Detector")
     var selectedSensor by remember { mutableStateOf(sensorTypes[0]) }
     var showAllDevices by remember { mutableStateOf(false) }
 
-//    LaunchedEffect(Unit) {
-//        isPermissionGranted.value = checkBluetoothPermissions(context)
-//        if (isPermissionGranted.value) {
-//            // Start scanning immediately, without checking isScanning state
-//            bluetoothViewModel.startPeriodicScan(activity)
-//            isScanning.value = true
-//
-//            // Optional: Add a timeout to stop scanning after some time
-//            delay(10000) // 10 seconds
-//            bluetoothViewModel.stopScan()
-//            isScanning.value = false
-//        }
-//    }
-//
-//
-//    LaunchedEffect(isPermissionGranted.value) {
-//        if (isPermissionGranted.value) {
-//            bluetoothViewModel.startPeriodicScan(activity)
-//            isScanning.value = true
-//        }
-//    }
-//
-//    BluetoothPermissionHandler(
-//        onPermissionsGranted = {
-//            isPermissionGranted.value = true
-////            bluetoothViewModel.startScan(activity)
-//            isScanning.value = true
-//        })
-
+    // Check permissions initially
     LaunchedEffect(Unit) {
         isPermissionGranted.value = checkBluetoothPermissions(context)
-        if (isPermissionGranted.value && isScanning.value) {
-            bluetoothViewModel.startPeriodicScan(activity)
-            bluetoothViewModel.stopScan()
-            isScanning.value = false
-        }
     }
 
-
+    // Handle permission requests
     BluetoothPermissionHandler(
         onPermissionsGranted = {
             isPermissionGranted.value = true
-//            bluetoothViewModel.startScan(activity)
-            isScanning.value = true
-        })
+        }
+    )
 
+    // Start periodic scanning when screen is visible, stop when disposed
+    DisposableEffect(isPermissionGranted.value) {
+        if (isPermissionGranted.value) {
+            bluetoothViewModel.startPeriodicScan(activity)
+        }
+        onDispose {
+            bluetoothViewModel.stopScan() // Stop scanning when leaving the screen
+        }
+    }
 
-
-
+    // Rest of your UI code remains largely the same, but update isScanning references
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(Color(0xFFF5F5F5))
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
-            // Your existing TopAppBar code...
+            // TopAppBar remains unchanged
             androidx.compose.material.TopAppBar(
                 backgroundColor = Color.White,
                 elevation = 8.dp
@@ -146,6 +119,7 @@ fun MainScreen(
                 }
             }
             Spacer(modifier = Modifier.height(16.dp))
+
             LazyColumn(
                 modifier = Modifier
                     .weight(1f)
@@ -170,7 +144,6 @@ fun MainScreen(
                                 horizontalArrangement = Arrangement.SpaceBetween,
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-
                                 Text(
                                     text = "Nearby devices (${bluetoothDevices.size})",
                                     style = MaterialTheme.typography.h6
@@ -180,9 +153,8 @@ fun MainScreen(
                                 ) {
                                     IconButton(
                                         onClick = {
-                                            if (isPermissionGranted.value && !isScanning.value) {
-                                                bluetoothViewModel.startScan(activity)
-                                                isScanning.value = true
+                                            if (isPermissionGranted.value && !isScanning) {
+                                                bluetoothViewModel.startPeriodicScan(activity)
                                             }
                                         }
                                     ) {
@@ -191,7 +163,7 @@ fun MainScreen(
                                             contentDescription = "Refresh"
                                         )
                                     }
-                                    // 3 Dots Menu Icon
+                                    // DropdownMenu remains unchanged
                                     Box {
                                         IconButton(onClick = { expanded = true }) {
                                             Icon(
@@ -199,7 +171,6 @@ fun MainScreen(
                                                 contentDescription = "More Options"
                                             )
                                         }
-
                                         DropdownMenu(
                                             expanded = expanded,
                                             onDismissRequest = { expanded = false }
@@ -217,8 +188,6 @@ fun MainScreen(
                                     }
                                 }
                             }
-
-
                             Spacer(modifier = Modifier.height(16.dp))
 
                             if (!isPermissionGranted.value) {
@@ -232,7 +201,7 @@ fun MainScreen(
                                     modifier = Modifier.fillMaxWidth(),
                                     horizontalAlignment = Alignment.CenterHorizontally
                                 ) {
-                                    if (isScanning.value) {
+                                    if (isScanning) {
                                         CircularProgressIndicator()
                                         Spacer(modifier = Modifier.height(8.dp))
                                         Text("Scanning for devices...")
@@ -241,21 +210,11 @@ fun MainScreen(
                                     }
                                 }
                             } else {
-//                                bluetoothDevices.forEach { device ->
-//                                    BluetoothDeviceItem(device)
-//                                    Divider()
-                                // Show only first 4 devices initially
-                                val devicesToShow =
-                                    if (showAllDevices) bluetoothDevices else bluetoothDevices.take(
-                                        4
-                                    )
+                                val devicesToShow = if (showAllDevices) bluetoothDevices else bluetoothDevices.take(4)
                                 devicesToShow.forEach { device ->
                                     BluetoothDeviceItem(device, navController, selectedSensor)
                                     Divider()
                                 }
-
-                                // Show "Show More" button if there are more than 4 devices
-                                // Toggle between "Show More" and "Show Less" if there are more than 4 devices
                                 if (bluetoothDevices.size > 4) {
                                     Box(
                                         modifier = Modifier
@@ -277,22 +236,14 @@ fun MainScreen(
                     }
                 }
 
+                item { Spacer(modifier = Modifier.height(16.dp)) }
 
                 item {
-                    Spacer(modifier = Modifier.height(16.dp))
-                }
-
-                item {
-                    // Define the allowed game devices
                     val allowedGameDevices = listOf(
                         "Scarlet Witch", "Black Widow", "Captain Marvel", "Wasp", "Hela",
                         "Hulk", "Thor", "Iron_Man", "Spider Man", "Captain America"
                     )
-
-                    // Filter Bluetooth devices to show only the allowed game devices
                     val gameDevices = bluetoothDevices.filter { it.name in allowedGameDevices }
-
-                    // Show only first 4 devices initially
                     val devicesToShow = if (showAllDevices) gameDevices else gameDevices.take(4)
 
                     Card(
@@ -314,12 +265,8 @@ fun MainScreen(
                                 )
                                 IconButton(
                                     onClick = {
-                                        if (isPermissionGranted.value && isScanning.value) {
+                                        if (isPermissionGranted.value && !isScanning) {
                                             bluetoothViewModel.startPeriodicScan(activity)
-//                                            delay(10000) // 10 seconds scan timeout
-                                            bluetoothViewModel.stopScan()
-                                            isScanning.value = false
-
                                         }
                                     }
                                 ) {
@@ -342,7 +289,7 @@ fun MainScreen(
                                     modifier = Modifier.fillMaxWidth(),
                                     horizontalAlignment = Alignment.CenterHorizontally
                                 ) {
-                                    if (isScanning.value) {
+                                    if (isScanning) {
                                         CircularProgressIndicator()
                                         Spacer(modifier = Modifier.height(8.dp))
                                         Text("Scanning for game devices...")
@@ -355,8 +302,6 @@ fun MainScreen(
                                     BluetoothDeviceItem(device, navController, selectedSensor)
                                     Divider()
                                 }
-
-                                // Show "Show More" button if there are more than 4 devices
                                 if (gameDevices.size > 4) {
                                     Box(
                                         modifier = Modifier
@@ -380,7 +325,6 @@ fun MainScreen(
             }
 
             Box {
-                // Bottom Navigation
                 CustomBottomNavigation(
                     modifier = Modifier.align(Alignment.BottomCenter),
                     navController = navController
@@ -389,7 +333,6 @@ fun MainScreen(
         }
     }
 }
-
 
 private fun checkBluetoothPermissions(context: Context): Boolean {
     return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
