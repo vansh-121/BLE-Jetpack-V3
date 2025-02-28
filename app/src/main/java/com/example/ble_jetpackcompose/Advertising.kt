@@ -44,7 +44,6 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -323,12 +322,12 @@ private fun exportDataToCSV(
                         when (val sensorData = entry.sensorData) {
                             is BluetoothScanViewModel.SensorData.SHT40Data -> {
                                 dataBuilder.append("${sensorData.temperature},")
-                                dataBuilder.append("${sensorData.humidity}")
+                                dataBuilder.append(sensorData.humidity)
                             }
                             is BluetoothScanViewModel.SensorData.LIS2DHData -> {
                                 dataBuilder.append("${sensorData.x},")
                                 dataBuilder.append("${sensorData.y},")
-                                dataBuilder.append("${sensorData.z}")
+                                dataBuilder.append(sensorData.z)
                             }
                             is BluetoothScanViewModel.SensorData.SoilSensorData -> {
                                 dataBuilder.append("${sensorData.nitrogen},")
@@ -337,14 +336,14 @@ private fun exportDataToCSV(
                                 dataBuilder.append("${sensorData.moisture},")
                                 dataBuilder.append("${sensorData.temperature},")
                                 dataBuilder.append("${sensorData.ec},")
-                                dataBuilder.append("${sensorData.pH}")
+                                dataBuilder.append(sensorData.pH)
                             }
                             is BluetoothScanViewModel.SensorData.LuxData -> {
                                 dataBuilder.append("${sensorData.calculatedLux}")
                             }
                             is BluetoothScanViewModel.SensorData.SDTData -> {
                                 dataBuilder.append("${sensorData.speed},")
-                                dataBuilder.append("${sensorData.distance}")
+                                dataBuilder.append(sensorData.distance)
                             }
                             is BluetoothScanViewModel.SensorData.ObjectDetectorData -> {
                                 dataBuilder.append("${sensorData.detection}")
@@ -398,6 +397,7 @@ private fun HeaderSection(
 
         Text(
             text = "Advertising Data",
+            fontFamily = helveticaFont,
             fontSize = 28.sp,
             fontWeight = FontWeight.Bold,
             color = Color.White,

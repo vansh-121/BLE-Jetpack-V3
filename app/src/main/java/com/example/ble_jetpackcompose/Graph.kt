@@ -246,7 +246,8 @@ fun ChartScreen(
             TopAppBar(
                 title = {
                     Text(
-                        "Sensor Data Graphs",
+                        "Graphs",
+                        fontFamily = helveticaFont,
                         fontSize = 25.sp,
                         fontWeight = FontWeight.Bold
                     )

@@ -1,12 +1,18 @@
 package com.example.ble_jetpackcompose
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.Card
 import androidx.compose.material.Divider
 import androidx.compose.material.Text
@@ -18,7 +24,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-
 
 @Composable
 fun SoilSensorDataTable(
@@ -32,9 +37,11 @@ fun SoilSensorDataTable(
     timestamps: List<String>,
     isReceivingData: Boolean
 ) {
+    val horizontalScrollState = rememberScrollState()
+
     Card(
         modifier = Modifier
-            .fillMaxWidth()
+            .fillMaxSize()
             .padding(16.dp),
         elevation = 4.dp
     ) {
@@ -42,169 +49,115 @@ fun SoilSensorDataTable(
             modifier = Modifier.padding(16.dp)
         ) {
             Text(
-                "Soil Sensor Data Table",
-                fontSize = 20.sp,
+                text = "Soil Sensor Data Table",
+                fontSize = 22.sp,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.padding(bottom = 16.dp)
             )
 
             if (isReceivingData && timestamps.isNotEmpty()) {
-                // Table header
-                Row(
+                // *Wrap Table in Horizontal Scrolling*
+                Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(Color(0xFFE0E0E0))
-                        .padding(vertical = 8.dp, horizontal = 4.dp)
+                        .horizontalScroll(horizontalScrollState) // Allow horizontal scrolling
                 ) {
-                    Text(
-                        "Time",
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.weight(1.2f)
-                    )
-                    Text(
-                        "Moisture (%)",
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.weight(1f)
-                    )
-                    Text(
-                        "Temp (°C)",
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.weight(1f)
-                    )
-                    Text(
-                        "Nitrogen (ppm)",
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.weight(1f)
-                    )
-                    Text(
-                        "Phosphorus (ppm)",
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.weight(1f)
-                    )
-                    Text(
-                        "Potassium (ppm)",
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.weight(1f)
-                    )
-                    Text(
-                        "EC (µS/cm)",
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.weight(1f)
-                    )
-                    Text(
-                        "pH",
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.weight(0.8f)
-                    )
-                }
+                    Column {
+                        // Table Header
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .background(Color(0xFFE0E0E0))
+                                .padding(vertical = 14.dp, horizontal = 12.dp)
+                        ) {
+                            listOf(
+                                "Time", "Moisture (%)", "Temp (°C)", "Nitrogen (ppm)", "Phosphorus (ppm)",
+                                "Potassium (ppm)", "EC (µS/cm)", "pH"
+                            ).forEach { title ->
+                                Text(
+                                    text = title,
+                                    fontSize = 16.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    textAlign = TextAlign.Center,
+                                    modifier = Modifier.width(120.dp) // Fixed width for better scrolling
+                                )
+                            }
+                        }
 
-                Divider()
+                        Divider()
 
-                // Scrollable table content
-                LazyColumn(
-                    modifier = Modifier.weight(1f)
-                ) {
-                    items(timestamps.indices.reversed().toList()) { index ->
-                        val rowIndex = timestamps.size - 1 - index
+                        // *Scrollable Table Content (Vertical Scroll)*
+                        Box(
+                            modifier = Modifier
+                                .height(500.dp)
+                                .fillMaxWidth()
+                        ) {
+                            LazyColumn {
+                                items(timestamps.indices.reversed().toList()) { index ->
+                                    val rowIndex = timestamps.size - 1 - index
 
-                        if (rowIndex >= 0 && rowIndex < timestamps.size) {
-                            Column {
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(vertical = 8.dp, horizontal = 4.dp),
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    Text(
-                                        text = timestamps.getOrNull(rowIndex) ?: "--",
-                                        modifier = Modifier.weight(1.2f)
-                                    )
-                                    Text(
-                                        text = soilMoistureHistory.getOrNull(rowIndex)?.toString() ?: "--",
-                                        modifier = Modifier.weight(1f)
-                                    )
-                                    Text(
-                                        text = soilTemperatureHistory.getOrNull(rowIndex)?.toString() ?: "--",
-                                        modifier = Modifier.weight(1f)
-                                    )
-                                    Text(
-                                        text = soilNitrogenHistory.getOrNull(rowIndex)?.toString() ?: "--",
-                                        modifier = Modifier.weight(1f)
-                                    )
-                                    Text(
-                                        text = soilPhosphorusHistory.getOrNull(rowIndex)?.toString() ?: "--",
-                                        modifier = Modifier.weight(1f)
-                                    )
-                                    Text(
-                                        text = soilPotassiumHistory.getOrNull(rowIndex)?.toString() ?: "--",
-                                        modifier = Modifier.weight(1f)
-                                    )
-                                    Text(
-                                        text = soilEcHistory.getOrNull(rowIndex)?.toString() ?: "--",
-                                        modifier = Modifier.weight(1f)
-                                    )
-                                    Text(
-                                        text = soilPhHistory.getOrNull(rowIndex)?.toString() ?: "--",
-                                        modifier = Modifier.weight(0.8f)
-                                    )
+                                    if (rowIndex in timestamps.indices) {
+                                        Column {
+                                            Row(
+                                                modifier = Modifier
+                                                    .fillMaxWidth()
+                                                    .padding(vertical = 14.dp, horizontal = 12.dp),
+                                                verticalAlignment = Alignment.CenterVertically
+                                            ) {
+                                                listOf(
+                                                    timestamps.getOrNull(rowIndex),
+                                                    soilMoistureHistory.getOrNull(rowIndex)?.toString(),
+                                                    soilTemperatureHistory.getOrNull(rowIndex)?.toString(),
+                                                    soilNitrogenHistory.getOrNull(rowIndex)?.toString(),
+                                                    soilPhosphorusHistory.getOrNull(rowIndex)?.toString(),
+                                                    soilPotassiumHistory.getOrNull(rowIndex)?.toString(),
+                                                    soilEcHistory.getOrNull(rowIndex)?.toString(),
+                                                    soilPhHistory.getOrNull(rowIndex)?.toString()
+                                                ).forEach { value ->
+                                                    Text(
+                                                        text = value ?: "--",
+                                                        textAlign = TextAlign.Center,
+                                                        modifier = Modifier.width(120.dp) // Fixed width
+                                                    )
+                                                }
+                                            }
+
+                                            Divider(color = Color.LightGray)
+                                        }
+                                    }
                                 }
+                            }
+                        }
 
-                                Divider(color = Color.LightGray)
+                        // *Current Values Summary Row*
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .background(Color(0xFFE3F2FD))
+                                .padding(vertical = 14.dp, horizontal = 12.dp)
+                        ) {
+                            listOf(
+                                "Current",
+                                soilMoistureHistory.lastOrNull()?.toString(),
+                                soilTemperatureHistory.lastOrNull()?.toString(),
+                                soilNitrogenHistory.lastOrNull()?.toString(),
+                                soilPhosphorusHistory.lastOrNull()?.toString(),
+                                soilPotassiumHistory.lastOrNull()?.toString(),
+                                soilEcHistory.lastOrNull()?.toString(),
+                                soilPhHistory.lastOrNull()?.toString()
+                            ).forEach { value ->
+                                Text(
+                                    text = value ?: "--",
+                                    fontSize = 16.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    textAlign = TextAlign.Center,
+                                    modifier = Modifier.width(120.dp)
+                                )
                             }
                         }
                     }
                 }
-
-                // Current values summary
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(Color(0xFFE3F2FD))
-                        .padding(vertical = 12.dp, horizontal = 4.dp)
-                ) {
-                    Text(
-                        "Current",
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.weight(1.2f)
-                    )
-                    Text(
-                        text = soilMoistureHistory.lastOrNull()?.toString() ?: "--",
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.weight(1f)
-                    )
-                    Text(
-                        text = soilTemperatureHistory.lastOrNull()?.toString() ?: "--",
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.weight(1f)
-                    )
-                    Text(
-                        text = soilNitrogenHistory.lastOrNull()?.toString() ?: "--",
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.weight(1f)
-                    )
-                    Text(
-                        text = soilPhosphorusHistory.lastOrNull()?.toString() ?: "--",
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.weight(1f)
-                    )
-                    Text(
-                        text = soilPotassiumHistory.lastOrNull()?.toString() ?: "--",
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.weight(1f)
-                    )
-                    Text(
-                        text = soilEcHistory.lastOrNull()?.toString() ?: "--",
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.weight(1f)
-                    )
-                    Text(
-                        text = soilPhHistory.lastOrNull()?.toString() ?: "--",
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.weight(0.8f)
-                    )
-                }
             } else {
-                // Show waiting message if no data is available
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -212,13 +165,14 @@ fun SoilSensorDataTable(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        "Waiting for soil sensor data...",
-                        fontSize = 16.sp,
+                        text = "Waiting for soil sensor data...",
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Medium,
                         modifier = Modifier.padding(bottom = 8.dp)
                     )
                     Text(
-                        "Make sure the soil sensor is connected and sending data",
-                        fontSize = 14.sp,
+                        text = "Make sure the soil sensor is connected and sending data",
+                        fontSize = 16.sp,
                         color = Color.Gray,
                         textAlign = TextAlign.Center
                     )

@@ -51,6 +51,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
@@ -112,6 +113,8 @@ fun MainScreen(
                 ) {
                     Text(
                         text = "BLE Sense ",
+                        fontFamily = helveticaFont,
+                        fontWeight = FontWeight.Bold,
                         color = Color.Black,
                         style = MaterialTheme.typography.h6,
                         textAlign = TextAlign.Center
@@ -145,7 +148,9 @@ fun MainScreen(
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Text(
-                                    text = "Nearby devices (${bluetoothDevices.size})",
+                                    text = "Nearby Devices (${bluetoothDevices.size})",
+//                                    fontFamily = helveticaFont,
+//                                    fontWeight = FontWeight.SemiBold,
                                     style = MaterialTheme.typography.h6
                                 )
                                 Row(
@@ -261,6 +266,8 @@ fun MainScreen(
                             ) {
                                 Text(
                                     text = "Game Devices (${gameDevices.size})",
+//                                    fontWeight = FontWeight.SemiBold,
+//                                    fontFamily = helveticaFont,
                                     style = MaterialTheme.typography.h6
                                 )
                                 IconButton(

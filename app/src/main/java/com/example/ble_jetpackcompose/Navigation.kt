@@ -191,7 +191,7 @@ fun AppNavigation(navController: NavHostController) {
 
 
         composable("home_screen") {
-//            val bluetoothViewModel = BluetoothScanViewModel(context = LocalContext.current)
+//      val bluetoothViewModel = BluetoothScanViewModel(context = LocalContext.current)
             MainScreen(
                 navController = navController,
                 bluetoothViewModel = bluetoothViewModel
