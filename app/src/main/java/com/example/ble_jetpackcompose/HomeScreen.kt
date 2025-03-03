@@ -8,6 +8,7 @@ import android.os.Build
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -31,6 +32,8 @@ import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DarkMode
+import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.DropdownMenuItem
@@ -57,21 +60,46 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavHostController
 import kotlinx.coroutines.delay
+
 @Composable
 fun MainScreen(
     navController: NavHostController,
     bluetoothViewModel: BluetoothScanViewModel,
 ) {
     val bluetoothDevices by bluetoothViewModel.devices.collectAsState(initial = emptyList())
-    val isScanning by bluetoothViewModel.isScanning.collectAsState() // Use ViewModel's state
+    val isScanning by bluetoothViewModel.isScanning.collectAsState()
     val context = LocalContext.current
+    val activity = context as ComponentActivity
 
-    val activity = LocalContext.current as ComponentActivity
-    val isPermissionGranted = remember { mutableStateOf(false) }
+    // Fix: Don't call composable functions inside remember blocks
+    val isPermissionGranted = remember { mutableStateOf(checkBluetoothPermissions(context)) }
     var expanded by remember { mutableStateOf(false) }
     val sensorTypes = listOf("SHT40", "LIS2DH", "Soil Sensor", "Weather", "LUX", "Speed Distance", "Metal Detector")
     var selectedSensor by remember { mutableStateOf(sensorTypes[0]) }
     var showAllDevices by remember { mutableStateOf(false) }
+
+    // Detect system theme
+    val systemDarkMode = isSystemInDarkTheme()
+
+    // Initialize theme state based on system theme
+    var isDarkMode by remember { mutableStateOf(systemDarkMode) }
+    val initializedFromSystem = remember { mutableStateOf(false) }
+
+    // Initialize from system theme only once
+    LaunchedEffect(Unit) {
+        if (!initializedFromSystem.value) {
+            isDarkMode = systemDarkMode
+            initializedFromSystem.value = true
+        }
+    }
+
+    // Define colors based on theme
+    val backgroundColor = if (isDarkMode) Color(0xFF121212) else Color(0xFFF5F5F5)
+    val cardBackgroundColor = if (isDarkMode) Color(0xFF1E1E1E) else Color.White
+    val textColor = if (isDarkMode) Color.White else Color.Black
+    val secondaryTextColor = if (isDarkMode) Color(0xFFB0B0B0) else Color(0xFF757575)
+    val dividerColor = if (isDarkMode) Color(0xFF2A2A2A) else Color(0xFFE0E0E0)
+    val bottomNavColor = if (isDarkMode) Color(0xFF1E1E1E) else Color.White
 
     // Check permissions initially
     LaunchedEffect(Unit) {
@@ -99,12 +127,12 @@ fun MainScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFF5F5F5))
+            .background(backgroundColor)
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
-            // TopAppBar remains unchanged
+            // TopAppBar updated with theme toggle
             androidx.compose.material.TopAppBar(
-                backgroundColor = Color.White,
+                backgroundColor = cardBackgroundColor,
                 elevation = 8.dp
             ) {
                 Box(
@@ -115,10 +143,22 @@ fun MainScreen(
                         text = "BLE Sense ",
                         fontFamily = helveticaFont,
                         fontWeight = FontWeight.Bold,
-                        color = Color.Black,
+                        color = textColor,
                         style = MaterialTheme.typography.h6,
                         textAlign = TextAlign.Center
                     )
+
+                    // Add theme toggle button
+                    IconButton(
+                        onClick = { isDarkMode = !isDarkMode },
+                        modifier = Modifier.align(Alignment.CenterEnd)
+                    ) {
+                        Icon(
+                            imageVector = if (isDarkMode) Icons.Default.LightMode else Icons.Default.DarkMode,
+                            contentDescription = "Toggle Theme",
+                            tint = if (isDarkMode) Color.Yellow else Color(0xFF5D4037)
+                        )
+                    }
                 }
             }
             Spacer(modifier = Modifier.height(16.dp))
@@ -135,7 +175,8 @@ fun MainScreen(
                             .fillMaxWidth()
                             .padding(vertical = 16.dp),
                         elevation = 4.dp,
-                        shape = RoundedCornerShape(16.dp)
+                        shape = RoundedCornerShape(16.dp),
+                        backgroundColor = cardBackgroundColor
                     ) {
                         Column(
                             modifier = Modifier
@@ -149,9 +190,8 @@ fun MainScreen(
                             ) {
                                 Text(
                                     text = "Nearby Devices (${bluetoothDevices.size})",
-//                                    fontFamily = helveticaFont,
-//                                    fontWeight = FontWeight.SemiBold,
-                                    style = MaterialTheme.typography.h6
+                                    style = MaterialTheme.typography.h6,
+                                    color = textColor
                                 )
                                 Row(
                                     verticalAlignment = Alignment.CenterVertically
@@ -165,7 +205,8 @@ fun MainScreen(
                                     ) {
                                         Icon(
                                             imageVector = Icons.Default.Refresh,
-                                            contentDescription = "Refresh"
+                                            contentDescription = "Refresh",
+                                            tint = if (isDarkMode) Color.White else Color.Black
                                         )
                                     }
                                     // DropdownMenu remains unchanged
@@ -173,16 +214,18 @@ fun MainScreen(
                                         IconButton(onClick = { expanded = true }) {
                                             Icon(
                                                 imageVector = Icons.Default.MoreVert,
-                                                contentDescription = "More Options"
+                                                contentDescription = "More Options",
+                                                tint = if (isDarkMode) Color.White else Color.Black
                                             )
                                         }
                                         DropdownMenu(
                                             expanded = expanded,
-                                            onDismissRequest = { expanded = false }
+                                            onDismissRequest = { expanded = false },
+                                            modifier = Modifier.background(cardBackgroundColor)
                                         ) {
                                             sensorTypes.forEach { sensor ->
                                                 DropdownMenuItem(
-                                                    text = { Text(sensor) },
+                                                    text = { Text(sensor, color = textColor) },
                                                     onClick = {
                                                         selectedSensor = sensor
                                                         expanded = false
@@ -199,7 +242,8 @@ fun MainScreen(
                                 Text(
                                     "Bluetooth permissions required",
                                     textAlign = TextAlign.Center,
-                                    modifier = Modifier.fillMaxWidth()
+                                    modifier = Modifier.fillMaxWidth(),
+                                    color = textColor
                                 )
                             } else if (bluetoothDevices.isEmpty()) {
                                 Column(
@@ -207,18 +251,25 @@ fun MainScreen(
                                     horizontalAlignment = Alignment.CenterHorizontally
                                 ) {
                                     if (isScanning) {
-                                        CircularProgressIndicator()
+                                        CircularProgressIndicator(
+                                            color = if (isDarkMode) Color(0xFF64B5F6) else Color(0xFF2196F3)
+                                        )
                                         Spacer(modifier = Modifier.height(8.dp))
-                                        Text("Scanning for devices...")
+                                        Text("Scanning for devices...", color = textColor)
                                     } else {
-                                        Text("No devices found")
+                                        Text("No devices found", color = textColor)
                                     }
                                 }
                             } else {
                                 val devicesToShow = if (showAllDevices) bluetoothDevices else bluetoothDevices.take(4)
                                 devicesToShow.forEach { device ->
-                                    BluetoothDeviceItem(device, navController, selectedSensor)
-                                    Divider()
+                                    BluetoothDeviceItem(
+                                        device = device,
+                                        navController = navController,
+                                        selectedSensor = selectedSensor,
+                                        isDarkMode = isDarkMode
+                                    )
+                                    Divider(color = dividerColor)
                                 }
                                 if (bluetoothDevices.size > 4) {
                                     Box(
@@ -226,13 +277,17 @@ fun MainScreen(
                                             .fillMaxWidth()
                                             .padding(vertical = 8.dp)
                                             .clickable { showAllDevices = !showAllDevices }
-                                            .background(Color.LightGray, RoundedCornerShape(8.dp)),
+                                            .background(
+                                                if (isDarkMode) Color(0xFF2A2A2A) else Color.LightGray,
+                                                RoundedCornerShape(8.dp)
+                                            ),
                                         contentAlignment = Alignment.Center
                                     ) {
                                         Text(
                                             text = if (showAllDevices) "Show Less" else "Show More",
                                             modifier = Modifier.padding(12.dp),
-                                            textAlign = TextAlign.Center
+                                            textAlign = TextAlign.Center,
+                                            color = textColor
                                         )
                                     }
                                 }
@@ -256,7 +311,8 @@ fun MainScreen(
                             .fillMaxWidth()
                             .padding(16.dp),
                         elevation = 4.dp,
-                        shape = RoundedCornerShape(16.dp)
+                        shape = RoundedCornerShape(16.dp),
+                        backgroundColor = cardBackgroundColor
                     ) {
                         Column(modifier = Modifier.padding(16.dp)) {
                             Row(
@@ -266,9 +322,8 @@ fun MainScreen(
                             ) {
                                 Text(
                                     text = "Game Devices (${gameDevices.size})",
-//                                    fontWeight = FontWeight.SemiBold,
-//                                    fontFamily = helveticaFont,
-                                    style = MaterialTheme.typography.h6
+                                    style = MaterialTheme.typography.h6,
+                                    color = textColor
                                 )
                                 IconButton(
                                     onClick = {
@@ -279,7 +334,8 @@ fun MainScreen(
                                 ) {
                                     Icon(
                                         imageVector = Icons.Default.Refresh,
-                                        contentDescription = "Refresh"
+                                        contentDescription = "Refresh",
+                                        tint = if (isDarkMode) Color.White else Color.Black
                                     )
                                 }
                             }
@@ -289,7 +345,8 @@ fun MainScreen(
                                 Text(
                                     "Bluetooth permissions required",
                                     textAlign = TextAlign.Center,
-                                    modifier = Modifier.fillMaxWidth()
+                                    modifier = Modifier.fillMaxWidth(),
+                                    color = textColor
                                 )
                             } else if (gameDevices.isEmpty()) {
                                 Column(
@@ -297,17 +354,24 @@ fun MainScreen(
                                     horizontalAlignment = Alignment.CenterHorizontally
                                 ) {
                                     if (isScanning) {
-                                        CircularProgressIndicator()
+                                        CircularProgressIndicator(
+                                            color = if (isDarkMode) Color(0xFF64B5F6) else Color(0xFF2196F3)
+                                        )
                                         Spacer(modifier = Modifier.height(8.dp))
-                                        Text("Scanning for game devices...")
+                                        Text("Scanning for game devices...", color = textColor)
                                     } else {
-                                        Text("No game devices found")
+                                        Text("No game devices found", color = textColor)
                                     }
                                 }
                             } else {
                                 devicesToShow.forEach { device ->
-                                    BluetoothDeviceItem(device, navController, selectedSensor)
-                                    Divider()
+                                    BluetoothDeviceItem(
+                                        device = device,
+                                        navController = navController,
+                                        selectedSensor = selectedSensor,
+                                        isDarkMode = isDarkMode
+                                    )
+                                    Divider(color = dividerColor)
                                 }
                                 if (gameDevices.size > 4) {
                                     Box(
@@ -315,13 +379,17 @@ fun MainScreen(
                                             .fillMaxWidth()
                                             .padding(vertical = 8.dp)
                                             .clickable { showAllDevices = !showAllDevices }
-                                            .background(Color.LightGray, RoundedCornerShape(8.dp)),
+                                            .background(
+                                                if (isDarkMode) Color(0xFF2A2A2A) else Color.LightGray,
+                                                RoundedCornerShape(8.dp)
+                                            ),
                                         contentAlignment = Alignment.Center
                                     ) {
                                         Text(
                                             text = if (showAllDevices) "Show Less" else "Show More",
                                             modifier = Modifier.padding(12.dp),
-                                            textAlign = TextAlign.Center
+                                            textAlign = TextAlign.Center,
+                                            color = textColor
                                         )
                                     }
                                 }
@@ -334,7 +402,8 @@ fun MainScreen(
             Box {
                 CustomBottomNavigation(
                     modifier = Modifier.align(Alignment.BottomCenter),
-                    navController = navController
+                    navController = navController,
+                    isDarkMode = isDarkMode
                 )
             }
         }
@@ -358,12 +427,19 @@ private fun checkPermission(context: Context, permission: String): Boolean {
         permission
     ) == PackageManager.PERMISSION_GRANTED
 }
+
 @Composable
 fun BluetoothDeviceItem(
     device: BluetoothScanViewModel.BluetoothDevice,
     navController: NavHostController,
-    selectedSensor: String
+    selectedSensor: String,
+    isDarkMode: Boolean
 ) {
+    val textColor = if (isDarkMode) Color.White else Color.Black
+    val secondaryTextColor = if (isDarkMode) Color(0xFFB0B0B0) else Color(0xFF757575)
+    val iconBackgroundColor = if (isDarkMode) Color(0xFF0D47A1) else Color(0xFFE3F2FD)
+    val iconTintColor = if (isDarkMode) Color(0xFF64B5F6) else Color(0xFF2196F3)
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -379,14 +455,14 @@ fun BluetoothDeviceItem(
         Box(
             modifier = Modifier
                 .size(48.dp)
-                .background(Color(0xFFE3F2FD), RoundedCornerShape(8.dp)),
+                .background(iconBackgroundColor, RoundedCornerShape(8.dp)),
             contentAlignment = Alignment.Center
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.bluetooth),
                 contentDescription = "Bluetooth Device",
                 modifier = Modifier.size(24.dp),
-                tint = Color(0xFF2196F3)
+                tint = iconTintColor
             )
         }
 
@@ -394,16 +470,19 @@ fun BluetoothDeviceItem(
         Column {
             Text(
                 text = device.name,
-                style = MaterialTheme.typography.subtitle1
+                style = MaterialTheme.typography.subtitle1,
+                color = textColor
             )
             Text(
                 text = "Address: ${device.address}",
-                style = MaterialTheme.typography.caption
+                style = MaterialTheme.typography.caption,
+                color = secondaryTextColor
             )
 
             Text(
                 text = "Signal Strength: ${device.rssi} dBm",
-                style = MaterialTheme.typography.caption
+                style = MaterialTheme.typography.caption,
+                color = secondaryTextColor
             )
 
             // Display sensor data based on selected sensor type
@@ -448,16 +527,17 @@ fun BluetoothDeviceItem(
                         else -> "Incompatible sensor type"
                     },
                     style = MaterialTheme.typography.caption,
-                    color = MaterialTheme.colors.primary
+                    color = if (isDarkMode) Color(0xFF64B5F6) else MaterialTheme.colors.primary
                 )
             }
         }
     }
 }
 
-
 @Composable
-private fun GameSignalItem() {
+private fun GameSignalItem(isDarkMode: Boolean = false) {
+    val bgColor = if (isDarkMode) Color(0xFF2A2A2A) else Color.Gray
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -468,7 +548,7 @@ private fun GameSignalItem() {
             modifier = Modifier
                 .size(54.dp)
                 .clip(RoundedCornerShape(8.dp))
-                .background(Color.Gray)
+                .background(bgColor)
         )
         Spacer(modifier = Modifier.width(16.dp))
         Column(
@@ -508,10 +588,19 @@ private fun GameSignalItem() {
 }
 
 @Composable
-fun CustomBottomNavigation(modifier: Modifier = Modifier, navController: NavHostController) {
+fun CustomBottomNavigation(
+    modifier: Modifier = Modifier,
+    navController: NavHostController,
+    isDarkMode: Boolean = false
+) {
+    val backgroundColor = if (isDarkMode) Color(0xFF1E1E1E) else Color.White
+    val contentColor = if (isDarkMode) Color.White else Color.Black
+    val selectedColor = if (isDarkMode) Color(0xFF64B5F6) else Color(0xFF2196F3)
+
     BottomNavigation(
         modifier = modifier,
-        backgroundColor = Color.White,
+        backgroundColor = backgroundColor,
+        contentColor = contentColor,
         elevation = 8.dp
     ) {
         BottomNavigationItem(
@@ -519,7 +608,8 @@ fun CustomBottomNavigation(modifier: Modifier = Modifier, navController: NavHost
                 Icon(
                     painter = painterResource(id = R.drawable.bluetooth),
                     contentDescription = "Bluetooth",
-                    modifier = Modifier.size(24.dp)
+                    modifier = Modifier.size(24.dp),
+                    tint = selectedColor
                 )
             },
             selected = true,
@@ -530,7 +620,8 @@ fun CustomBottomNavigation(modifier: Modifier = Modifier, navController: NavHost
                 Icon(
                     painter = painterResource(id = R.drawable.gamepad),
                     contentDescription = "Gameplay",
-                    modifier = Modifier.size(24.dp)
+                    modifier = Modifier.size(24.dp),
+                    tint = contentColor
                 )
             },
             selected = false,
@@ -543,7 +634,8 @@ fun CustomBottomNavigation(modifier: Modifier = Modifier, navController: NavHost
                 Icon(
                     painter = painterResource(id = R.drawable.settings),
                     contentDescription = "Settings",
-                    modifier = Modifier.size(24.dp)
+                    modifier = Modifier.size(24.dp),
+                    tint = contentColor
                 )
             },
             selected = false,

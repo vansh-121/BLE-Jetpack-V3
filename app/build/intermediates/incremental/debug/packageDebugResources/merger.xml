@@ -3,7 +3,7 @@
         <item name="windowSplashScreenBackground">#FFFFFF</item>
         <item name="windowSplashScreenAnimatedIcon">@drawable/bg_remove_2</item>
         <item name="postSplashScreenTheme">@style/Theme.BLEJetpackCompose</item>
-    </style></file><file path="C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\src\main\res\values\strings.xml" qualifiers=""><string name="app_name">BLE - Jetpack Compose</string></file><file path="C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\src\main\res\values\themes.xml" qualifiers=""><style name="Theme.BLEJetpackCompose" parent="android:Theme.Material.Light.NoActionBar"/></file><file path="C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\src\main\res\values-night\splash.xml" qualifiers="night-v8"><style name="Theme.BLEJetpackCompose.Splash" parent="Theme.SplashScreen">
+    </style></file><file path="C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\src\main\res\values\strings.xml" qualifiers=""><string name="app_name">BLE Sense 2.0</string></file><file path="C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\src\main\res\values\themes.xml" qualifiers=""><style name="Theme.BLEJetpackCompose" parent="android:Theme.Material.Light.NoActionBar"/></file><file path="C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\src\main\res\values-night\splash.xml" qualifiers="night-v8"><style name="Theme.BLEJetpackCompose.Splash" parent="Theme.SplashScreen">
         <item name="windowSplashScreenBackground">#000000</item>
         <item name="windowSplashScreenAnimatedIcon">@drawable/bg_remove_2</item>
         <item name="postSplashScreenTheme">@style/Theme.BLEJetpackCompose</item>

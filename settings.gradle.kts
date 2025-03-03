@@ -19,5 +19,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "BLE - Jetpack Compose"
+rootProject.name = "BLE Sense - Jetpack Compose"
 include(":app")

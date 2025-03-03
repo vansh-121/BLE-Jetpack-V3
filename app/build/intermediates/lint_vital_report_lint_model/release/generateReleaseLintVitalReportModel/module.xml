@@ -3,10 +3,10 @@
     dir="C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app"
     name=":app"
     type="APP"
-    maven="BLE - Jetpack Compose:app:unspecified"
-    agpVersion="8.7.3"
+    maven="BLE Sense - Jetpack Compose:app:unspecified"
+    agpVersion="8.8.2"
     buildFolder="build"
-    bootClassPath="C:\Users\DELL\AppData\Local\Android\Sdk\platforms\android-35\android.jar;C:\Users\DELL\AppData\Local\Android\Sdk\build-tools\34.0.0\core-lambda-stubs.jar"
+    bootClassPath="C:\Users\DELL\AppData\Local\Android\Sdk\platforms\android-35\android.jar;C:\Users\DELL\AppData\Local\Android\Sdk\build-tools\35.0.0\core-lambda-stubs.jar"
     javaSourceLevel="11"
     compileTarget="android-35">
   <lintOptions

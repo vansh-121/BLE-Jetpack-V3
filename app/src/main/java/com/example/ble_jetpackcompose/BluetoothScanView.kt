@@ -260,17 +260,25 @@ class BluetoothScanViewModel(private val context: Context) : ViewModel() {
             humidity = "${data[3].toUByte()}.${data[4].toUByte()}"
         )
     }
-
     private fun parseLuxSensorData(data: ByteArray): SensorData? {
-        if (data.size < 5) return null
+        // Check if we have enough data
+        if (data.size < 11) return null  // Ensure we have at least 11 bytes
+
         val deviceId = data[0].toUByte().toString()
-        val temperature = "${data[1].toUByte()}.${data[2].toUByte()}".toFloat()
+
+        // Parse lux value correctly - treating each byte as a single digit
+        // Make sure we include all required bytes (5 through 10)
+        val digits = data.sliceArray(5..10).map { it.toInt() }
+
+        // Calculate lux value by combining only non-zero digits
+        val luxValueStr = digits.joinToString("") { it.toString() }.trimStart('0')
+        val luxValue = if (luxValueStr.isEmpty()) 0f else luxValueStr.toFloat()
+
         return SensorData.LuxData(
             deviceId = deviceId,
-            calculatedLux = temperature * 60
+            calculatedLux = luxValue
         )
     }
-
     private fun parseLIS2DHData(data: ByteArray): SensorData? {
         if (data.size < 7) return null
         return SensorData.LIS2DHData(
@@ -315,7 +323,7 @@ class BluetoothScanViewModel(private val context: Context) : ViewModel() {
     // Region: Utility Functions
     private fun determineDeviceType(name: String?): String? = when {
         name?.contains("SHT", ignoreCase = true) == true -> "SHT40"
-        name?.contains("LUX", ignoreCase = true) == true -> "Lux Sensor"
+        name?.contains("Data", ignoreCase = true) == true -> "Lux Sensor"
         name?.contains("Activity", ignoreCase = true) == true -> "LIS2DH"
         name?.contains("SOIL", ignoreCase = true) == true -> "Soil Sensor"
         name?.contains("Speed", ignoreCase = true) == true -> "SPEED_DISTANCE"
