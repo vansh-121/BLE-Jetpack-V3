@@ -36,12 +36,26 @@ class BluetoothScanViewModel<T>(private val context: Context) : ViewModel() {
 
     // Historical data storage - using ConcurrentHashMap for thread safety
     private val deviceHistoricalData = ConcurrentHashMap<String, MutableList<HistoricalDataEntry>>()
+    private val _currentGameMode = MutableStateFlow<GameMode>(GameMode.NONE)
+    val currentGameMode: StateFlow<GameMode> = _currentGameMode.asStateFlow()
 
     // Configure scan intervals
     companion object {
         private const val SCAN_PERIOD = 10000L // 10 seconds
         private const val SCAN_INTERVAL = 30000L // 30 seconds between scans
         private const val MAX_HISTORY_ENTRIES_PER_DEVICE = 1000 // Limit entries to prevent memory issues
+    }
+
+    enum class GameMode {
+        NONE,
+        HUNT_THE_HEROES,
+        GUESS_THE_CHARACTER
+    }
+
+    fun setGameMode(mode: GameMode) {
+        _currentGameMode.value = mode
+        // Clear devices when changing mode
+        clearDevices()
     }
 
     // Data class to store historical data with timestamps

@@ -292,11 +292,26 @@ fun GameActivityScreen(
             }
         }
 
+        LaunchedEffect(expandedImage) {
+            if (expandedImage == R.drawable.hunt_the_heroes) {
+                // Add this line
+                bluetoothViewModel.setGameMode(BluetoothScanViewModel.GameMode.HUNT_THE_HEROES)
+
+                bluetoothViewModel.startScan(activity)
+            } else {
+                // Add this line when exiting the mode
+                bluetoothViewModel.setGameMode(BluetoothScanViewModel.GameMode.NONE)
+            }
+        }
+
         // Hunt the Heroes Logic
         if (expandedImage == R.drawable.hunt_the_heroes) {
             val nearbyHeroDevice = bluetoothDevices.find {
                 it.name in allowedHeroes && it.rssi.toInt() in -40..0 && it.name !in foundCharacters.keys
             }
+
+
+
 
 
             LaunchedEffect(nearbyHeroDevice) {
@@ -542,21 +557,32 @@ fun GameActivityScreen(
             var showCharacterReveal by remember { mutableStateOf(false) }
             var detectedCharacter by remember { mutableStateOf<String?>(null) }
 
-            val nearbyHeroForGuessing = bluetoothDevices.find {
-                it.name in allowedHeroes && it.rssi.toInt() in -40..0
+            val nearbyHeroForGuessing = bluetoothDevices.find { device ->
+                device.name in allowedHeroes &&
+                        device.rssi.toInt() in -40..0 &&
+                        device.name !in foundCharacters.keys
             }
+
+//            val nearbyHeroForGuessing = bluetoothDevices.find { device ->
+//                device.name in allowedHeroes &&
+//                        device.rssi.toInt() in -40..0
+//            }
 
             LaunchedEffect(expandedImage) {
                 if (expandedImage == R.drawable.guess_the_character) {
+                    // Add this line
+                    bluetoothViewModel.setGameMode(BluetoothScanViewModel.GameMode.GUESS_THE_CHARACTER)
+
                     delay(100)
                     showRadar = true
                     bluetoothViewModel.startScan(activity)
                 } else {
+                    // Add this line when exiting the mode
+                    bluetoothViewModel.setGameMode(BluetoothScanViewModel.GameMode.NONE)
                     showRadar = false
                     showCharacterReveal = false
                 }
             }
-
             LaunchedEffect(nearbyHeroForGuessing) {
                 if (nearbyHeroForGuessing != null && expandedImage == R.drawable.guess_the_character) {
                     delay(1500)
