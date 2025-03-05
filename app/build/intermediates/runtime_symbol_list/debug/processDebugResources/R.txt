@@ -3056,6 +3056,7 @@ int drawable notification_template_icon_bg 0x7f07011a
 int drawable notification_template_icon_low_bg 0x7f07011b
 int drawable notification_tile_bg 0x7f07011c
 int drawable notify_panel_notification_icon_bg 0x7f07011d
+int drawable open_box 0x7f070132
 int drawable parrot 0x7f07011e
 int drawable pirate 0x7f07011f
 int drawable scratch 0x7f070120

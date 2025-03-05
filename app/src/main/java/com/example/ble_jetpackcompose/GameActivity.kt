@@ -653,55 +653,61 @@ fun GameActivityScreen(
 
 
         // Sound Button - Bottom Right
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.End
+        Box(
+            modifier = Modifier
+                .padding(end = 16.dp)
+                .clickable { isSoundOn = !isSoundOn }
         ) {
-            Box(
-                modifier = Modifier
-                    .padding(16.dp)
-                    .clickable { isSoundOn = !isSoundOn }
-            ) {
-                Image(
-                    painter = painterResource(id = if (isSoundOn) R.drawable.soundon else R.drawable.soundoff),
-                    contentDescription = if (isSoundOn) "Sound On" else "Sound Off",
-                    modifier = Modifier.size(40.dp)
-                )
-            }
-        }
-    }
-
-
-
-    // Game Box Button in the bottom-left corner
-    Box(
-        modifier = Modifier
-            .offset { IntOffset(gameBoxPosition.x.toInt(), gameBoxPosition.y.toInt()) }
-            .size(80.dp)
-            .clickable {
-                isGameBoxOpen = true // Open the Game Box when clicked
-            }
-    ) {
-        Image(
-            painter = painterResource(id = R.drawable.close_box), // Replace with your Game Box image
-            contentDescription = "Game Box",
-            modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.Crop
-        )
-
-        // Display the number of collected heroes on the Game Box
-        if (foundCharacters.isNotEmpty()) {
-            Text(
-                text = "${foundCharacters.size}",
-                style = MaterialTheme.typography.body2,
-                color = Color.White,
-                modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .background(Color.Black.copy(alpha = 0.7f), shape = RoundedCornerShape(4.dp))
-                    .padding(4.dp)
+            Image(
+                painter = painterResource(id = if (isSoundOn) R.drawable.soundon else R.drawable.soundoff),
+                contentDescription = if (isSoundOn) "Sound On" else "Sound Off",
+                modifier = Modifier.size(60.dp)
             )
         }
     }
+
+
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(bottom = 16.dp),
+        contentAlignment = Alignment.BottomCenter
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.Bottom
+        ) {
+            // Game Box Button in the bottom-left corner
+            Box(
+                modifier = Modifier
+                    .padding(start = 16.dp)
+                    .size(80.dp)
+                    .clickable {
+                        isGameBoxOpen = true // Open the Game Box when clicked
+                    }
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.close_box),
+                    contentDescription = "Game Box",
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.Crop
+                )
+
+                // Display the number of collected heroes on the Game Box
+                if (foundCharacters.isNotEmpty()) {
+                    Text(
+                        text = "${foundCharacters.size}",
+                        style = MaterialTheme.typography.body2,
+                        color = Color.White,
+                        modifier = Modifier
+                            .align(Alignment.TopEnd)
+                            .background(Color.Black.copy(alpha = 0.7f), shape = RoundedCornerShape(4.dp))
+                            .padding(4.dp)
+                    )
+                }
+            }
 
     // Open Game Box Popup
     if (isGameBoxOpen) {
@@ -760,3 +766,5 @@ fun GameActivityScreen(
         }
     }
 }
+        }
+    }

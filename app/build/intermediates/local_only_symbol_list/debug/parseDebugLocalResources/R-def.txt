@@ -52,6 +52,7 @@ drawable logoblelastfinal
 drawable logofinal
 drawable logofinallast
 drawable monkey
+drawable open_box
 drawable parrot
 drawable pirate
 drawable scratch
