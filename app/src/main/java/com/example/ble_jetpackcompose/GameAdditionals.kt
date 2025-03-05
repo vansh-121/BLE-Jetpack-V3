@@ -3,10 +3,12 @@ package com.example.ble_jetpackcompose
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
@@ -23,9 +25,12 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -35,8 +40,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Alignment.Companion.TopCenter
-import androidx.compose.ui.Alignment.Companion.TopStart
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.clipToBounds
@@ -108,8 +111,8 @@ fun AnimatedImageButton(
     ) { expanded ->
         if (expanded) {
             val currentX = currentPosition.x.toFloat()
-            val buttonWidthPx = dpToPx(380.dp)
-            val targetX = (screenWidth - buttonWidthPx) / 2f
+            val buttonWidthPx = dpToPx(200.dp) // Width of the button in pixels
+            val targetX = (screenWidth - buttonWidthPx) / 3.5f // Center horizontally
             targetX - currentX
         } else 0f
     }
@@ -121,8 +124,8 @@ fun AnimatedImageButton(
     ) { expanded ->
         if (expanded) {
             val currentY = currentPosition.y.toFloat()
-            val buttonHeightPx = dpToPx(282.dp)
-            val targetY = (screenHeight - buttonHeightPx) / 2f
+            val buttonHeightPx = dpToPx(282.dp) // Height of the button in pixels
+            val targetY = (screenHeight - buttonHeightPx) / 2.3f // Center vertically
             targetY - currentY
         } else 0f
     }
@@ -132,8 +135,8 @@ fun AnimatedImageButton(
             painter = painterResource(id = if (isExpanded) expandedImageResId else imageResId),
             contentDescription = contentDescription,
             modifier = Modifier
-                .width(209.dp)
-                .height(282.dp)
+                .width(200.dp)
+                .height(280.dp)
                 .onGloballyPositioned { coordinates ->
                     if (!isExpanded) {
                         onPositioned(
@@ -153,14 +156,14 @@ fun AnimatedImageButton(
                 }
                 .clickable(
                     onClick = onClick,
-                    indication = null,  // Disable the ripple effect
+                    indication = null, // Disable the ripple effect
                     interactionSource = remember { MutableInteractionSource() } // Remove ripple and interaction feedback
                 ),
             contentScale = ContentScale.Crop
         )
-
     }
 }
+
 
 @Composable
 fun RadarScreenWithRotatingLine(modifier: Modifier = Modifier) {
@@ -333,30 +336,57 @@ fun generateRandomPosition(radius: Float): Offset {
 
 //@OptIn(ExperimentalComposeUiApi::class) // Opting into experimental API @Composable
 @Composable
-fun ScratchCardScreen() {
+fun ScratchCardScreen(
+    heroName: String,
+    modifier: Modifier = Modifier,
+    onScratchCompleted: () -> Unit = {}
+) {
     val overlayImage = ImageBitmap.imageResource(id = R.drawable.scratch)
-    val baseImage = ImageBitmap.imageResource(id = R.drawable.inner)
+    // Select base image based on hero name
+    val baseImage = ImageBitmap.imageResource(
+        id = when (heroName) {
+            "Iron_Man" -> R.drawable.iron_man
+            "Hulk" -> R.drawable.hulk_
+            "Captain Marvel" -> R.drawable.captain_marvel
+            "Captain America" -> R.drawable.captain_america
+            else -> R.drawable.inner // Default fallback image
+        }
+    )
 
     val currentPathState = remember { mutableStateOf(DraggedPath(path = Path(), width = 150f)) }
     var scratchedAreaPercentage by remember { mutableFloatStateOf(0f) }
-
-
+    var hasCalledCompletion by remember { mutableStateOf(false) }
     val canvasSizePx = with(LocalDensity.current) { 300.dp.toPx() }
+
+    // Animation state for hero reveal
+    var showHeroReveal by remember { mutableStateOf(false) }
+    val animatedScale by animateFloatAsState(
+        targetValue = if (showHeroReveal) 1.2f else 1f,
+        animationSpec = tween(durationMillis = 500, easing = FastOutSlowInEasing),
+        label = "heroRevealScale"
+    )
+
+    // Trigger the completion callback when scratch reaches 95%
+    LaunchedEffect(scratchedAreaPercentage) {
+        if (scratchedAreaPercentage >= 95f && !hasCalledCompletion) {
+            hasCalledCompletion = true
+            onScratchCompleted()
+            showHeroReveal = true // Trigger hero reveal animation
+        }
+    }
 
     LaunchedEffect(Unit) {
         val stepSize = canvasSizePx / 8
         var scratchedArea: Float
-        canvasSizePx * canvasSizePx
+        val totalArea = canvasSizePx * canvasSizePx
 
         // Zigzag pattern
         for (y in 0..canvasSizePx.toInt() step (stepSize / 1.5f).toInt()) {
-            // Alternate direction for each row
             val xRange = if (y % (stepSize.toInt() * 2) == 0) {
                 (0..canvasSizePx.toInt() step (stepSize / 1.5f).toInt())
             } else {
                 (canvasSizePx.toInt() downTo 0 step (stepSize / 1.5f).toInt())
             }
-
             for (x in xRange) {
                 currentPathState.value.path.addOval(
                     androidx.compose.ui.geometry.Rect(
@@ -364,48 +394,70 @@ fun ScratchCardScreen() {
                         radius = stepSize * 1.2f
                     )
                 )
-
-                // Add diagonal connections for smoother zigzag
-                if (y > 0 && x > stepSize && x < canvasSizePx - stepSize) {
-                    currentPathState.value.path.addOval(
-                        androidx.compose.ui.geometry.Rect(
-                            center = Offset(
-                                x.toFloat() - stepSize/2,
-                                y.toFloat() - stepSize/2
-                            ),
-                            radius = stepSize * 1.2f
-                        )
-                    )
-                }
-
-                scratchedArea = (y * canvasSizePx + x) / (canvasSizePx * canvasSizePx) * 100f
+                scratchedArea = (y * canvasSizePx + x) / totalArea * 100f
                 scratchedAreaPercentage = scratchedArea.coerceAtMost(100f)
-
                 delay(30)
-
             }
-
         }
     }
 
     Box(
-        contentAlignment = TopCenter
+        contentAlignment = Alignment.Center,
+        modifier = modifier
     ) {
-        ScratchCanvas(
-            overlayImage = overlayImage,
-            baseImage = baseImage,
-            currentPath = currentPathState.value.path,
-            modifier = Modifier
-                .align(alignment = TopStart)
-                .size(300.dp)
-        )
+        // Scratch Canvas (Visible only while scratching)
+        if (scratchedAreaPercentage < 95f) {
+            ScratchCanvas(
+                overlayImage = overlayImage,
+                baseImage = baseImage,
+                currentPath = currentPathState.value.path,
+                modifier = Modifier
+                    .size(300.dp)
+                    .align(Alignment.Center)
+            )
+        } else {
+            // Reveal Hero Image with Animation
+            Image(
+                painter = painterResource(
+                    id = when (heroName) {
+                        "Iron_Man" -> R.drawable.iron_man
+                        "Hulk" -> R.drawable.hulk_
+                        "Captain Marvel" -> R.drawable.captain_marvel
+                        "Captain America" -> R.drawable.captain_america
+                        else -> R.drawable.inner // Default fallback image
+                    }
+                ),
+                contentDescription = "Revealed Hero",
+                modifier = Modifier
+                    .size(300.dp)
+                    .graphicsLayer {
+                        scaleX = animatedScale
+                        scaleY = animatedScale
+                    }
+                    .align(Alignment.Center)
+            )
+        }
 
-        Text(
-            text = " ${scratchedAreaPercentage.toInt()}%",
-            modifier = Modifier.size(height =  0.dp, width = 0.dp),
-        )
-
-
+        // Completion Indicator
+        AnimatedVisibility(
+            visible = scratchedAreaPercentage >= 95f,
+            enter = fadeIn(),
+            exit = fadeOut()
+        ) {
+            Text(
+                text = "Hero collected!",
+                style = MaterialTheme.typography.titleLarge,
+                color = Color.White,
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = 16.dp)
+                    .background(
+                        Color(0x99000000),
+                        shape = RoundedCornerShape(4.dp)
+                    )
+                    .padding(horizontal = 12.dp, vertical = 4.dp)
+            )
+        }
     }
 }
 

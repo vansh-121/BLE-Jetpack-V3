@@ -64,7 +64,7 @@ import kotlinx.coroutines.delay
 @Composable
 fun MainScreen(
     navController: NavHostController,
-    bluetoothViewModel: BluetoothScanViewModel,
+    bluetoothViewModel: BluetoothScanViewModel<Any?>,
 ) {
     val bluetoothDevices by bluetoothViewModel.devices.collectAsState(initial = emptyList())
     val isScanning by bluetoothViewModel.isScanning.collectAsState()

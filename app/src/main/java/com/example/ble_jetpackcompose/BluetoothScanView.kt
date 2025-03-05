@@ -24,7 +24,7 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import java.util.concurrent.ConcurrentHashMap
 
-class BluetoothScanViewModel(private val context: Context) : ViewModel() {
+class BluetoothScanViewModel<T>(private val context: Context) : ViewModel() {
     private val _devices = MutableStateFlow<List<BluetoothDevice>>(emptyList())
     val devices: StateFlow<List<BluetoothDevice>> = _devices.asStateFlow()
 

@@ -2902,6 +2902,9 @@ drawable btn_radio_off_mtrl
 drawable btn_radio_off_to_on_mtrl_animation
 drawable btn_radio_on_mtrl
 drawable btn_radio_on_to_off_mtrl_animation
+drawable captain_america
+drawable captain_marvel
+drawable close_box
 drawable common_full_open_on_phone
 drawable common_google_signin_btn_icon_dark
 drawable common_google_signin_btn_icon_dark_focused
@@ -2943,6 +2946,7 @@ drawable gth
 drawable guess_the_character
 drawable home
 drawable hth
+drawable hulk_
 drawable hunt_the_heroes
 drawable ic_arrow_back_black_24
 drawable ic_call_answer
@@ -2969,6 +2973,7 @@ drawable ic_password
 drawable ic_search_black_24
 drawable icon_background
 drawable inner
+drawable iron_man
 drawable jack
 drawable jjack
 drawable lock

@@ -65,7 +65,7 @@ fun AdvertisingDataScreen(
 ) {
     val context = LocalContext.current
     // Use viewModel() for proper lifecycle management
-    val viewModel: BluetoothScanViewModel = viewModel()
+    val viewModel: BluetoothScanViewModel<Any?> = viewModel()
     val activity = context as Activity
 
     // Collect the device list from the ViewModel
@@ -189,7 +189,7 @@ fun AdvertisingDataScreen(
 
 @Composable
 private fun DownloadButton(
-    viewModel: BluetoothScanViewModel,
+    viewModel: BluetoothScanViewModel<Any?>,
     deviceAddress: String,
     deviceName: String,
     deviceId: String
@@ -234,7 +234,7 @@ private fun DownloadButton(
 private fun exportDataToCSV(
     context: Context,
     uri: Uri,
-    viewModel: BluetoothScanViewModel,
+    viewModel: BluetoothScanViewModel<Any?>,
     deviceAddress: String,
     deviceName: String,
     deviceId: String,
@@ -374,7 +374,7 @@ private fun exportDataToCSV(
 @Composable
 private fun HeaderSection(
     navController: NavController,
-    viewModel: BluetoothScanViewModel,
+    viewModel: BluetoothScanViewModel<Any?>,
     deviceAddress: String // Add this parameter
 ) {
     Row(

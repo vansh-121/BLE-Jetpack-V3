@@ -1,5 +1,6 @@
 package com.example.ble_jetpackcompose
 
+import android.app.Activity
 import android.app.Application
 import androidx.activity.ComponentActivity
 import androidx.activity.viewModels
@@ -23,7 +24,7 @@ fun AppNavigation(navController: NavHostController) {
     val context = LocalContext.current
     val application = context.applicationContext as Application
     val activity = context as ComponentActivity
-    val bluetoothViewModel: BluetoothScanViewModel by activity.viewModels { BluetoothScanViewModelFactory(application)}
+    val bluetoothViewModel: BluetoothScanViewModel<Any?> by activity.viewModels { BluetoothScanViewModelFactory(application)}
 
     // Check authentication state when the app starts
     LaunchedEffect(Unit) {
@@ -125,7 +126,8 @@ fun AppNavigation(navController: NavHostController) {
         }
 
         composable("game_screen") {
-            GameActivityScreen()
+            val activity = LocalContext.current as Activity  // ✅ Get current activity
+            GameActivityScreen(activity = activity)  // ✅ Pass activity correctly
         }
 
         composable("settings_screen") {
@@ -154,7 +156,7 @@ fun AppNavigation(navController: NavHostController) {
             backStackEntry.arguments?.getString("sensorType") ?: ""
             val deviceId = backStackEntry.arguments?.getString("deviceId") ?: ""
             // Get the device from the ViewModel using the address
-            val viewModel: BluetoothScanViewModel = viewModel(factory = BluetoothScanViewModelFactory(application))
+            val viewModel: BluetoothScanViewModel<Any?> = viewModel(factory = BluetoothScanViewModelFactory(application))
             val devices by viewModel.devices.collectAsState()
             devices.find { it.address == deviceAddress }
 

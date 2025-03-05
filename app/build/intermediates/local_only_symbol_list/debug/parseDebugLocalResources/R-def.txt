@@ -19,6 +19,9 @@ drawable bg_remove_2
 drawable bg_remove_ble
 drawable ble_games
 drawable bluetooth
+drawable captain_america
+drawable captain_marvel
+drawable close_box
 drawable eyes
 drawable eyes_visibility
 drawable facebook
@@ -32,10 +35,12 @@ drawable gth
 drawable guess_the_character
 drawable home
 drawable hth
+drawable hulk_
 drawable hunt_the_heroes
 drawable ic_launcher_background
 drawable ic_launcher_foreground
 drawable inner
+drawable iron_man
 drawable jack
 drawable jjack
 drawable lock

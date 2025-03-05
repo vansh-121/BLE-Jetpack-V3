@@ -69,7 +69,7 @@ fun ChartScreen(
     val context = LocalContext.current
     val application = context.applicationContext as Application
     val factory = remember { BluetoothScanViewModelFactory(application) }
-    val viewModel: BluetoothScanViewModel = viewModel(factory = factory)
+    val viewModel: BluetoothScanViewModel<Any?> = viewModel(factory = factory)
 
     // Collect sensor data from the device using the device address
     val sensorData by remember(deviceAddress) {

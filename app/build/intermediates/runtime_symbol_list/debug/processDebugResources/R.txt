@@ -2901,6 +2901,9 @@ int drawable btn_radio_off_mtrl 0x7f070084
 int drawable btn_radio_off_to_on_mtrl_animation 0x7f070085
 int drawable btn_radio_on_mtrl 0x7f070086
 int drawable btn_radio_on_to_off_mtrl_animation 0x7f070087
+int drawable captain_america 0x7f07012d
+int drawable captain_marvel 0x7f07012e
+int drawable close_box 0x7f070131
 int drawable common_full_open_on_phone 0x7f070088
 int drawable common_google_signin_btn_icon_dark 0x7f070089
 int drawable common_google_signin_btn_icon_dark_focused 0x7f07008a
@@ -2942,6 +2945,7 @@ int drawable gth 0x7f0700ad
 int drawable guess_the_character 0x7f0700ae
 int drawable home 0x7f0700af
 int drawable hth 0x7f0700b0
+int drawable hulk_ 0x7f07012f
 int drawable hunt_the_heroes 0x7f0700b1
 int drawable ic_arrow_back_black_24 0x7f0700b2
 int drawable ic_call_answer 0x7f0700b3
@@ -2968,6 +2972,7 @@ int drawable ic_password 0x7f0700c7
 int drawable ic_search_black_24 0x7f0700c8
 int drawable icon_background 0x7f0700c9
 int drawable inner 0x7f0700ca
+int drawable iron_man 0x7f070130
 int drawable jack 0x7f0700cb
 int drawable jjack 0x7f0700cc
 int drawable lock 0x7f0700cd
