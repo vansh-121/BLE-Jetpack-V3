@@ -4,7 +4,7 @@
             "outputFile": "com.example.ble_jetpackcompose.app-mergeDebugResources-74:/values-land/values-land.xml",
             "map": [
                 {
-                    "source": "C:\\Users\\DELL\\.gradle\\caches\\8.10.2\\transforms\\82f0dc094f0b1d6cf360527d28f95ce3\\transformed\\material-1.9.0\\res\\values-land\\values-land.xml",
+                    "source": "C:\\Users\\DELL\\.gradle\\caches\\8.11.1\\transforms\\289ad281d3c424fa2928d5bb9c67039a\\transformed\\material-1.9.0\\res\\values-land\\values-land.xml",
                     "from": {
                         "startLines": "2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,26,35,40",
                         "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
@@ -23,7 +23,7 @@
                     }
                 },
                 {
-                    "source": "C:\\Users\\DELL\\.gradle\\caches\\8.10.2\\transforms\\23399ed6cd047541aebc37a19ede9397\\transformed\\appcompat-1.5.0\\res\\values-land\\values-land.xml",
+                    "source": "C:\\Users\\DELL\\.gradle\\caches\\8.11.1\\transforms\\55d419d37888059ff2f44e465564ffd2\\transformed\\appcompat-1.5.0\\res\\values-land\\values-land.xml",
                     "from": {
                         "startLines": "2,3,4",
                         "startColumns": "4,4,4",

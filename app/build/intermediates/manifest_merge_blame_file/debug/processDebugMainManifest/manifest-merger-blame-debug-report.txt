@@ -30,32 +30,32 @@
 17-->C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\src\main\AndroidManifest.xml:11:5-77
 17-->C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\src\main\AndroidManifest.xml:11:22-75
 18    <uses-permission android:name="android.permission.INTERNET" />
-18-->[com.google.firebase:firebase-auth:23.1.0] C:\Users\DELL\.gradle\caches\8.10.2\transforms\3c90da3ab7f346914dfddd38d1aa6773\transformed\firebase-auth-23.1.0\AndroidManifest.xml:25:5-67
-18-->[com.google.firebase:firebase-auth:23.1.0] C:\Users\DELL\.gradle\caches\8.10.2\transforms\3c90da3ab7f346914dfddd38d1aa6773\transformed\firebase-auth-23.1.0\AndroidManifest.xml:25:22-64
+18-->[com.google.firebase:firebase-auth:23.1.0] C:\Users\DELL\.gradle\caches\8.11.1\transforms\e38744ba42fb8cfe021c04b4eb87aff4\transformed\firebase-auth-23.1.0\AndroidManifest.xml:25:5-67
+18-->[com.google.firebase:firebase-auth:23.1.0] C:\Users\DELL\.gradle\caches\8.11.1\transforms\e38744ba42fb8cfe021c04b4eb87aff4\transformed\firebase-auth-23.1.0\AndroidManifest.xml:25:22-64
 19    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-19-->[com.google.firebase:firebase-auth:23.1.0] C:\Users\DELL\.gradle\caches\8.10.2\transforms\3c90da3ab7f346914dfddd38d1aa6773\transformed\firebase-auth-23.1.0\AndroidManifest.xml:26:5-79
-19-->[com.google.firebase:firebase-auth:23.1.0] C:\Users\DELL\.gradle\caches\8.10.2\transforms\3c90da3ab7f346914dfddd38d1aa6773\transformed\firebase-auth-23.1.0\AndroidManifest.xml:26:22-76
+19-->[com.google.firebase:firebase-auth:23.1.0] C:\Users\DELL\.gradle\caches\8.11.1\transforms\e38744ba42fb8cfe021c04b4eb87aff4\transformed\firebase-auth-23.1.0\AndroidManifest.xml:26:5-79
+19-->[com.google.firebase:firebase-auth:23.1.0] C:\Users\DELL\.gradle\caches\8.11.1\transforms\e38744ba42fb8cfe021c04b4eb87aff4\transformed\firebase-auth-23.1.0\AndroidManifest.xml:26:22-76
 20    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
-20-->[com.google.android.recaptcha:recaptcha:18.5.1] C:\Users\DELL\.gradle\caches\8.10.2\transforms\d69e5fd1004b503d51af8dbd9fc710e1\transformed\recaptcha-18.5.1\AndroidManifest.xml:9:5-98
-20-->[com.google.android.recaptcha:recaptcha:18.5.1] C:\Users\DELL\.gradle\caches\8.10.2\transforms\d69e5fd1004b503d51af8dbd9fc710e1\transformed\recaptcha-18.5.1\AndroidManifest.xml:9:22-95
+20-->[com.google.android.recaptcha:recaptcha:18.5.1] C:\Users\DELL\.gradle\caches\8.11.1\transforms\cc95da70f16e5f3e26811cd00677d578\transformed\recaptcha-18.5.1\AndroidManifest.xml:9:5-98
+20-->[com.google.android.recaptcha:recaptcha:18.5.1] C:\Users\DELL\.gradle\caches\8.11.1\transforms\cc95da70f16e5f3e26811cd00677d578\transformed\recaptcha-18.5.1\AndroidManifest.xml:9:22-95
 21
 22    <permission
-22-->[androidx.core:core:1.15.0] C:\Users\DELL\.gradle\caches\8.10.2\transforms\2952717b3a84bbc046ad3798099fed43\transformed\core-1.15.0\AndroidManifest.xml:22:5-24:47
+22-->[androidx.core:core:1.15.0] C:\Users\DELL\.gradle\caches\8.11.1\transforms\1e435ce1ddb5b273dbbc8d5e8fd8f2e2\transformed\core-1.15.0\AndroidManifest.xml:22:5-24:47
 23        android:name="com.example.ble_jetpackcompose.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
-23-->[androidx.core:core:1.15.0] C:\Users\DELL\.gradle\caches\8.10.2\transforms\2952717b3a84bbc046ad3798099fed43\transformed\core-1.15.0\AndroidManifest.xml:23:9-81
+23-->[androidx.core:core:1.15.0] C:\Users\DELL\.gradle\caches\8.11.1\transforms\1e435ce1ddb5b273dbbc8d5e8fd8f2e2\transformed\core-1.15.0\AndroidManifest.xml:23:9-81
 24        android:protectionLevel="signature" />
-24-->[androidx.core:core:1.15.0] C:\Users\DELL\.gradle\caches\8.10.2\transforms\2952717b3a84bbc046ad3798099fed43\transformed\core-1.15.0\AndroidManifest.xml:24:9-44
+24-->[androidx.core:core:1.15.0] C:\Users\DELL\.gradle\caches\8.11.1\transforms\1e435ce1ddb5b273dbbc8d5e8fd8f2e2\transformed\core-1.15.0\AndroidManifest.xml:24:9-44
 25
 26    <uses-permission android:name="com.example.ble_jetpackcompose.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" />
-26-->[androidx.core:core:1.15.0] C:\Users\DELL\.gradle\caches\8.10.2\transforms\2952717b3a84bbc046ad3798099fed43\transformed\core-1.15.0\AndroidManifest.xml:26:5-97
-26-->[androidx.core:core:1.15.0] C:\Users\DELL\.gradle\caches\8.10.2\transforms\2952717b3a84bbc046ad3798099fed43\transformed\core-1.15.0\AndroidManifest.xml:26:22-94
+26-->[androidx.core:core:1.15.0] C:\Users\DELL\.gradle\caches\8.11.1\transforms\1e435ce1ddb5b273dbbc8d5e8fd8f2e2\transformed\core-1.15.0\AndroidManifest.xml:26:5-97
+26-->[androidx.core:core:1.15.0] C:\Users\DELL\.gradle\caches\8.11.1\transforms\1e435ce1ddb5b273dbbc8d5e8fd8f2e2\transformed\core-1.15.0\AndroidManifest.xml:26:22-94
 27
 28    <application
 28-->C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\src\main\AndroidManifest.xml:16:5-55:19
 29        android:allowBackup="true"
 29-->C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\src\main\AndroidManifest.xml:17:9-35
 30        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
-30-->[androidx.core:core:1.15.0] C:\Users\DELL\.gradle\caches\8.10.2\transforms\2952717b3a84bbc046ad3798099fed43\transformed\core-1.15.0\AndroidManifest.xml:28:18-86
+30-->[androidx.core:core:1.15.0] C:\Users\DELL\.gradle\caches\8.11.1\transforms\1e435ce1ddb5b273dbbc8d5e8fd8f2e2\transformed\core-1.15.0\AndroidManifest.xml:28:18-86
 31        android:dataExtractionRules="@xml/data_extraction_rules"
 31-->C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\src\main\AndroidManifest.xml:18:9-65
 32        android:debuggable="true"
@@ -113,276 +113,276 @@
 64            </intent-filter>
 65        </activity>
 66        <activity
-66-->[com.google.firebase:firebase-auth:23.1.0] C:\Users\DELL\.gradle\caches\8.10.2\transforms\3c90da3ab7f346914dfddd38d1aa6773\transformed\firebase-auth-23.1.0\AndroidManifest.xml:29:9-46:20
+66-->[com.google.firebase:firebase-auth:23.1.0] C:\Users\DELL\.gradle\caches\8.11.1\transforms\e38744ba42fb8cfe021c04b4eb87aff4\transformed\firebase-auth-23.1.0\AndroidManifest.xml:29:9-46:20
 67            android:name="com.google.firebase.auth.internal.GenericIdpActivity"
-67-->[com.google.firebase:firebase-auth:23.1.0] C:\Users\DELL\.gradle\caches\8.10.2\transforms\3c90da3ab7f346914dfddd38d1aa6773\transformed\firebase-auth-23.1.0\AndroidManifest.xml:30:13-80
+67-->[com.google.firebase:firebase-auth:23.1.0] C:\Users\DELL\.gradle\caches\8.11.1\transforms\e38744ba42fb8cfe021c04b4eb87aff4\transformed\firebase-auth-23.1.0\AndroidManifest.xml:30:13-80
 68            android:excludeFromRecents="true"
-68-->[com.google.firebase:firebase-auth:23.1.0] C:\Users\DELL\.gradle\caches\8.10.2\transforms\3c90da3ab7f346914dfddd38d1aa6773\transformed\firebase-auth-23.1.0\AndroidManifest.xml:31:13-46
+68-->[com.google.firebase:firebase-auth:23.1.0] C:\Users\DELL\.gradle\caches\8.11.1\transforms\e38744ba42fb8cfe021c04b4eb87aff4\transformed\firebase-auth-23.1.0\AndroidManifest.xml:31:13-46
 69            android:exported="true"
-69-->[com.google.firebase:firebase-auth:23.1.0] C:\Users\DELL\.gradle\caches\8.10.2\transforms\3c90da3ab7f346914dfddd38d1aa6773\transformed\firebase-auth-23.1.0\AndroidManifest.xml:32:13-36
+69-->[com.google.firebase:firebase-auth:23.1.0] C:\Users\DELL\.gradle\caches\8.11.1\transforms\e38744ba42fb8cfe021c04b4eb87aff4\transformed\firebase-auth-23.1.0\AndroidManifest.xml:32:13-36
 70            android:launchMode="singleTask"
-70-->[com.google.firebase:firebase-auth:23.1.0] C:\Users\DELL\.gradle\caches\8.10.2\transforms\3c90da3ab7f346914dfddd38d1aa6773\transformed\firebase-auth-23.1.0\AndroidManifest.xml:33:13-44
+70-->[com.google.firebase:firebase-auth:23.1.0] C:\Users\DELL\.gradle\caches\8.11.1\transforms\e38744ba42fb8cfe021c04b4eb87aff4\transformed\firebase-auth-23.1.0\AndroidManifest.xml:33:13-44
 71            android:theme="@android:style/Theme.Translucent.NoTitleBar" >
-71-->[com.google.firebase:firebase-auth:23.1.0] C:\Users\DELL\.gradle\caches\8.10.2\transforms\3c90da3ab7f346914dfddd38d1aa6773\transformed\firebase-auth-23.1.0\AndroidManifest.xml:34:13-72
+71-->[com.google.firebase:firebase-auth:23.1.0] C:\Users\DELL\.gradle\caches\8.11.1\transforms\e38744ba42fb8cfe021c04b4eb87aff4\transformed\firebase-auth-23.1.0\AndroidManifest.xml:34:13-72
 72            <intent-filter>
-72-->[com.google.firebase:firebase-auth:23.1.0] C:\Users\DELL\.gradle\caches\8.10.2\transforms\3c90da3ab7f346914dfddd38d1aa6773\transformed\firebase-auth-23.1.0\AndroidManifest.xml:35:13-45:29
+72-->[com.google.firebase:firebase-auth:23.1.0] C:\Users\DELL\.gradle\caches\8.11.1\transforms\e38744ba42fb8cfe021c04b4eb87aff4\transformed\firebase-auth-23.1.0\AndroidManifest.xml:35:13-45:29
 73                <action android:name="android.intent.action.VIEW" />
-73-->[com.google.firebase:firebase-auth:23.1.0] C:\Users\DELL\.gradle\caches\8.10.2\transforms\3c90da3ab7f346914dfddd38d1aa6773\transformed\firebase-auth-23.1.0\AndroidManifest.xml:36:17-69
-73-->[com.google.firebase:firebase-auth:23.1.0] C:\Users\DELL\.gradle\caches\8.10.2\transforms\3c90da3ab7f346914dfddd38d1aa6773\transformed\firebase-auth-23.1.0\AndroidManifest.xml:36:25-66
+73-->[com.google.firebase:firebase-auth:23.1.0] C:\Users\DELL\.gradle\caches\8.11.1\transforms\e38744ba42fb8cfe021c04b4eb87aff4\transformed\firebase-auth-23.1.0\AndroidManifest.xml:36:17-69
+73-->[com.google.firebase:firebase-auth:23.1.0] C:\Users\DELL\.gradle\caches\8.11.1\transforms\e38744ba42fb8cfe021c04b4eb87aff4\transformed\firebase-auth-23.1.0\AndroidManifest.xml:36:25-66
 74
 75                <category android:name="android.intent.category.DEFAULT" />
-75-->[com.google.firebase:firebase-auth:23.1.0] C:\Users\DELL\.gradle\caches\8.10.2\transforms\3c90da3ab7f346914dfddd38d1aa6773\transformed\firebase-auth-23.1.0\AndroidManifest.xml:38:17-76
-75-->[com.google.firebase:firebase-auth:23.1.0] C:\Users\DELL\.gradle\caches\8.10.2\transforms\3c90da3ab7f346914dfddd38d1aa6773\transformed\firebase-auth-23.1.0\AndroidManifest.xml:38:27-73
+75-->[com.google.firebase:firebase-auth:23.1.0] C:\Users\DELL\.gradle\caches\8.11.1\transforms\e38744ba42fb8cfe021c04b4eb87aff4\transformed\firebase-auth-23.1.0\AndroidManifest.xml:38:17-76
+75-->[com.google.firebase:firebase-auth:23.1.0] C:\Users\DELL\.gradle\caches\8.11.1\transforms\e38744ba42fb8cfe021c04b4eb87aff4\transformed\firebase-auth-23.1.0\AndroidManifest.xml:38:27-73
 76                <category android:name="android.intent.category.BROWSABLE" />
-76-->[com.google.firebase:firebase-auth:23.1.0] C:\Users\DELL\.gradle\caches\8.10.2\transforms\3c90da3ab7f346914dfddd38d1aa6773\transformed\firebase-auth-23.1.0\AndroidManifest.xml:39:17-78
-76-->[com.google.firebase:firebase-auth:23.1.0] C:\Users\DELL\.gradle\caches\8.10.2\transforms\3c90da3ab7f346914dfddd38d1aa6773\transformed\firebase-auth-23.1.0\AndroidManifest.xml:39:27-75
+76-->[com.google.firebase:firebase-auth:23.1.0] C:\Users\DELL\.gradle\caches\8.11.1\transforms\e38744ba42fb8cfe021c04b4eb87aff4\transformed\firebase-auth-23.1.0\AndroidManifest.xml:39:17-78
+76-->[com.google.firebase:firebase-auth:23.1.0] C:\Users\DELL\.gradle\caches\8.11.1\transforms\e38744ba42fb8cfe021c04b4eb87aff4\transformed\firebase-auth-23.1.0\AndroidManifest.xml:39:27-75
 77
 78                <data
-78-->[com.google.firebase:firebase-auth:23.1.0] C:\Users\DELL\.gradle\caches\8.10.2\transforms\3c90da3ab7f346914dfddd38d1aa6773\transformed\firebase-auth-23.1.0\AndroidManifest.xml:41:17-44:51
+78-->[com.google.firebase:firebase-auth:23.1.0] C:\Users\DELL\.gradle\caches\8.11.1\transforms\e38744ba42fb8cfe021c04b4eb87aff4\transformed\firebase-auth-23.1.0\AndroidManifest.xml:41:17-44:51
 79                    android:host="firebase.auth"
-79-->[com.google.firebase:firebase-auth:23.1.0] C:\Users\DELL\.gradle\caches\8.10.2\transforms\3c90da3ab7f346914dfddd38d1aa6773\transformed\firebase-auth-23.1.0\AndroidManifest.xml:42:21-49
+79-->[com.google.firebase:firebase-auth:23.1.0] C:\Users\DELL\.gradle\caches\8.11.1\transforms\e38744ba42fb8cfe021c04b4eb87aff4\transformed\firebase-auth-23.1.0\AndroidManifest.xml:42:21-49
 80                    android:path="/"
-80-->[com.google.firebase:firebase-auth:23.1.0] C:\Users\DELL\.gradle\caches\8.10.2\transforms\3c90da3ab7f346914dfddd38d1aa6773\transformed\firebase-auth-23.1.0\AndroidManifest.xml:43:21-37
+80-->[com.google.firebase:firebase-auth:23.1.0] C:\Users\DELL\.gradle\caches\8.11.1\transforms\e38744ba42fb8cfe021c04b4eb87aff4\transformed\firebase-auth-23.1.0\AndroidManifest.xml:43:21-37
 81                    android:scheme="genericidp" />
-81-->[com.google.firebase:firebase-auth:23.1.0] C:\Users\DELL\.gradle\caches\8.10.2\transforms\3c90da3ab7f346914dfddd38d1aa6773\transformed\firebase-auth-23.1.0\AndroidManifest.xml:44:21-48
+81-->[com.google.firebase:firebase-auth:23.1.0] C:\Users\DELL\.gradle\caches\8.11.1\transforms\e38744ba42fb8cfe021c04b4eb87aff4\transformed\firebase-auth-23.1.0\AndroidManifest.xml:44:21-48
 82            </intent-filter>
 83        </activity>
 84        <activity
-84-->[com.google.firebase:firebase-auth:23.1.0] C:\Users\DELL\.gradle\caches\8.10.2\transforms\3c90da3ab7f346914dfddd38d1aa6773\transformed\firebase-auth-23.1.0\AndroidManifest.xml:47:9-64:20
+84-->[com.google.firebase:firebase-auth:23.1.0] C:\Users\DELL\.gradle\caches\8.11.1\transforms\e38744ba42fb8cfe021c04b4eb87aff4\transformed\firebase-auth-23.1.0\AndroidManifest.xml:47:9-64:20
 85            android:name="com.google.firebase.auth.internal.RecaptchaActivity"
-85-->[com.google.firebase:firebase-auth:23.1.0] C:\Users\DELL\.gradle\caches\8.10.2\transforms\3c90da3ab7f346914dfddd38d1aa6773\transformed\firebase-auth-23.1.0\AndroidManifest.xml:48:13-79
+85-->[com.google.firebase:firebase-auth:23.1.0] C:\Users\DELL\.gradle\caches\8.11.1\transforms\e38744ba42fb8cfe021c04b4eb87aff4\transformed\firebase-auth-23.1.0\AndroidManifest.xml:48:13-79
 86            android:excludeFromRecents="true"
-86-->[com.google.firebase:firebase-auth:23.1.0] C:\Users\DELL\.gradle\caches\8.10.2\transforms\3c90da3ab7f346914dfddd38d1aa6773\transformed\firebase-auth-23.1.0\AndroidManifest.xml:49:13-46
+86-->[com.google.firebase:firebase-auth:23.1.0] C:\Users\DELL\.gradle\caches\8.11.1\transforms\e38744ba42fb8cfe021c04b4eb87aff4\transformed\firebase-auth-23.1.0\AndroidManifest.xml:49:13-46
 87            android:exported="true"
-87-->[com.google.firebase:firebase-auth:23.1.0] C:\Users\DELL\.gradle\caches\8.10.2\transforms\3c90da3ab7f346914dfddd38d1aa6773\transformed\firebase-auth-23.1.0\AndroidManifest.xml:50:13-36
+87-->[com.google.firebase:firebase-auth:23.1.0] C:\Users\DELL\.gradle\caches\8.11.1\transforms\e38744ba42fb8cfe021c04b4eb87aff4\transformed\firebase-auth-23.1.0\AndroidManifest.xml:50:13-36
 88            android:launchMode="singleTask"
-88-->[com.google.firebase:firebase-auth:23.1.0] C:\Users\DELL\.gradle\caches\8.10.2\transforms\3c90da3ab7f346914dfddd38d1aa6773\transformed\firebase-auth-23.1.0\AndroidManifest.xml:51:13-44
+88-->[com.google.firebase:firebase-auth:23.1.0] C:\Users\DELL\.gradle\caches\8.11.1\transforms\e38744ba42fb8cfe021c04b4eb87aff4\transformed\firebase-auth-23.1.0\AndroidManifest.xml:51:13-44
 89            android:theme="@android:style/Theme.Translucent.NoTitleBar" >
-89-->[com.google.firebase:firebase-auth:23.1.0] C:\Users\DELL\.gradle\caches\8.10.2\transforms\3c90da3ab7f346914dfddd38d1aa6773\transformed\firebase-auth-23.1.0\AndroidManifest.xml:52:13-72
+89-->[com.google.firebase:firebase-auth:23.1.0] C:\Users\DELL\.gradle\caches\8.11.1\transforms\e38744ba42fb8cfe021c04b4eb87aff4\transformed\firebase-auth-23.1.0\AndroidManifest.xml:52:13-72
 90            <intent-filter>
-90-->[com.google.firebase:firebase-auth:23.1.0] C:\Users\DELL\.gradle\caches\8.10.2\transforms\3c90da3ab7f346914dfddd38d1aa6773\transformed\firebase-auth-23.1.0\AndroidManifest.xml:53:13-63:29
+90-->[com.google.firebase:firebase-auth:23.1.0] C:\Users\DELL\.gradle\caches\8.11.1\transforms\e38744ba42fb8cfe021c04b4eb87aff4\transformed\firebase-auth-23.1.0\AndroidManifest.xml:53:13-63:29
 91                <action android:name="android.intent.action.VIEW" />
-91-->[com.google.firebase:firebase-auth:23.1.0] C:\Users\DELL\.gradle\caches\8.10.2\transforms\3c90da3ab7f346914dfddd38d1aa6773\transformed\firebase-auth-23.1.0\AndroidManifest.xml:36:17-69
-91-->[com.google.firebase:firebase-auth:23.1.0] C:\Users\DELL\.gradle\caches\8.10.2\transforms\3c90da3ab7f346914dfddd38d1aa6773\transformed\firebase-auth-23.1.0\AndroidManifest.xml:36:25-66
+91-->[com.google.firebase:firebase-auth:23.1.0] C:\Users\DELL\.gradle\caches\8.11.1\transforms\e38744ba42fb8cfe021c04b4eb87aff4\transformed\firebase-auth-23.1.0\AndroidManifest.xml:36:17-69
+91-->[com.google.firebase:firebase-auth:23.1.0] C:\Users\DELL\.gradle\caches\8.11.1\transforms\e38744ba42fb8cfe021c04b4eb87aff4\transformed\firebase-auth-23.1.0\AndroidManifest.xml:36:25-66
 92
 93                <category android:name="android.intent.category.DEFAULT" />
-93-->[com.google.firebase:firebase-auth:23.1.0] C:\Users\DELL\.gradle\caches\8.10.2\transforms\3c90da3ab7f346914dfddd38d1aa6773\transformed\firebase-auth-23.1.0\AndroidManifest.xml:38:17-76
-93-->[com.google.firebase:firebase-auth:23.1.0] C:\Users\DELL\.gradle\caches\8.10.2\transforms\3c90da3ab7f346914dfddd38d1aa6773\transformed\firebase-auth-23.1.0\AndroidManifest.xml:38:27-73
+93-->[com.google.firebase:firebase-auth:23.1.0] C:\Users\DELL\.gradle\caches\8.11.1\transforms\e38744ba42fb8cfe021c04b4eb87aff4\transformed\firebase-auth-23.1.0\AndroidManifest.xml:38:17-76
+93-->[com.google.firebase:firebase-auth:23.1.0] C:\Users\DELL\.gradle\caches\8.11.1\transforms\e38744ba42fb8cfe021c04b4eb87aff4\transformed\firebase-auth-23.1.0\AndroidManifest.xml:38:27-73
 94                <category android:name="android.intent.category.BROWSABLE" />
-94-->[com.google.firebase:firebase-auth:23.1.0] C:\Users\DELL\.gradle\caches\8.10.2\transforms\3c90da3ab7f346914dfddd38d1aa6773\transformed\firebase-auth-23.1.0\AndroidManifest.xml:39:17-78
-94-->[com.google.firebase:firebase-auth:23.1.0] C:\Users\DELL\.gradle\caches\8.10.2\transforms\3c90da3ab7f346914dfddd38d1aa6773\transformed\firebase-auth-23.1.0\AndroidManifest.xml:39:27-75
+94-->[com.google.firebase:firebase-auth:23.1.0] C:\Users\DELL\.gradle\caches\8.11.1\transforms\e38744ba42fb8cfe021c04b4eb87aff4\transformed\firebase-auth-23.1.0\AndroidManifest.xml:39:17-78
+94-->[com.google.firebase:firebase-auth:23.1.0] C:\Users\DELL\.gradle\caches\8.11.1\transforms\e38744ba42fb8cfe021c04b4eb87aff4\transformed\firebase-auth-23.1.0\AndroidManifest.xml:39:27-75
 95
 96                <data
-96-->[com.google.firebase:firebase-auth:23.1.0] C:\Users\DELL\.gradle\caches\8.10.2\transforms\3c90da3ab7f346914dfddd38d1aa6773\transformed\firebase-auth-23.1.0\AndroidManifest.xml:41:17-44:51
+96-->[com.google.firebase:firebase-auth:23.1.0] C:\Users\DELL\.gradle\caches\8.11.1\transforms\e38744ba42fb8cfe021c04b4eb87aff4\transformed\firebase-auth-23.1.0\AndroidManifest.xml:41:17-44:51
 97                    android:host="firebase.auth"
-97-->[com.google.firebase:firebase-auth:23.1.0] C:\Users\DELL\.gradle\caches\8.10.2\transforms\3c90da3ab7f346914dfddd38d1aa6773\transformed\firebase-auth-23.1.0\AndroidManifest.xml:42:21-49
+97-->[com.google.firebase:firebase-auth:23.1.0] C:\Users\DELL\.gradle\caches\8.11.1\transforms\e38744ba42fb8cfe021c04b4eb87aff4\transformed\firebase-auth-23.1.0\AndroidManifest.xml:42:21-49
 98                    android:path="/"
-98-->[com.google.firebase:firebase-auth:23.1.0] C:\Users\DELL\.gradle\caches\8.10.2\transforms\3c90da3ab7f346914dfddd38d1aa6773\transformed\firebase-auth-23.1.0\AndroidManifest.xml:43:21-37
+98-->[com.google.firebase:firebase-auth:23.1.0] C:\Users\DELL\.gradle\caches\8.11.1\transforms\e38744ba42fb8cfe021c04b4eb87aff4\transformed\firebase-auth-23.1.0\AndroidManifest.xml:43:21-37
 99                    android:scheme="recaptcha" />
-99-->[com.google.firebase:firebase-auth:23.1.0] C:\Users\DELL\.gradle\caches\8.10.2\transforms\3c90da3ab7f346914dfddd38d1aa6773\transformed\firebase-auth-23.1.0\AndroidManifest.xml:44:21-48
+99-->[com.google.firebase:firebase-auth:23.1.0] C:\Users\DELL\.gradle\caches\8.11.1\transforms\e38744ba42fb8cfe021c04b4eb87aff4\transformed\firebase-auth-23.1.0\AndroidManifest.xml:44:21-48
 100            </intent-filter>
 101        </activity>
 102
 103        <service
-103-->[com.google.firebase:firebase-auth:23.1.0] C:\Users\DELL\.gradle\caches\8.10.2\transforms\3c90da3ab7f346914dfddd38d1aa6773\transformed\firebase-auth-23.1.0\AndroidManifest.xml:66:9-72:19
+103-->[com.google.firebase:firebase-auth:23.1.0] C:\Users\DELL\.gradle\caches\8.11.1\transforms\e38744ba42fb8cfe021c04b4eb87aff4\transformed\firebase-auth-23.1.0\AndroidManifest.xml:66:9-72:19
 104            android:name="com.google.firebase.components.ComponentDiscoveryService"
-104-->[com.google.firebase:firebase-auth:23.1.0] C:\Users\DELL\.gradle\caches\8.10.2\transforms\3c90da3ab7f346914dfddd38d1aa6773\transformed\firebase-auth-23.1.0\AndroidManifest.xml:67:13-84
+104-->[com.google.firebase:firebase-auth:23.1.0] C:\Users\DELL\.gradle\caches\8.11.1\transforms\e38744ba42fb8cfe021c04b4eb87aff4\transformed\firebase-auth-23.1.0\AndroidManifest.xml:67:13-84
 105            android:directBootAware="true"
-105-->[com.google.firebase:firebase-common:21.0.0] C:\Users\DELL\.gradle\caches\8.10.2\transforms\c4d20ebb26adb74fa97cc95f801698be\transformed\firebase-common-21.0.0\AndroidManifest.xml:32:13-43
+105-->[com.google.firebase:firebase-common:21.0.0] C:\Users\DELL\.gradle\caches\8.11.1\transforms\0cdc21a3b2d78f46e432384640bd21c0\transformed\firebase-common-21.0.0\AndroidManifest.xml:32:13-43
 106            android:exported="false" >
-106-->[com.google.firebase:firebase-auth:23.1.0] C:\Users\DELL\.gradle\caches\8.10.2\transforms\3c90da3ab7f346914dfddd38d1aa6773\transformed\firebase-auth-23.1.0\AndroidManifest.xml:68:13-37
+106-->[com.google.firebase:firebase-auth:23.1.0] C:\Users\DELL\.gradle\caches\8.11.1\transforms\e38744ba42fb8cfe021c04b4eb87aff4\transformed\firebase-auth-23.1.0\AndroidManifest.xml:68:13-37
 107            <meta-data
-107-->[com.google.firebase:firebase-auth:23.1.0] C:\Users\DELL\.gradle\caches\8.10.2\transforms\3c90da3ab7f346914dfddd38d1aa6773\transformed\firebase-auth-23.1.0\AndroidManifest.xml:69:13-71:85
+107-->[com.google.firebase:firebase-auth:23.1.0] C:\Users\DELL\.gradle\caches\8.11.1\transforms\e38744ba42fb8cfe021c04b4eb87aff4\transformed\firebase-auth-23.1.0\AndroidManifest.xml:69:13-71:85
 108                android:name="com.google.firebase.components:com.google.firebase.auth.FirebaseAuthRegistrar"
-108-->[com.google.firebase:firebase-auth:23.1.0] C:\Users\DELL\.gradle\caches\8.10.2\transforms\3c90da3ab7f346914dfddd38d1aa6773\transformed\firebase-auth-23.1.0\AndroidManifest.xml:70:17-109
+108-->[com.google.firebase:firebase-auth:23.1.0] C:\Users\DELL\.gradle\caches\8.11.1\transforms\e38744ba42fb8cfe021c04b4eb87aff4\transformed\firebase-auth-23.1.0\AndroidManifest.xml:70:17-109
 109                android:value="com.google.firebase.components.ComponentRegistrar" />
-109-->[com.google.firebase:firebase-auth:23.1.0] C:\Users\DELL\.gradle\caches\8.10.2\transforms\3c90da3ab7f346914dfddd38d1aa6773\transformed\firebase-auth-23.1.0\AndroidManifest.xml:71:17-82
+109-->[com.google.firebase:firebase-auth:23.1.0] C:\Users\DELL\.gradle\caches\8.11.1\transforms\e38744ba42fb8cfe021c04b4eb87aff4\transformed\firebase-auth-23.1.0\AndroidManifest.xml:71:17-82
 110            <meta-data
-110-->[com.google.firebase:firebase-common-ktx:21.0.0] C:\Users\DELL\.gradle\caches\8.10.2\transforms\6f65d94277b5090e2de2d3284b2848bc\transformed\firebase-common-ktx-21.0.0\AndroidManifest.xml:12:13-14:85
+110-->[com.google.firebase:firebase-common-ktx:21.0.0] C:\Users\DELL\.gradle\caches\8.11.1\transforms\4b446112469bf8b4a626b0dd452cf049\transformed\firebase-common-ktx-21.0.0\AndroidManifest.xml:12:13-14:85
 111                android:name="com.google.firebase.components:com.google.firebase.ktx.FirebaseCommonLegacyRegistrar"
-111-->[com.google.firebase:firebase-common-ktx:21.0.0] C:\Users\DELL\.gradle\caches\8.10.2\transforms\6f65d94277b5090e2de2d3284b2848bc\transformed\firebase-common-ktx-21.0.0\AndroidManifest.xml:13:17-116
+111-->[com.google.firebase:firebase-common-ktx:21.0.0] C:\Users\DELL\.gradle\caches\8.11.1\transforms\4b446112469bf8b4a626b0dd452cf049\transformed\firebase-common-ktx-21.0.0\AndroidManifest.xml:13:17-116
 112                android:value="com.google.firebase.components.ComponentRegistrar" />
-112-->[com.google.firebase:firebase-common-ktx:21.0.0] C:\Users\DELL\.gradle\caches\8.10.2\transforms\6f65d94277b5090e2de2d3284b2848bc\transformed\firebase-common-ktx-21.0.0\AndroidManifest.xml:14:17-82
+112-->[com.google.firebase:firebase-common-ktx:21.0.0] C:\Users\DELL\.gradle\caches\8.11.1\transforms\4b446112469bf8b4a626b0dd452cf049\transformed\firebase-common-ktx-21.0.0\AndroidManifest.xml:14:17-82
 113            <meta-data
-113-->[com.google.firebase:firebase-common:21.0.0] C:\Users\DELL\.gradle\caches\8.10.2\transforms\c4d20ebb26adb74fa97cc95f801698be\transformed\firebase-common-21.0.0\AndroidManifest.xml:35:13-37:85
+113-->[com.google.firebase:firebase-common:21.0.0] C:\Users\DELL\.gradle\caches\8.11.1\transforms\0cdc21a3b2d78f46e432384640bd21c0\transformed\firebase-common-21.0.0\AndroidManifest.xml:35:13-37:85
 114                android:name="com.google.firebase.components:com.google.firebase.FirebaseCommonKtxRegistrar"
-114-->[com.google.firebase:firebase-common:21.0.0] C:\Users\DELL\.gradle\caches\8.10.2\transforms\c4d20ebb26adb74fa97cc95f801698be\transformed\firebase-common-21.0.0\AndroidManifest.xml:36:17-109
+114-->[com.google.firebase:firebase-common:21.0.0] C:\Users\DELL\.gradle\caches\8.11.1\transforms\0cdc21a3b2d78f46e432384640bd21c0\transformed\firebase-common-21.0.0\AndroidManifest.xml:36:17-109
 115                android:value="com.google.firebase.components.ComponentRegistrar" />
-115-->[com.google.firebase:firebase-common:21.0.0] C:\Users\DELL\.gradle\caches\8.10.2\transforms\c4d20ebb26adb74fa97cc95f801698be\transformed\firebase-common-21.0.0\AndroidManifest.xml:37:17-82
+115-->[com.google.firebase:firebase-common:21.0.0] C:\Users\DELL\.gradle\caches\8.11.1\transforms\0cdc21a3b2d78f46e432384640bd21c0\transformed\firebase-common-21.0.0\AndroidManifest.xml:37:17-82
 116        </service>
 117        <service
-117-->[androidx.credentials:credentials-play-services-auth:1.2.0-rc01] C:\Users\DELL\.gradle\caches\8.10.2\transforms\c3495709298a8dbcfe45fd51c41b576d\transformed\credentials-play-services-auth-1.2.0-rc01\AndroidManifest.xml:24:9-32:19
+117-->[androidx.credentials:credentials-play-services-auth:1.2.0-rc01] C:\Users\DELL\.gradle\caches\8.11.1\transforms\90e805a9e00270f3e708b4cdfd27cc08\transformed\credentials-play-services-auth-1.2.0-rc01\AndroidManifest.xml:24:9-32:19
 118            android:name="androidx.credentials.playservices.CredentialProviderMetadataHolder"
-118-->[androidx.credentials:credentials-play-services-auth:1.2.0-rc01] C:\Users\DELL\.gradle\caches\8.10.2\transforms\c3495709298a8dbcfe45fd51c41b576d\transformed\credentials-play-services-auth-1.2.0-rc01\AndroidManifest.xml:25:13-94
+118-->[androidx.credentials:credentials-play-services-auth:1.2.0-rc01] C:\Users\DELL\.gradle\caches\8.11.1\transforms\90e805a9e00270f3e708b4cdfd27cc08\transformed\credentials-play-services-auth-1.2.0-rc01\AndroidManifest.xml:25:13-94
 119            android:enabled="true"
-119-->[androidx.credentials:credentials-play-services-auth:1.2.0-rc01] C:\Users\DELL\.gradle\caches\8.10.2\transforms\c3495709298a8dbcfe45fd51c41b576d\transformed\credentials-play-services-auth-1.2.0-rc01\AndroidManifest.xml:26:13-35
+119-->[androidx.credentials:credentials-play-services-auth:1.2.0-rc01] C:\Users\DELL\.gradle\caches\8.11.1\transforms\90e805a9e00270f3e708b4cdfd27cc08\transformed\credentials-play-services-auth-1.2.0-rc01\AndroidManifest.xml:26:13-35
 120            android:exported="false" >
-120-->[androidx.credentials:credentials-play-services-auth:1.2.0-rc01] C:\Users\DELL\.gradle\caches\8.10.2\transforms\c3495709298a8dbcfe45fd51c41b576d\transformed\credentials-play-services-auth-1.2.0-rc01\AndroidManifest.xml:27:13-37
+120-->[androidx.credentials:credentials-play-services-auth:1.2.0-rc01] C:\Users\DELL\.gradle\caches\8.11.1\transforms\90e805a9e00270f3e708b4cdfd27cc08\transformed\credentials-play-services-auth-1.2.0-rc01\AndroidManifest.xml:27:13-37
 121            <meta-data
-121-->[androidx.credentials:credentials-play-services-auth:1.2.0-rc01] C:\Users\DELL\.gradle\caches\8.10.2\transforms\c3495709298a8dbcfe45fd51c41b576d\transformed\credentials-play-services-auth-1.2.0-rc01\AndroidManifest.xml:29:13-31:104
+121-->[androidx.credentials:credentials-play-services-auth:1.2.0-rc01] C:\Users\DELL\.gradle\caches\8.11.1\transforms\90e805a9e00270f3e708b4cdfd27cc08\transformed\credentials-play-services-auth-1.2.0-rc01\AndroidManifest.xml:29:13-31:104
 122                android:name="androidx.credentials.CREDENTIAL_PROVIDER_KEY"
-122-->[androidx.credentials:credentials-play-services-auth:1.2.0-rc01] C:\Users\DELL\.gradle\caches\8.10.2\transforms\c3495709298a8dbcfe45fd51c41b576d\transformed\credentials-play-services-auth-1.2.0-rc01\AndroidManifest.xml:30:17-76
+122-->[androidx.credentials:credentials-play-services-auth:1.2.0-rc01] C:\Users\DELL\.gradle\caches\8.11.1\transforms\90e805a9e00270f3e708b4cdfd27cc08\transformed\credentials-play-services-auth-1.2.0-rc01\AndroidManifest.xml:30:17-76
 123                android:value="androidx.credentials.playservices.CredentialProviderPlayServicesImpl" />
-123-->[androidx.credentials:credentials-play-services-auth:1.2.0-rc01] C:\Users\DELL\.gradle\caches\8.10.2\transforms\c3495709298a8dbcfe45fd51c41b576d\transformed\credentials-play-services-auth-1.2.0-rc01\AndroidManifest.xml:31:17-101
+123-->[androidx.credentials:credentials-play-services-auth:1.2.0-rc01] C:\Users\DELL\.gradle\caches\8.11.1\transforms\90e805a9e00270f3e708b4cdfd27cc08\transformed\credentials-play-services-auth-1.2.0-rc01\AndroidManifest.xml:31:17-101
 124        </service>
 125
 126        <activity
-126-->[androidx.credentials:credentials-play-services-auth:1.2.0-rc01] C:\Users\DELL\.gradle\caches\8.10.2\transforms\c3495709298a8dbcfe45fd51c41b576d\transformed\credentials-play-services-auth-1.2.0-rc01\AndroidManifest.xml:34:9-41:20
+126-->[androidx.credentials:credentials-play-services-auth:1.2.0-rc01] C:\Users\DELL\.gradle\caches\8.11.1\transforms\90e805a9e00270f3e708b4cdfd27cc08\transformed\credentials-play-services-auth-1.2.0-rc01\AndroidManifest.xml:34:9-41:20
 127            android:name="androidx.credentials.playservices.HiddenActivity"
-127-->[androidx.credentials:credentials-play-services-auth:1.2.0-rc01] C:\Users\DELL\.gradle\caches\8.10.2\transforms\c3495709298a8dbcfe45fd51c41b576d\transformed\credentials-play-services-auth-1.2.0-rc01\AndroidManifest.xml:35:13-76
+127-->[androidx.credentials:credentials-play-services-auth:1.2.0-rc01] C:\Users\DELL\.gradle\caches\8.11.1\transforms\90e805a9e00270f3e708b4cdfd27cc08\transformed\credentials-play-services-auth-1.2.0-rc01\AndroidManifest.xml:35:13-76
 128            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
-128-->[androidx.credentials:credentials-play-services-auth:1.2.0-rc01] C:\Users\DELL\.gradle\caches\8.10.2\transforms\c3495709298a8dbcfe45fd51c41b576d\transformed\credentials-play-services-auth-1.2.0-rc01\AndroidManifest.xml:36:13-87
+128-->[androidx.credentials:credentials-play-services-auth:1.2.0-rc01] C:\Users\DELL\.gradle\caches\8.11.1\transforms\90e805a9e00270f3e708b4cdfd27cc08\transformed\credentials-play-services-auth-1.2.0-rc01\AndroidManifest.xml:36:13-87
 129            android:enabled="true"
-129-->[androidx.credentials:credentials-play-services-auth:1.2.0-rc01] C:\Users\DELL\.gradle\caches\8.10.2\transforms\c3495709298a8dbcfe45fd51c41b576d\transformed\credentials-play-services-auth-1.2.0-rc01\AndroidManifest.xml:37:13-35
+129-->[androidx.credentials:credentials-play-services-auth:1.2.0-rc01] C:\Users\DELL\.gradle\caches\8.11.1\transforms\90e805a9e00270f3e708b4cdfd27cc08\transformed\credentials-play-services-auth-1.2.0-rc01\AndroidManifest.xml:37:13-35
 130            android:exported="false"
-130-->[androidx.credentials:credentials-play-services-auth:1.2.0-rc01] C:\Users\DELL\.gradle\caches\8.10.2\transforms\c3495709298a8dbcfe45fd51c41b576d\transformed\credentials-play-services-auth-1.2.0-rc01\AndroidManifest.xml:38:13-37
+130-->[androidx.credentials:credentials-play-services-auth:1.2.0-rc01] C:\Users\DELL\.gradle\caches\8.11.1\transforms\90e805a9e00270f3e708b4cdfd27cc08\transformed\credentials-play-services-auth-1.2.0-rc01\AndroidManifest.xml:38:13-37
 131            android:fitsSystemWindows="true"
-131-->[androidx.credentials:credentials-play-services-auth:1.2.0-rc01] C:\Users\DELL\.gradle\caches\8.10.2\transforms\c3495709298a8dbcfe45fd51c41b576d\transformed\credentials-play-services-auth-1.2.0-rc01\AndroidManifest.xml:39:13-45
+131-->[androidx.credentials:credentials-play-services-auth:1.2.0-rc01] C:\Users\DELL\.gradle\caches\8.11.1\transforms\90e805a9e00270f3e708b4cdfd27cc08\transformed\credentials-play-services-auth-1.2.0-rc01\AndroidManifest.xml:39:13-45
 132            android:theme="@style/Theme.Hidden" >
-132-->[androidx.credentials:credentials-play-services-auth:1.2.0-rc01] C:\Users\DELL\.gradle\caches\8.10.2\transforms\c3495709298a8dbcfe45fd51c41b576d\transformed\credentials-play-services-auth-1.2.0-rc01\AndroidManifest.xml:40:13-48
+132-->[androidx.credentials:credentials-play-services-auth:1.2.0-rc01] C:\Users\DELL\.gradle\caches\8.11.1\transforms\90e805a9e00270f3e708b4cdfd27cc08\transformed\credentials-play-services-auth-1.2.0-rc01\AndroidManifest.xml:40:13-48
 133        </activity>
 134        <activity
-134-->[com.google.android.gms:play-services-auth:20.7.0] C:\Users\DELL\.gradle\caches\8.10.2\transforms\a080a1ec434fd28ae8cafe3f39143e03\transformed\play-services-auth-20.7.0\AndroidManifest.xml:23:9-27:75
+134-->[com.google.android.gms:play-services-auth:20.7.0] C:\Users\DELL\.gradle\caches\8.11.1\transforms\4ecf1330bdd616796e55b21036e79d86\transformed\play-services-auth-20.7.0\AndroidManifest.xml:23:9-27:75
 135            android:name="com.google.android.gms.auth.api.signin.internal.SignInHubActivity"
-135-->[com.google.android.gms:play-services-auth:20.7.0] C:\Users\DELL\.gradle\caches\8.10.2\transforms\a080a1ec434fd28ae8cafe3f39143e03\transformed\play-services-auth-20.7.0\AndroidManifest.xml:24:13-93
+135-->[com.google.android.gms:play-services-auth:20.7.0] C:\Users\DELL\.gradle\caches\8.11.1\transforms\4ecf1330bdd616796e55b21036e79d86\transformed\play-services-auth-20.7.0\AndroidManifest.xml:24:13-93
 136            android:excludeFromRecents="true"
-136-->[com.google.android.gms:play-services-auth:20.7.0] C:\Users\DELL\.gradle\caches\8.10.2\transforms\a080a1ec434fd28ae8cafe3f39143e03\transformed\play-services-auth-20.7.0\AndroidManifest.xml:25:13-46
+136-->[com.google.android.gms:play-services-auth:20.7.0] C:\Users\DELL\.gradle\caches\8.11.1\transforms\4ecf1330bdd616796e55b21036e79d86\transformed\play-services-auth-20.7.0\AndroidManifest.xml:25:13-46
 137            android:exported="false"
-137-->[com.google.android.gms:play-services-auth:20.7.0] C:\Users\DELL\.gradle\caches\8.10.2\transforms\a080a1ec434fd28ae8cafe3f39143e03\transformed\play-services-auth-20.7.0\AndroidManifest.xml:26:13-37
+137-->[com.google.android.gms:play-services-auth:20.7.0] C:\Users\DELL\.gradle\caches\8.11.1\transforms\4ecf1330bdd616796e55b21036e79d86\transformed\play-services-auth-20.7.0\AndroidManifest.xml:26:13-37
 138            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
-138-->[com.google.android.gms:play-services-auth:20.7.0] C:\Users\DELL\.gradle\caches\8.10.2\transforms\a080a1ec434fd28ae8cafe3f39143e03\transformed\play-services-auth-20.7.0\AndroidManifest.xml:27:13-72
+138-->[com.google.android.gms:play-services-auth:20.7.0] C:\Users\DELL\.gradle\caches\8.11.1\transforms\4ecf1330bdd616796e55b21036e79d86\transformed\play-services-auth-20.7.0\AndroidManifest.xml:27:13-72
 139        <!--
 140            Service handling Google Sign-In user revocation. For apps that do not integrate with
 141            Google Sign-In, this service will never be started.
 142        -->
 143        <service
-143-->[com.google.android.gms:play-services-auth:20.7.0] C:\Users\DELL\.gradle\caches\8.10.2\transforms\a080a1ec434fd28ae8cafe3f39143e03\transformed\play-services-auth-20.7.0\AndroidManifest.xml:33:9-37:51
+143-->[com.google.android.gms:play-services-auth:20.7.0] C:\Users\DELL\.gradle\caches\8.11.1\transforms\4ecf1330bdd616796e55b21036e79d86\transformed\play-services-auth-20.7.0\AndroidManifest.xml:33:9-37:51
 144            android:name="com.google.android.gms.auth.api.signin.RevocationBoundService"
-144-->[com.google.android.gms:play-services-auth:20.7.0] C:\Users\DELL\.gradle\caches\8.10.2\transforms\a080a1ec434fd28ae8cafe3f39143e03\transformed\play-services-auth-20.7.0\AndroidManifest.xml:34:13-89
+144-->[com.google.android.gms:play-services-auth:20.7.0] C:\Users\DELL\.gradle\caches\8.11.1\transforms\4ecf1330bdd616796e55b21036e79d86\transformed\play-services-auth-20.7.0\AndroidManifest.xml:34:13-89
 145            android:exported="true"
-145-->[com.google.android.gms:play-services-auth:20.7.0] C:\Users\DELL\.gradle\caches\8.10.2\transforms\a080a1ec434fd28ae8cafe3f39143e03\transformed\play-services-auth-20.7.0\AndroidManifest.xml:35:13-36
+145-->[com.google.android.gms:play-services-auth:20.7.0] C:\Users\DELL\.gradle\caches\8.11.1\transforms\4ecf1330bdd616796e55b21036e79d86\transformed\play-services-auth-20.7.0\AndroidManifest.xml:35:13-36
 146            android:permission="com.google.android.gms.auth.api.signin.permission.REVOCATION_NOTIFICATION"
-146-->[com.google.android.gms:play-services-auth:20.7.0] C:\Users\DELL\.gradle\caches\8.10.2\transforms\a080a1ec434fd28ae8cafe3f39143e03\transformed\play-services-auth-20.7.0\AndroidManifest.xml:36:13-107
+146-->[com.google.android.gms:play-services-auth:20.7.0] C:\Users\DELL\.gradle\caches\8.11.1\transforms\4ecf1330bdd616796e55b21036e79d86\transformed\play-services-auth-20.7.0\AndroidManifest.xml:36:13-107
 147            android:visibleToInstantApps="true" />
-147-->[com.google.android.gms:play-services-auth:20.7.0] C:\Users\DELL\.gradle\caches\8.10.2\transforms\a080a1ec434fd28ae8cafe3f39143e03\transformed\play-services-auth-20.7.0\AndroidManifest.xml:37:13-48
+147-->[com.google.android.gms:play-services-auth:20.7.0] C:\Users\DELL\.gradle\caches\8.11.1\transforms\4ecf1330bdd616796e55b21036e79d86\transformed\play-services-auth-20.7.0\AndroidManifest.xml:37:13-48
 148
 149        <provider
-149-->[com.google.firebase:firebase-common:21.0.0] C:\Users\DELL\.gradle\caches\8.10.2\transforms\c4d20ebb26adb74fa97cc95f801698be\transformed\firebase-common-21.0.0\AndroidManifest.xml:23:9-28:39
+149-->[com.google.firebase:firebase-common:21.0.0] C:\Users\DELL\.gradle\caches\8.11.1\transforms\0cdc21a3b2d78f46e432384640bd21c0\transformed\firebase-common-21.0.0\AndroidManifest.xml:23:9-28:39
 150            android:name="com.google.firebase.provider.FirebaseInitProvider"
-150-->[com.google.firebase:firebase-common:21.0.0] C:\Users\DELL\.gradle\caches\8.10.2\transforms\c4d20ebb26adb74fa97cc95f801698be\transformed\firebase-common-21.0.0\AndroidManifest.xml:24:13-77
+150-->[com.google.firebase:firebase-common:21.0.0] C:\Users\DELL\.gradle\caches\8.11.1\transforms\0cdc21a3b2d78f46e432384640bd21c0\transformed\firebase-common-21.0.0\AndroidManifest.xml:24:13-77
 151            android:authorities="com.example.ble_jetpackcompose.firebaseinitprovider"
-151-->[com.google.firebase:firebase-common:21.0.0] C:\Users\DELL\.gradle\caches\8.10.2\transforms\c4d20ebb26adb74fa97cc95f801698be\transformed\firebase-common-21.0.0\AndroidManifest.xml:25:13-72
+151-->[com.google.firebase:firebase-common:21.0.0] C:\Users\DELL\.gradle\caches\8.11.1\transforms\0cdc21a3b2d78f46e432384640bd21c0\transformed\firebase-common-21.0.0\AndroidManifest.xml:25:13-72
 152            android:directBootAware="true"
-152-->[com.google.firebase:firebase-common:21.0.0] C:\Users\DELL\.gradle\caches\8.10.2\transforms\c4d20ebb26adb74fa97cc95f801698be\transformed\firebase-common-21.0.0\AndroidManifest.xml:26:13-43
+152-->[com.google.firebase:firebase-common:21.0.0] C:\Users\DELL\.gradle\caches\8.11.1\transforms\0cdc21a3b2d78f46e432384640bd21c0\transformed\firebase-common-21.0.0\AndroidManifest.xml:26:13-43
 153            android:exported="false"
-153-->[com.google.firebase:firebase-common:21.0.0] C:\Users\DELL\.gradle\caches\8.10.2\transforms\c4d20ebb26adb74fa97cc95f801698be\transformed\firebase-common-21.0.0\AndroidManifest.xml:27:13-37
+153-->[com.google.firebase:firebase-common:21.0.0] C:\Users\DELL\.gradle\caches\8.11.1\transforms\0cdc21a3b2d78f46e432384640bd21c0\transformed\firebase-common-21.0.0\AndroidManifest.xml:27:13-37
 154            android:initOrder="100" />
-154-->[com.google.firebase:firebase-common:21.0.0] C:\Users\DELL\.gradle\caches\8.10.2\transforms\c4d20ebb26adb74fa97cc95f801698be\transformed\firebase-common-21.0.0\AndroidManifest.xml:28:13-36
+154-->[com.google.firebase:firebase-common:21.0.0] C:\Users\DELL\.gradle\caches\8.11.1\transforms\0cdc21a3b2d78f46e432384640bd21c0\transformed\firebase-common-21.0.0\AndroidManifest.xml:28:13-36
 155
 156        <activity
-156-->[com.google.android.gms:play-services-base:18.0.1] C:\Users\DELL\.gradle\caches\8.10.2\transforms\985b1ed20dc09f52a75e529980cfcd59\transformed\play-services-base-18.0.1\AndroidManifest.xml:20:9-22:45
+156-->[com.google.android.gms:play-services-base:18.0.1] C:\Users\DELL\.gradle\caches\8.11.1\transforms\299144a04fa2aebf30cb18b9fc6059c1\transformed\play-services-base-18.0.1\AndroidManifest.xml:20:9-22:45
 157            android:name="com.google.android.gms.common.api.GoogleApiActivity"
-157-->[com.google.android.gms:play-services-base:18.0.1] C:\Users\DELL\.gradle\caches\8.10.2\transforms\985b1ed20dc09f52a75e529980cfcd59\transformed\play-services-base-18.0.1\AndroidManifest.xml:20:19-85
+157-->[com.google.android.gms:play-services-base:18.0.1] C:\Users\DELL\.gradle\caches\8.11.1\transforms\299144a04fa2aebf30cb18b9fc6059c1\transformed\play-services-base-18.0.1\AndroidManifest.xml:20:19-85
 158            android:exported="false"
-158-->[com.google.android.gms:play-services-base:18.0.1] C:\Users\DELL\.gradle\caches\8.10.2\transforms\985b1ed20dc09f52a75e529980cfcd59\transformed\play-services-base-18.0.1\AndroidManifest.xml:22:19-43
+158-->[com.google.android.gms:play-services-base:18.0.1] C:\Users\DELL\.gradle\caches\8.11.1\transforms\299144a04fa2aebf30cb18b9fc6059c1\transformed\play-services-base-18.0.1\AndroidManifest.xml:22:19-43
 159            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
-159-->[com.google.android.gms:play-services-base:18.0.1] C:\Users\DELL\.gradle\caches\8.10.2\transforms\985b1ed20dc09f52a75e529980cfcd59\transformed\play-services-base-18.0.1\AndroidManifest.xml:21:19-78
+159-->[com.google.android.gms:play-services-base:18.0.1] C:\Users\DELL\.gradle\caches\8.11.1\transforms\299144a04fa2aebf30cb18b9fc6059c1\transformed\play-services-base-18.0.1\AndroidManifest.xml:21:19-78
 160        <activity
-160-->[androidx.compose.ui:ui-tooling-android:1.6.6] C:\Users\DELL\.gradle\caches\8.10.2\transforms\e1e76351a0dc1153369b9a947affcebf\transformed\ui-tooling-release\AndroidManifest.xml:23:9-25:39
+160-->[androidx.compose.ui:ui-tooling-android:1.6.6] C:\Users\DELL\.gradle\caches\8.11.1\transforms\f56e5fb445100eb35c297888d4ebafde\transformed\ui-tooling-release\AndroidManifest.xml:23:9-25:39
 161            android:name="androidx.compose.ui.tooling.PreviewActivity"
-161-->[androidx.compose.ui:ui-tooling-android:1.6.6] C:\Users\DELL\.gradle\caches\8.10.2\transforms\e1e76351a0dc1153369b9a947affcebf\transformed\ui-tooling-release\AndroidManifest.xml:24:13-71
+161-->[androidx.compose.ui:ui-tooling-android:1.6.6] C:\Users\DELL\.gradle\caches\8.11.1\transforms\f56e5fb445100eb35c297888d4ebafde\transformed\ui-tooling-release\AndroidManifest.xml:24:13-71
 162            android:exported="true" />
-162-->[androidx.compose.ui:ui-tooling-android:1.6.6] C:\Users\DELL\.gradle\caches\8.10.2\transforms\e1e76351a0dc1153369b9a947affcebf\transformed\ui-tooling-release\AndroidManifest.xml:25:13-36
+162-->[androidx.compose.ui:ui-tooling-android:1.6.6] C:\Users\DELL\.gradle\caches\8.11.1\transforms\f56e5fb445100eb35c297888d4ebafde\transformed\ui-tooling-release\AndroidManifest.xml:25:13-36
 163
 164        <provider
-164-->[androidx.emoji2:emoji2:1.3.0] C:\Users\DELL\.gradle\caches\8.10.2\transforms\248e6eba2771b7d1234844e88f24e800\transformed\emoji2-1.3.0\AndroidManifest.xml:24:9-32:20
+164-->[androidx.emoji2:emoji2:1.3.0] C:\Users\DELL\.gradle\caches\8.11.1\transforms\37ab6ff3ea41c51757afe9c69d8c8a6f\transformed\emoji2-1.3.0\AndroidManifest.xml:24:9-32:20
 165            android:name="androidx.startup.InitializationProvider"
-165-->[androidx.emoji2:emoji2:1.3.0] C:\Users\DELL\.gradle\caches\8.10.2\transforms\248e6eba2771b7d1234844e88f24e800\transformed\emoji2-1.3.0\AndroidManifest.xml:25:13-67
+165-->[androidx.emoji2:emoji2:1.3.0] C:\Users\DELL\.gradle\caches\8.11.1\transforms\37ab6ff3ea41c51757afe9c69d8c8a6f\transformed\emoji2-1.3.0\AndroidManifest.xml:25:13-67
 166            android:authorities="com.example.ble_jetpackcompose.androidx-startup"
-166-->[androidx.emoji2:emoji2:1.3.0] C:\Users\DELL\.gradle\caches\8.10.2\transforms\248e6eba2771b7d1234844e88f24e800\transformed\emoji2-1.3.0\AndroidManifest.xml:26:13-68
+166-->[androidx.emoji2:emoji2:1.3.0] C:\Users\DELL\.gradle\caches\8.11.1\transforms\37ab6ff3ea41c51757afe9c69d8c8a6f\transformed\emoji2-1.3.0\AndroidManifest.xml:26:13-68
 167            android:exported="false" >
-167-->[androidx.emoji2:emoji2:1.3.0] C:\Users\DELL\.gradle\caches\8.10.2\transforms\248e6eba2771b7d1234844e88f24e800\transformed\emoji2-1.3.0\AndroidManifest.xml:27:13-37
+167-->[androidx.emoji2:emoji2:1.3.0] C:\Users\DELL\.gradle\caches\8.11.1\transforms\37ab6ff3ea41c51757afe9c69d8c8a6f\transformed\emoji2-1.3.0\AndroidManifest.xml:27:13-37
 168            <meta-data
-168-->[androidx.emoji2:emoji2:1.3.0] C:\Users\DELL\.gradle\caches\8.10.2\transforms\248e6eba2771b7d1234844e88f24e800\transformed\emoji2-1.3.0\AndroidManifest.xml:29:13-31:52
+168-->[androidx.emoji2:emoji2:1.3.0] C:\Users\DELL\.gradle\caches\8.11.1\transforms\37ab6ff3ea41c51757afe9c69d8c8a6f\transformed\emoji2-1.3.0\AndroidManifest.xml:29:13-31:52
 169                android:name="androidx.emoji2.text.EmojiCompatInitializer"
-169-->[androidx.emoji2:emoji2:1.3.0] C:\Users\DELL\.gradle\caches\8.10.2\transforms\248e6eba2771b7d1234844e88f24e800\transformed\emoji2-1.3.0\AndroidManifest.xml:30:17-75
+169-->[androidx.emoji2:emoji2:1.3.0] C:\Users\DELL\.gradle\caches\8.11.1\transforms\37ab6ff3ea41c51757afe9c69d8c8a6f\transformed\emoji2-1.3.0\AndroidManifest.xml:30:17-75
 170                android:value="androidx.startup" />
-170-->[androidx.emoji2:emoji2:1.3.0] C:\Users\DELL\.gradle\caches\8.10.2\transforms\248e6eba2771b7d1234844e88f24e800\transformed\emoji2-1.3.0\AndroidManifest.xml:31:17-49
+170-->[androidx.emoji2:emoji2:1.3.0] C:\Users\DELL\.gradle\caches\8.11.1\transforms\37ab6ff3ea41c51757afe9c69d8c8a6f\transformed\emoji2-1.3.0\AndroidManifest.xml:31:17-49
 171            <meta-data
-171-->[androidx.lifecycle:lifecycle-process:2.8.7] C:\Users\DELL\.gradle\caches\8.10.2\transforms\49ca76242081fb45511fe33f9b53c58c\transformed\lifecycle-process-2.8.7\AndroidManifest.xml:29:13-31:52
+171-->[androidx.lifecycle:lifecycle-process:2.8.7] C:\Users\DELL\.gradle\caches\8.11.1\transforms\2d576de051a49f5a604a4244ccc87ff3\transformed\lifecycle-process-2.8.7\AndroidManifest.xml:29:13-31:52
 172                android:name="androidx.lifecycle.ProcessLifecycleInitializer"
-172-->[androidx.lifecycle:lifecycle-process:2.8.7] C:\Users\DELL\.gradle\caches\8.10.2\transforms\49ca76242081fb45511fe33f9b53c58c\transformed\lifecycle-process-2.8.7\AndroidManifest.xml:30:17-78
+172-->[androidx.lifecycle:lifecycle-process:2.8.7] C:\Users\DELL\.gradle\caches\8.11.1\transforms\2d576de051a49f5a604a4244ccc87ff3\transformed\lifecycle-process-2.8.7\AndroidManifest.xml:30:17-78
 173                android:value="androidx.startup" />
-173-->[androidx.lifecycle:lifecycle-process:2.8.7] C:\Users\DELL\.gradle\caches\8.10.2\transforms\49ca76242081fb45511fe33f9b53c58c\transformed\lifecycle-process-2.8.7\AndroidManifest.xml:31:17-49
+173-->[androidx.lifecycle:lifecycle-process:2.8.7] C:\Users\DELL\.gradle\caches\8.11.1\transforms\2d576de051a49f5a604a4244ccc87ff3\transformed\lifecycle-process-2.8.7\AndroidManifest.xml:31:17-49
 174            <meta-data
-174-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\DELL\.gradle\caches\8.10.2\transforms\0401f59d82ae15d1d027adb78849ae7c\transformed\profileinstaller-1.3.1\AndroidManifest.xml:29:13-31:52
+174-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\DELL\.gradle\caches\8.11.1\transforms\77bbbd8901abccae8e43ca46234940c0\transformed\profileinstaller-1.3.1\AndroidManifest.xml:29:13-31:52
 175                android:name="androidx.profileinstaller.ProfileInstallerInitializer"
-175-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\DELL\.gradle\caches\8.10.2\transforms\0401f59d82ae15d1d027adb78849ae7c\transformed\profileinstaller-1.3.1\AndroidManifest.xml:30:17-85
+175-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\DELL\.gradle\caches\8.11.1\transforms\77bbbd8901abccae8e43ca46234940c0\transformed\profileinstaller-1.3.1\AndroidManifest.xml:30:17-85
 176                android:value="androidx.startup" />
-176-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\DELL\.gradle\caches\8.10.2\transforms\0401f59d82ae15d1d027adb78849ae7c\transformed\profileinstaller-1.3.1\AndroidManifest.xml:31:17-49
+176-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\DELL\.gradle\caches\8.11.1\transforms\77bbbd8901abccae8e43ca46234940c0\transformed\profileinstaller-1.3.1\AndroidManifest.xml:31:17-49
 177        </provider>
 178
 179        <meta-data
-179-->[com.google.android.gms:play-services-basement:18.4.0] C:\Users\DELL\.gradle\caches\8.10.2\transforms\242345f0067fa626e8fc7233d6db8c70\transformed\play-services-basement-18.4.0\AndroidManifest.xml:6:9-122
+179-->[com.google.android.gms:play-services-basement:18.4.0] C:\Users\DELL\.gradle\caches\8.11.1\transforms\02c73a040e1bb05bfca3dfb219926ab1\transformed\play-services-basement-18.4.0\AndroidManifest.xml:6:9-122
 180            android:name="com.google.android.gms.version"
-180-->[com.google.android.gms:play-services-basement:18.4.0] C:\Users\DELL\.gradle\caches\8.10.2\transforms\242345f0067fa626e8fc7233d6db8c70\transformed\play-services-basement-18.4.0\AndroidManifest.xml:6:20-65
+180-->[com.google.android.gms:play-services-basement:18.4.0] C:\Users\DELL\.gradle\caches\8.11.1\transforms\02c73a040e1bb05bfca3dfb219926ab1\transformed\play-services-basement-18.4.0\AndroidManifest.xml:6:20-65
 181            android:value="@integer/google_play_services_version" />
-181-->[com.google.android.gms:play-services-basement:18.4.0] C:\Users\DELL\.gradle\caches\8.10.2\transforms\242345f0067fa626e8fc7233d6db8c70\transformed\play-services-basement-18.4.0\AndroidManifest.xml:6:66-119
+181-->[com.google.android.gms:play-services-basement:18.4.0] C:\Users\DELL\.gradle\caches\8.11.1\transforms\02c73a040e1bb05bfca3dfb219926ab1\transformed\play-services-basement-18.4.0\AndroidManifest.xml:6:66-119
 182
 183        <activity
-183-->[androidx.compose.ui:ui-test-manifest:1.6.6] C:\Users\DELL\.gradle\caches\8.10.2\transforms\99f6ab8245b1be967a15ef7eba3c2a93\transformed\ui-test-manifest-1.6.6\AndroidManifest.xml:23:9-25:39
+183-->[androidx.compose.ui:ui-test-manifest:1.6.6] C:\Users\DELL\.gradle\caches\8.11.1\transforms\724fbf9e38e9d7b15e956cbec4439c54\transformed\ui-test-manifest-1.6.6\AndroidManifest.xml:23:9-25:39
 184            android:name="androidx.activity.ComponentActivity"
-184-->[androidx.compose.ui:ui-test-manifest:1.6.6] C:\Users\DELL\.gradle\caches\8.10.2\transforms\99f6ab8245b1be967a15ef7eba3c2a93\transformed\ui-test-manifest-1.6.6\AndroidManifest.xml:24:13-63
+184-->[androidx.compose.ui:ui-test-manifest:1.6.6] C:\Users\DELL\.gradle\caches\8.11.1\transforms\724fbf9e38e9d7b15e956cbec4439c54\transformed\ui-test-manifest-1.6.6\AndroidManifest.xml:24:13-63
 185            android:exported="true" />
-185-->[androidx.compose.ui:ui-test-manifest:1.6.6] C:\Users\DELL\.gradle\caches\8.10.2\transforms\99f6ab8245b1be967a15ef7eba3c2a93\transformed\ui-test-manifest-1.6.6\AndroidManifest.xml:25:13-36
+185-->[androidx.compose.ui:ui-test-manifest:1.6.6] C:\Users\DELL\.gradle\caches\8.11.1\transforms\724fbf9e38e9d7b15e956cbec4439c54\transformed\ui-test-manifest-1.6.6\AndroidManifest.xml:25:13-36
 186
 187        <receiver
-187-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\DELL\.gradle\caches\8.10.2\transforms\0401f59d82ae15d1d027adb78849ae7c\transformed\profileinstaller-1.3.1\AndroidManifest.xml:34:9-52:20
+187-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\DELL\.gradle\caches\8.11.1\transforms\77bbbd8901abccae8e43ca46234940c0\transformed\profileinstaller-1.3.1\AndroidManifest.xml:34:9-52:20
 188            android:name="androidx.profileinstaller.ProfileInstallReceiver"
-188-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\DELL\.gradle\caches\8.10.2\transforms\0401f59d82ae15d1d027adb78849ae7c\transformed\profileinstaller-1.3.1\AndroidManifest.xml:35:13-76
+188-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\DELL\.gradle\caches\8.11.1\transforms\77bbbd8901abccae8e43ca46234940c0\transformed\profileinstaller-1.3.1\AndroidManifest.xml:35:13-76
 189            android:directBootAware="false"
-189-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\DELL\.gradle\caches\8.10.2\transforms\0401f59d82ae15d1d027adb78849ae7c\transformed\profileinstaller-1.3.1\AndroidManifest.xml:36:13-44
+189-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\DELL\.gradle\caches\8.11.1\transforms\77bbbd8901abccae8e43ca46234940c0\transformed\profileinstaller-1.3.1\AndroidManifest.xml:36:13-44
 190            android:enabled="true"
-190-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\DELL\.gradle\caches\8.10.2\transforms\0401f59d82ae15d1d027adb78849ae7c\transformed\profileinstaller-1.3.1\AndroidManifest.xml:37:13-35
+190-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\DELL\.gradle\caches\8.11.1\transforms\77bbbd8901abccae8e43ca46234940c0\transformed\profileinstaller-1.3.1\AndroidManifest.xml:37:13-35
 191            android:exported="true"
-191-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\DELL\.gradle\caches\8.10.2\transforms\0401f59d82ae15d1d027adb78849ae7c\transformed\profileinstaller-1.3.1\AndroidManifest.xml:38:13-36
+191-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\DELL\.gradle\caches\8.11.1\transforms\77bbbd8901abccae8e43ca46234940c0\transformed\profileinstaller-1.3.1\AndroidManifest.xml:38:13-36
 192            android:permission="android.permission.DUMP" >
-192-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\DELL\.gradle\caches\8.10.2\transforms\0401f59d82ae15d1d027adb78849ae7c\transformed\profileinstaller-1.3.1\AndroidManifest.xml:39:13-57
+192-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\DELL\.gradle\caches\8.11.1\transforms\77bbbd8901abccae8e43ca46234940c0\transformed\profileinstaller-1.3.1\AndroidManifest.xml:39:13-57
 193            <intent-filter>
-193-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\DELL\.gradle\caches\8.10.2\transforms\0401f59d82ae15d1d027adb78849ae7c\transformed\profileinstaller-1.3.1\AndroidManifest.xml:40:13-42:29
+193-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\DELL\.gradle\caches\8.11.1\transforms\77bbbd8901abccae8e43ca46234940c0\transformed\profileinstaller-1.3.1\AndroidManifest.xml:40:13-42:29
 194                <action android:name="androidx.profileinstaller.action.INSTALL_PROFILE" />
-194-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\DELL\.gradle\caches\8.10.2\transforms\0401f59d82ae15d1d027adb78849ae7c\transformed\profileinstaller-1.3.1\AndroidManifest.xml:41:17-91
-194-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\DELL\.gradle\caches\8.10.2\transforms\0401f59d82ae15d1d027adb78849ae7c\transformed\profileinstaller-1.3.1\AndroidManifest.xml:41:25-88
+194-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\DELL\.gradle\caches\8.11.1\transforms\77bbbd8901abccae8e43ca46234940c0\transformed\profileinstaller-1.3.1\AndroidManifest.xml:41:17-91
+194-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\DELL\.gradle\caches\8.11.1\transforms\77bbbd8901abccae8e43ca46234940c0\transformed\profileinstaller-1.3.1\AndroidManifest.xml:41:25-88
 195            </intent-filter>
 196            <intent-filter>
-196-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\DELL\.gradle\caches\8.10.2\transforms\0401f59d82ae15d1d027adb78849ae7c\transformed\profileinstaller-1.3.1\AndroidManifest.xml:43:13-45:29
+196-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\DELL\.gradle\caches\8.11.1\transforms\77bbbd8901abccae8e43ca46234940c0\transformed\profileinstaller-1.3.1\AndroidManifest.xml:43:13-45:29
 197                <action android:name="androidx.profileinstaller.action.SKIP_FILE" />
-197-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\DELL\.gradle\caches\8.10.2\transforms\0401f59d82ae15d1d027adb78849ae7c\transformed\profileinstaller-1.3.1\AndroidManifest.xml:44:17-85
-197-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\DELL\.gradle\caches\8.10.2\transforms\0401f59d82ae15d1d027adb78849ae7c\transformed\profileinstaller-1.3.1\AndroidManifest.xml:44:25-82
+197-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\DELL\.gradle\caches\8.11.1\transforms\77bbbd8901abccae8e43ca46234940c0\transformed\profileinstaller-1.3.1\AndroidManifest.xml:44:17-85
+197-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\DELL\.gradle\caches\8.11.1\transforms\77bbbd8901abccae8e43ca46234940c0\transformed\profileinstaller-1.3.1\AndroidManifest.xml:44:25-82
 198            </intent-filter>
 199            <intent-filter>
-199-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\DELL\.gradle\caches\8.10.2\transforms\0401f59d82ae15d1d027adb78849ae7c\transformed\profileinstaller-1.3.1\AndroidManifest.xml:46:13-48:29
+199-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\DELL\.gradle\caches\8.11.1\transforms\77bbbd8901abccae8e43ca46234940c0\transformed\profileinstaller-1.3.1\AndroidManifest.xml:46:13-48:29
 200                <action android:name="androidx.profileinstaller.action.SAVE_PROFILE" />
-200-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\DELL\.gradle\caches\8.10.2\transforms\0401f59d82ae15d1d027adb78849ae7c\transformed\profileinstaller-1.3.1\AndroidManifest.xml:47:17-88
-200-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\DELL\.gradle\caches\8.10.2\transforms\0401f59d82ae15d1d027adb78849ae7c\transformed\profileinstaller-1.3.1\AndroidManifest.xml:47:25-85
+200-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\DELL\.gradle\caches\8.11.1\transforms\77bbbd8901abccae8e43ca46234940c0\transformed\profileinstaller-1.3.1\AndroidManifest.xml:47:17-88
+200-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\DELL\.gradle\caches\8.11.1\transforms\77bbbd8901abccae8e43ca46234940c0\transformed\profileinstaller-1.3.1\AndroidManifest.xml:47:25-85
 201            </intent-filter>
 202            <intent-filter>
-202-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\DELL\.gradle\caches\8.10.2\transforms\0401f59d82ae15d1d027adb78849ae7c\transformed\profileinstaller-1.3.1\AndroidManifest.xml:49:13-51:29
+202-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\DELL\.gradle\caches\8.11.1\transforms\77bbbd8901abccae8e43ca46234940c0\transformed\profileinstaller-1.3.1\AndroidManifest.xml:49:13-51:29
 203                <action android:name="androidx.profileinstaller.action.BENCHMARK_OPERATION" />
-203-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\DELL\.gradle\caches\8.10.2\transforms\0401f59d82ae15d1d027adb78849ae7c\transformed\profileinstaller-1.3.1\AndroidManifest.xml:50:17-95
-203-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\DELL\.gradle\caches\8.10.2\transforms\0401f59d82ae15d1d027adb78849ae7c\transformed\profileinstaller-1.3.1\AndroidManifest.xml:50:25-92
+203-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\DELL\.gradle\caches\8.11.1\transforms\77bbbd8901abccae8e43ca46234940c0\transformed\profileinstaller-1.3.1\AndroidManifest.xml:50:17-95
+203-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\DELL\.gradle\caches\8.11.1\transforms\77bbbd8901abccae8e43ca46234940c0\transformed\profileinstaller-1.3.1\AndroidManifest.xml:50:25-92
 204            </intent-filter>
 205        </receiver> <!-- The activities will be merged into the manifest of the hosting app. -->
 206        <activity
-206-->[com.google.android.play:core-common:2.0.3] C:\Users\DELL\.gradle\caches\8.10.2\transforms\bdeb9e9980e2e1c9f2c500eca5055165\transformed\core-common-2.0.3\AndroidManifest.xml:14:9-18:65
+206-->[com.google.android.play:core-common:2.0.3] C:\Users\DELL\.gradle\caches\8.11.1\transforms\b24db51edc00e3bf3e782e1257317d98\transformed\core-common-2.0.3\AndroidManifest.xml:14:9-18:65
 207            android:name="com.google.android.play.core.common.PlayCoreDialogWrapperActivity"
-207-->[com.google.android.play:core-common:2.0.3] C:\Users\DELL\.gradle\caches\8.10.2\transforms\bdeb9e9980e2e1c9f2c500eca5055165\transformed\core-common-2.0.3\AndroidManifest.xml:15:13-93
+207-->[com.google.android.play:core-common:2.0.3] C:\Users\DELL\.gradle\caches\8.11.1\transforms\b24db51edc00e3bf3e782e1257317d98\transformed\core-common-2.0.3\AndroidManifest.xml:15:13-93
 208            android:exported="false"
-208-->[com.google.android.play:core-common:2.0.3] C:\Users\DELL\.gradle\caches\8.10.2\transforms\bdeb9e9980e2e1c9f2c500eca5055165\transformed\core-common-2.0.3\AndroidManifest.xml:16:13-37
+208-->[com.google.android.play:core-common:2.0.3] C:\Users\DELL\.gradle\caches\8.11.1\transforms\b24db51edc00e3bf3e782e1257317d98\transformed\core-common-2.0.3\AndroidManifest.xml:16:13-37
 209            android:stateNotNeeded="true"
-209-->[com.google.android.play:core-common:2.0.3] C:\Users\DELL\.gradle\caches\8.10.2\transforms\bdeb9e9980e2e1c9f2c500eca5055165\transformed\core-common-2.0.3\AndroidManifest.xml:17:13-42
+209-->[com.google.android.play:core-common:2.0.3] C:\Users\DELL\.gradle\caches\8.11.1\transforms\b24db51edc00e3bf3e782e1257317d98\transformed\core-common-2.0.3\AndroidManifest.xml:17:13-42
 210            android:theme="@style/Theme.PlayCore.Transparent" />
-210-->[com.google.android.play:core-common:2.0.3] C:\Users\DELL\.gradle\caches\8.10.2\transforms\bdeb9e9980e2e1c9f2c500eca5055165\transformed\core-common-2.0.3\AndroidManifest.xml:18:13-62
+210-->[com.google.android.play:core-common:2.0.3] C:\Users\DELL\.gradle\caches\8.11.1\transforms\b24db51edc00e3bf3e782e1257317d98\transformed\core-common-2.0.3\AndroidManifest.xml:18:13-62
 211    </application>
 212
 213</manifest>

@@ -29,7 +29,10 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.zIndex
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.BlendMode
+import androidx.compose.ui.graphics.ColorFilter
 
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.Dp
@@ -481,7 +484,9 @@ fun GameActivityScreen(
 
                     // Use Image composable with painterResource
                     Image(
-                        painter = painterResource(id = heroImages[heroName] ?: heroImages["Default"]!!),
+                        painter = painterResource(
+                            id = heroImages[heroName] ?: heroImages["Default"]!!
+                        ),
                         contentDescription = null,
                         modifier = Modifier
                             .offset {
@@ -652,6 +657,8 @@ fun GameActivityScreen(
         }
 
 
+
+
         // Sound Button - Bottom Right
         Box(
             modifier = Modifier
@@ -696,75 +703,126 @@ fun GameActivityScreen(
                 )
 
                 // Display the number of collected heroes on the Game Box
-                if (foundCharacters.isNotEmpty()) {
-                    Text(
-                        text = "${foundCharacters.size}",
-                        style = MaterialTheme.typography.body2,
-                        color = Color.White,
-                        modifier = Modifier
-                            .align(Alignment.TopEnd)
-                            .background(Color.Black.copy(alpha = 0.7f), shape = RoundedCornerShape(4.dp))
-                            .padding(4.dp)
-                    )
-                }
+                Text(
+                    text = "${foundCharacters.size}/${allowedHeroes.size}",
+                    style = MaterialTheme.typography.body2,
+                    color = Color.White,
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .background(Color.Black.copy(alpha = 0.7f), shape = RoundedCornerShape(4.dp))
+                        .padding(4.dp)
+                )
+            }
             }
 
-    // Open Game Box Popup
-    if (isGameBoxOpen) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color.Black.copy(alpha = 0.8f))
-                .clickable { isGameBoxOpen = false }, // Close the popup when clicking outside
-            contentAlignment = Alignment.Center
-        ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center,
+            // Open Game Box Popup
+        if (isGameBoxOpen) {
+            Box(
                 modifier = Modifier
-                    .background(Color.White, shape = RoundedCornerShape(16.dp))
-                    .padding(16.dp)
+                    .fillMaxSize()
+                    .background(Color.Black.copy(alpha = 0.8f))
+                    .clickable { isGameBoxOpen = false }, // Close the popup when clicking outside
+                contentAlignment = Alignment.Center
             ) {
-                Text(
-                    text = "Collected Heroes",
-                    style = MaterialTheme.typography.h6,
-                    color = Color.Black
-                )
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                // Display all collected heroes
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(16.dp),
-                    modifier = Modifier.horizontalScroll(rememberScrollState())
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
+                    modifier = Modifier
+                        .background(Color.White, shape = RoundedCornerShape(16.dp))
+                        .padding(16.dp)
                 ) {
-                    foundCharacters.forEach { (character, count) ->
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            Image(
-                                painter = painterResource(
-                                    id = when (character) {
-                                        "Iron_Man" -> R.drawable.iron_man
-                                        "Hulk" -> R.drawable.hulk_
-                                        "Captain Marvel" -> R.drawable.captain_marvel
-                                        "Captain America" -> R.drawable.captain_america
-                                        else -> R.drawable.search
+                    Text(
+                        text = "Heroes Collection",
+                        style = MaterialTheme.typography.h6,
+                        color = Color.Black
+                    )
+
+                    Text(
+                        text = "Collected: ${foundCharacters.size}/${allowedHeroes.size}",
+                        style = MaterialTheme.typography.body1,
+                        color = Color.Gray
+                    )
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    // Display all possible heroes
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(16.dp),
+                        modifier = Modifier.horizontalScroll(rememberScrollState())
+                    ) {
+                        allowedHeroes.forEach { character ->
+                            val isCollected = character in foundCharacters.keys
+                            val count = foundCharacters[character] ?: 0
+
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                // Get the resource ID for the character
+                                val resourceId = when (character) {
+                                    "Iron_Man" -> R.drawable.iron_man
+                                    "Hulk" -> R.drawable.hulk_
+                                    "Captain Marvel" -> R.drawable.captain_marvel
+                                    "Captain America" -> R.drawable.captain_america
+                                    "Scarlet Witch" -> R.drawable.scarlet_witch // Replace with actual resource
+                                    "Black Widow" -> R.drawable.black_widow // Replace with actual resource
+                                    "Wasp" -> R.drawable.wasp // Replace with actual resource
+                                    "Hela" -> R.drawable.hela // Replace with actual resource
+                                    "Thor" -> R.drawable.thor // Replace with actual resource
+                                    "Spider Man" -> R.drawable.spider_man // Replace with actual resource
+                                    else -> R.drawable.search
+                                }
+
+                                // Use two separate Image composables instead of modifiers
+                                if (isCollected) {
+                                    // Show colored version for collected heroes
+                                    Image(
+                                        painter = painterResource(id = resourceId),
+                                        contentDescription = character,
+                                        modifier = Modifier.size(80.dp)
+                                    )
+                                } else {
+                                    // Show grayscale version with alpha for uncollected heroes
+                                    Box(modifier = Modifier.size(80.dp)) {
+                                        Image(
+                                            painter = painterResource(id = resourceId),
+                                            contentDescription = character,
+                                            colorFilter = ColorFilter.tint(
+                                                Color.Gray.copy(alpha = 0.5f),
+                                                blendMode = BlendMode.SrcAtop
+                                            ),
+                                            modifier = Modifier
+                                                .size(80.dp)
+                                                .alpha(0.7f)
+                                        )
+
+                                        // Add a semi-transparent overlay to indicate it's not collected yet
+                                        Box(
+                                            modifier = Modifier
+                                                .matchParentSize()
+                                                .background(Color.Black.copy(alpha = 0.3f))
+                                        )
                                     }
-                                ),
-                                contentDescription = character,
-                                modifier = Modifier.size(80.dp)
-                            )
-                            Text(
-                                text = "×$count",
-                                style = MaterialTheme.typography.body2
-                            )
+                                }
+
+                                // Show the count if collected, otherwise show "?"
+                                Text(
+                                    text = if (isCollected) "×$count" else "?",
+                                    style = MaterialTheme.typography.body2,
+                                    color = if (isCollected) Color.Black else Color.Gray
+                                )
+
+                                // Show the character name
+                                Text(
+                                    text = character.replace("_", " "),
+                                    style = MaterialTheme.typography.caption,
+                                    color = if (isCollected) Color.Black else Color.Gray
+                                )
+                            }
                         }
                     }
                 }
             }
         }
+
     }
-}
-        }
     }
