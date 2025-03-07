@@ -17,6 +17,7 @@ drawable arrow_back
 drawable background
 drawable bg_remove_2
 drawable bg_remove_ble
+drawable black_widow
 drawable ble_games
 drawable bluetooth
 drawable captain_america
@@ -33,6 +34,7 @@ drawable google_g
 drawable graph
 drawable gth
 drawable guess_the_character
+drawable hela
 drawable home
 drawable hth
 drawable hulk_
@@ -55,16 +57,20 @@ drawable monkey
 drawable open_box
 drawable parrot
 drawable pirate
+drawable scarlet_witch
 drawable scratch
 drawable search
 drawable settings
 drawable soundoff
 drawable soundon
+drawable spider_man
 drawable sun
+drawable thor
 drawable ttr
 drawable visibility
 drawable visibility_off
 drawable visibility_on
+drawable wasp
 font fonts
 font helvetica
 font helvetica_bold
