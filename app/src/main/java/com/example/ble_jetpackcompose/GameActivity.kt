@@ -242,10 +242,10 @@ fun GameActivityScreen(
                 ) {
                     var buttonPosition by remember { mutableStateOf(IntOffset.Zero) }
                     AnimatedImageButton(
-                        imageResId = R.drawable.hunt_the_heroes,
+                        imageResId = R.drawable.guess_the_character,
                         contentDescription = "Hunt the Heroes",
                         isExpanded = expandedImage == R.drawable.hunt_the_heroes,
-                        expandedImageResId = R.drawable.hth,
+                        expandedImageResId = R.drawable.gth,
                         screenWidth = screenWidth,
                         screenHeight = screenHeight,
                         currentPosition = buttonPosition,
@@ -273,10 +273,10 @@ fun GameActivityScreen(
                 ) {
                     var buttonPosition by remember { mutableStateOf(IntOffset.Zero) }
                     AnimatedImageButton(
-                        imageResId = R.drawable.guess_the_character,
+                        imageResId = R.drawable.hunt_the_heroes,
                         contentDescription = "Guess the Character",
                         isExpanded = expandedImage == R.drawable.guess_the_character,
-                        expandedImageResId = R.drawable.gth,
+                        expandedImageResId = R.drawable.hth,
                         screenWidth = screenWidth,
                         screenHeight = screenHeight,
                         currentPosition = buttonPosition,

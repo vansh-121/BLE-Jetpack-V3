@@ -280,12 +280,13 @@ class BluetoothScanViewModel<T>(private val context: Context) : ViewModel() {
 
         val deviceId = data[0].toUByte().toString()
 
-        // Parse lux value correctly - treating each byte as a single digit
-        // Make sure we include all required bytes (5 through 10)
-        val digits = data.sliceArray(5..10).map { it.toInt() }
+        // Use toUByte() to get unsigned values (0-255) instead of potentially negative values
+        val digits = data.sliceArray(5..10).map { it.toUByte().toInt() }
 
-        // Calculate lux value by combining only non-zero digits
+        // Join the digits as a string
         val luxValueStr = digits.joinToString("") { it.toString() }.trimStart('0')
+
+        // Parse as float, with a default of 0f if empty
         val luxValue = if (luxValueStr.isEmpty()) 0f else luxValueStr.toFloat()
 
         return SensorData.LuxData(
