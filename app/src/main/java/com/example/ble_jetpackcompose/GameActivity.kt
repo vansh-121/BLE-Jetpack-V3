@@ -3,7 +3,15 @@ package com.example.ble_jetpackcompose
 import android.app.Activity
 import android.media.MediaPlayer
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.*
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.animateOffsetAsState
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
@@ -13,37 +21,54 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.IntOffset
-import androidx.compose.ui.zIndex
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.BlendMode
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
-
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.delay
 import kotlin.math.cos
+import kotlin.math.roundToInt
 import kotlin.math.sin
 import kotlin.random.Random
-import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.res.imageResource
-import kotlin.math.roundToInt
 
 fun dpToPx(dp: Dp): Float {
     return dp.value
@@ -427,6 +452,12 @@ fun GameActivityScreen(
                                 "Hulk" -> R.drawable.hulk_
                                 "Captain Marvel" -> R.drawable.captain_marvel
                                 "Captain America" -> R.drawable.captain_america
+                                "Scarlet Witch" -> R.drawable.scarlet_witch_ // Replace with actual resource
+                                "Black Widow" -> R.drawable.black_widow_ // Replace with actual resource
+                                "Wasp" -> R.drawable.wasp_ // Replace with actual resource
+                                "Hela" -> R.drawable.hela_ // Replace with actual resource
+                                "Thor" -> R.drawable.thor_ // Replace with actual resource
+                                "Spider Man" -> R.drawable.spider_man_ // Replace with actual resource
                                 else -> R.drawable.search // Placeholder
                             }
                         ),
@@ -456,7 +487,6 @@ fun GameActivityScreen(
                         )
                     }
                 }
-
             }
 
             // Load hero images as ImageBitmap outside the Canvas
@@ -466,12 +496,18 @@ fun GameActivityScreen(
                     "Hulk" to R.drawable.hulk_,
                     "Captain Marvel" to R.drawable.captain_marvel,
                     "Captain America" to R.drawable.captain_america,
+                    "Scarlet Witch" to R.drawable.scarlet_witch_, // Replace with actual resource
+                    "Black Widow" to R.drawable.black_widow_, // Replace with actual resource
+                    "Wasp" to R.drawable.wasp_, // Replace with actual resource
+                    "Hela" to R.drawable.hela_, // Replace with actual resource
+                    "Thor" to R.drawable.thor_, // Replace with actual resource
+                    "Spider Man" to R.drawable.spider_man_, // Replace with actual resource
                     "Default" to R.drawable.search
                 )
             }
 
             Box(modifier = Modifier.fillMaxSize()) {
-                heroAnimationState.forEach { (heroName, startPosition) ->
+                heroAnimationState.forEach { (heroName, _) ->
                     // Interpolate the position of the hero
                     val animatedPosition by animateOffsetAsState(
                         targetValue = gameBoxPosition,
@@ -539,6 +575,12 @@ fun GameActivityScreen(
                                                 "Hulk" -> R.drawable.hulk_
                                                 "Captain Marvel" -> R.drawable.captain_marvel
                                                 "Captain America" -> R.drawable.captain_america
+                                                "Scarlet Witch" -> R.drawable.scarlet_witch_ // Replace with actual resource
+                                                "Black Widow" -> R.drawable.black_widow_ // Replace with actual resource
+                                                "Wasp" -> R.drawable.wasp_ // Replace with actual resource
+                                                "Hela" -> R.drawable.hela_ // Replace with actual resource
+                                                "Thor" -> R.drawable.thor_ // Replace with actual resource
+                                                "Spider Man" -> R.drawable.spider_man_ // Replace with actual resource
                                                 else -> R.drawable.search
                                             }
                                         ),
@@ -560,44 +602,67 @@ fun GameActivityScreen(
         if (expandedImage == R.drawable.guess_the_character) {
             var showRadar by remember { mutableStateOf(false) }
             var showCharacterReveal by remember { mutableStateOf(false) }
-            var detectedCharacter by remember { mutableStateOf<String?>(null) }
+            var detectedCharacters by remember { mutableStateOf<List<String>>(emptyList()) }
 
-            val nearbyHeroForGuessing = bluetoothDevices.find { device ->
-                device.name in allowedHeroes &&
-                        device.rssi.toInt() in -40..0 &&
-                        device.name !in foundCharacters.keys
+            // Detect nearby Bluetooth devices (multiple)
+            val nearbyHeroes = bluetoothDevices.filter {
+                it.name in allowedHeroes && it.rssi.toInt() in -40..0
             }
 
-//            val nearbyHeroForGuessing = bluetoothDevices.find { device ->
-//                device.name in allowedHeroes &&
-//                        device.rssi.toInt() in -40..0
-//            }
-
+            // Show radar when Guess the Character is selected
             LaunchedEffect(expandedImage) {
                 if (expandedImage == R.drawable.guess_the_character) {
-                    // Add this line
                     bluetoothViewModel.setGameMode(BluetoothScanViewModel.GameMode.GUESS_THE_CHARACTER)
-
                     delay(100)
                     showRadar = true
                     bluetoothViewModel.startScan(activity)
                 } else {
-                    // Add this line when exiting the mode
-                    bluetoothViewModel.setGameMode(BluetoothScanViewModel.GameMode.NONE)
                     showRadar = false
                     showCharacterReveal = false
+                    bluetoothViewModel.setGameMode(BluetoothScanViewModel.GameMode.NONE)
                 }
             }
-            LaunchedEffect(nearbyHeroForGuessing) {
-                if (nearbyHeroForGuessing != null && expandedImage == R.drawable.guess_the_character) {
-                    delay(1500)
-                    detectedCharacter = nearbyHeroForGuessing.name
+
+            // Handle character detection
+            LaunchedEffect(nearbyHeroes) {
+                if (nearbyHeroes.isNotEmpty() && expandedImage == R.drawable.guess_the_character) {
+                    delay(1000) // Slight delay for dramatic effect
+                    detectedCharacters = nearbyHeroes.map { it.name }
                     showCharacterReveal = true
                 } else {
                     showCharacterReveal = false
-                    detectedCharacter = null
+                    detectedCharacters = emptyList()
                 }
             }
+
+            // Create a map of all hero images
+            val heroImages = remember {
+                mapOf(
+                    "Iron_Man" to R.drawable.iron_man,
+                    "Hulk" to R.drawable.hulk_,
+                    "Captain Marvel" to R.drawable.captain_marvel,
+                    "Captain America" to R.drawable.captain_america,
+                    "Scarlet Witch" to R.drawable.scarlet_witch_,
+                    "Black Widow" to R.drawable.black_widow_,
+                    "Wasp" to R.drawable.wasp_,
+                    "Hela" to R.drawable.hela_,
+                    "Thor" to R.drawable.thor_,
+                    "Spider Man" to R.drawable.spider_man_
+                )
+            }
+
+            // Create a list of all heroes with their positions on the radar
+            val allHeroesDeviceList = remember {
+                val positions = generateMultiplePositions(allowedHeroes.size, 600f)
+
+                // Pair each hero with its image resource and position
+                allowedHeroes.mapIndexed { index, heroName ->
+                    val imageRes = heroImages[heroName] ?: R.drawable.search
+                    Pair(imageRes, positions.getOrElse(index) { Offset.Zero })
+                }
+            }
+
+            // Display radar with all heroes
 
             if (showRadar) {
                 Box(
@@ -607,56 +672,46 @@ fun GameActivityScreen(
                         .offset(y = 50.dp),
                     contentAlignment = Alignment.Center
                 ) {
-                    RadarScreenWithRotatingLine()
+                    RadarScreenWithAllCharacters(
+                        activatedDevices = detectedCharacters,
+                        deviceList = allHeroesDeviceList
+                    )
+                }
+            }
 
-                    if (showCharacterReveal && detectedCharacter != null) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(16.dp)
-                                .zIndex(8f),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Column(
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                verticalArrangement = Arrangement.Center
-                            ) {
-                                Image(
-                                    painter = painterResource(
-                                        id = when (detectedCharacter) {
-                                            "Iron_Man" -> R.drawable.iron_man
-                                            "Hulk" -> R.drawable.hulk_
-                                            "Captain Marvel" -> R.drawable.captain_marvel
-                                            "Captain America" -> R.drawable.captain_america
-                                            else -> R.drawable.search
-                                        }
-                                    ),
-                                    contentDescription = "Character Revealed",
-                                    modifier = Modifier.size(200.dp),
-                                    contentScale = ContentScale.Fit
-                                )
-
-                                Spacer(modifier = Modifier.height(16.dp))
-
-                                Text(
-                                    text = detectedCharacter ?: "",
-                                    style = MaterialTheme.typography.h6,
-                                    color = Color.White,
-                                    modifier = Modifier
-                                        .background(
-                                            Color(0x99000000),
-                                            shape = RoundedCornerShape(4.dp)
-                                        )
-                                        .padding(horizontal = 16.dp, vertical = 8.dp)
-                                )
-                            }
+            // Optional: Display detected character names at the bottom
+            if (detectedCharacters.isNotEmpty()) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(bottom = 16.dp)
+                        .zIndex(8f),
+                    contentAlignment = Alignment.BottomCenter
+                ) {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier
+                            .background(Color(0x99000000), RoundedCornerShape(8.dp))
+                            .padding(16.dp)
+                    ) {
+                        Text(
+                            text = "Heroes Detected:",
+                            //style = MaterialTheme.typography.titleMedium,
+                            color = Color.White
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        detectedCharacters.forEach { heroName ->
+                            Text(
+                                text = heroName,
+                                //style = MaterialTheme.typography.bodyMedium,
+                                color = Color.White
+                            )
                         }
                     }
                 }
             }
         }
     }
-
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -760,12 +815,12 @@ fun GameActivityScreen(
                                     "Hulk" -> R.drawable.hulk_
                                     "Captain Marvel" -> R.drawable.captain_marvel
                                     "Captain America" -> R.drawable.captain_america
-                                    "Scarlet Witch" -> R.drawable.scarlet_witch // Replace with actual resource
-                                    "Black Widow" -> R.drawable.black_widow // Replace with actual resource
-                                    "Wasp" -> R.drawable.wasp // Replace with actual resource
-                                    "Hela" -> R.drawable.hela // Replace with actual resource
-                                    "Thor" -> R.drawable.thor // Replace with actual resource
-                                    "Spider Man" -> R.drawable.spider_man // Replace with actual resource
+                                    "Scarlet Witch" -> R.drawable.scarlet_witch_ // Replace with actual resource
+                                    "Black Widow" -> R.drawable.black_widow_ // Replace with actual resource
+                                    "Wasp" -> R.drawable.wasp_ // Replace with actual resource
+                                    "Hela" -> R.drawable.hela_ // Replace with actual resource
+                                    "Thor" -> R.drawable.thor_ // Replace with actual resource
+                                    "Spider Man" -> R.drawable.spider_man_ // Replace with actual resource
                                     else -> R.drawable.search
                                 }
 

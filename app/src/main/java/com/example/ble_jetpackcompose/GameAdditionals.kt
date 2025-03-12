@@ -165,33 +165,159 @@ fun AnimatedImageButton(
 }
 
 
+//GameAdditionals
+
+
 @Composable
-fun RadarScreenWithRotatingLine(modifier: Modifier = Modifier) {
-    val radarColor = colorResource(id = R.color.radar_color) // Color for circles
-    val centerCircleColor = colorResource(id = R.color.radar_color) // Focal circle color
+fun RadarScreenWithAllCharacters(
+    modifier: Modifier = Modifier,
+    deviceList: List<Pair<Int, Offset>> = emptyList(),  // List of image resources and positions
+    activatedDevices: List<String> = emptyList()  // List of activated device names
+) {
+    val radarColor = colorResource(id = R.color.radar_color)
+    val centerCircleColor = colorResource(id = R.color.radar_color)
+
+    // List of characters and their corresponding image resources
+    val characters = listOf(
+        R.drawable.iron_man to "Iron_Man",
+        R.drawable.hulk_ to "Hulk",
+        R.drawable.captain_marvel to "Captain Marvel",
+        R.drawable.captain_america to "Captain America",
+        R.drawable.scarlet_witch_ to "Scarlet Witch",
+        R.drawable.black_widow_ to "Black Widow",
+        R.drawable.wasp_ to "Wasp",
+        R.drawable.thor_ to "Thor"
+    )
+
+    // Generate symmetrical positions for the characters
+    val radius = 250f // Radius of the radar circle
+    val positions = generateSymmetricalPositions(characters.size, radius)
+
+    // Combine characters with their positions
+    val deviceList = characters.zip(positions).map { (imageResId, position) ->
+        imageResId.first to position
+    }
 
     Box(
-        modifier = modifier, // Apply the passed modifier here
+        modifier = modifier,
         contentAlignment = Alignment.Center
     ) {
-        RadarLayoutWithRotatingLine(radarColor, centerCircleColor)
+        RadarLayoutWithRotatingLine(
+            radarColor = radarColor,
+            centerCircleColor = centerCircleColor,
+            deviceList = deviceList,
+            activatedDevices = activatedDevices
+        )
     }
 }
+
+// Helper function to generate symmetrical positions
+fun generateSymmetricalPositions(count: Int, radius: Float): List<Offset> {
+    val positions = mutableListOf<Offset>()
+    for (i in 0 until count) {
+        val angle = 2 * Math.PI * i / count // Calculate the angle for each character
+        val x = (radius * cos(angle)).toFloat()
+        val y = (radius * sin(angle)).toFloat()
+        positions.add(Offset(x, y))
+    }
+    return positions
+}
+
+//@Composable
+//fun RadarLayout(
+//    radarColor: Color,
+//    centerCircleColor: Color,
+//    deviceList: List<Pair<Int, Offset>> = emptyList(),
+//    activatedDevices: List<String> = emptyList()
+//) {
+//    // Blinking animation for activated devices
+//    val blinkAlpha = remember { Animatable(1f) }
+//
+//    // Trigger blinking animation when activatedDevices changes
+//    LaunchedEffect(activatedDevices) {
+//        if (activatedDevices.isNotEmpty()) {
+//            while (true) {
+//                blinkAlpha.animateTo(0.3f, animationSpec = tween(500))
+//                blinkAlpha.animateTo(1f, animationSpec = tween(500))
+//            }
+//        } else {
+//            // Reset alpha if no devices are activated
+//            blinkAlpha.snapTo(1f)
+//        }
+//    }
+//
+//    Box(
+//        modifier = Modifier
+//            .size(300.dp)
+//            .clip(CircleShape)
+//            .background(Color.Transparent),
+//        contentAlignment = Alignment.Center
+//    ) {
+//        Canvas(modifier = Modifier.fillMaxSize()) {
+//            val boxSize = size.minDimension
+//            val radius = boxSize / 2
+//
+//            // Draw rotating line
+//            rotate(degrees = 0f) {
+//                drawLine(
+//                    color = radarColor,
+//                    start = center,
+//                    end = center.copy(x = center.x, y = center.y - radius),
+//                    strokeWidth = 3.dp.toPx()
+//                )
+//            }
+//        }
+//
+//        // Display all devices organized in circles
+//        deviceList.forEach { (imageResId, position) ->
+//            // Get the device name from the resource ID
+//            val deviceName = getDeviceNameFromResId(imageResId)
+//            val isActivated = activatedDevices.contains(deviceName)
+//
+//            Box(
+//                modifier = Modifier
+//                    .size(60.dp)
+//                    .offset(
+//                        x = with(LocalDensity.current) { position.x.toDp() },
+//                        y = with(LocalDensity.current) { position.y.toDp() }
+//                    )
+//            ) {
+//                // Device image with conditional blinking
+//                Image(
+//                    painter = painterResource(id = imageResId),
+//                    contentDescription = null,
+//                    modifier = Modifier
+//                        .fillMaxSize()
+//                        .graphicsLayer {
+//                            alpha = if (isActivated) blinkAlpha.value else 1f
+//                            scaleX = if (isActivated) 1.2f else 1f
+//                            scaleY = if (isActivated) 1.2f else 1f
+//                        }
+//                )
+//            }
+//        }
+//    }
+//}
+
 
 @Composable
 fun RadarLayoutWithRotatingLine(
     radarColor: Color,
-    centerCircleColor: Color
+    centerCircleColor: Color,
+    deviceList: List<Pair<Int, Offset>> = emptyList(),
+    activatedDevices: List<String> = emptyList() // Add parameter for activated devices
 ) {
     val lineRotation = remember { Animatable(0f) }
 
-    // State to manage the visibility and position of the image
-    val showImage = remember { mutableStateOf(false) }
-    val imagePosition = remember { mutableStateOf(Offset.Zero) }
+    // State for the visibility of devices
+    val showDevices = remember { mutableStateOf(false) }
 
     // State for burst effect
     val burstEffectVisible = remember { mutableStateOf(false) }
     val burstScale = remember { Animatable(0f) }
+
+    // Blinking animation for activated devices
+    val blinkAlpha = remember { Animatable(1f) }
 
     // Infinite rotation animation
     LaunchedEffect(Unit) {
@@ -207,35 +333,43 @@ fun RadarLayoutWithRotatingLine(
         )
     }
 
-    // Show image after 3 seconds
+    // Blinking animation for activated devices
+    LaunchedEffect(activatedDevices) {
+        if (activatedDevices.isNotEmpty()) {
+            while (true) {
+                blinkAlpha.animateTo(0.3f, animationSpec = tween(500))
+                blinkAlpha.animateTo(1f, animationSpec = tween(500))
+            }
+        }
+    }
+
+    // Show devices after delay
     LaunchedEffect(Unit) {
-        delay(3000L) // Wait for 3 seconds
+        delay(1500L)
         burstEffectVisible.value = true
-        imagePosition.value = generateRandomPosition(radius = 300f) // Generate random position
-        delay(300) // Brief delay to show burst effect
-        showImage.value = true
+        delay(300)
+        showDevices.value = true
         burstScale.animateTo(1f, animationSpec = tween(500))
     }
 
     Box(
         modifier = Modifier
-            .size(300.dp) // Outer box size
+            .size(300.dp)
             .clip(CircleShape)
-            .background(Color.Transparent), // Background color for the radar
+            .background(Color.Transparent),
         contentAlignment = Alignment.Center
     ) {
         Canvas(modifier = Modifier.fillMaxSize()) {
             val boxSize = size.minDimension
-            val radius = boxSize / 2 // Outer circle matches half of the box size
+            val radius = boxSize / 2
 
-            // Three concentric circles
+            // Draw the radar circles
             val circles = listOf(
-                radius * 0.33f to 2.dp,  // Smallest circle
-                radius * 0.66f to 4.dp,  // Medium circle
-                radius to 6.dp           // Outermost circle
+                radius * 0.33f to 2.dp,
+                radius * 0.66f to 4.dp,
+                radius to 6.dp
             )
 
-            // Draw each circle
             circles.forEach { (circleRadius, strokeWidth) ->
                 drawCircle(
                     color = radarColor,
@@ -244,36 +378,32 @@ fun RadarLayoutWithRotatingLine(
                 )
             }
 
-            // Draw the opaque center circle
+            // Draw center circle
             drawCircle(
                 color = centerCircleColor,
-                radius = radius * 0.06f, // Small circle at the center
-                alpha = 1f // Fully opaque
+                radius = radius * 0.06f,
+                alpha = 1f
             )
 
-            // Draw the rotating line
+            // Draw rotating line
             rotate(degrees = lineRotation.value) {
                 drawLine(
                     color = radarColor,
                     start = center,
-                    end = center.copy(
-                        x = center.x,
-                        y = center.y - radius // Use outer radius for line length
-                    ),
+                    end = center.copy(x = center.x, y = center.y - radius),
                     strokeWidth = 3.dp.toPx()
                 )
             }
 
-            // 3D Effect: Radar "pie slice" shadow effect
+            // Draw radar sector shadow
             val angle = lineRotation.value
-            val shadowColor = Color.Black.copy(alpha = 0.2f) // Light shadow effect
+            val shadowColor = Color.Black.copy(alpha = 0.2f)
 
-            // Draw the radar sector (shadow effect)
             rotate(degrees = angle) {
                 drawArc(
                     color = shadowColor,
                     startAngle = 240f,
-                    sweepAngle = 30f, // Adjust the size of the shadow area
+                    sweepAngle = 30f,
                     useCenter = true,
                     topLeft = Offset(center.x - radius, center.y - radius),
                     size = Size(radius * 2, radius * 2),
@@ -282,43 +412,107 @@ fun RadarLayoutWithRotatingLine(
             }
         }
 
-        // Display image with burst effect
-        Box(
-            modifier = Modifier
-                .size(60.dp) // Set image size
-                .offset(
-                    x = with(LocalDensity.current) { imagePosition.value.x.toDp() },
-                    y = with(LocalDensity.current) { imagePosition.value.y.toDp() }
-                )
-        ) {
-            // Burst effect animation (glowing light effect)
-            if (burstEffectVisible.value) {
+        // Display all devices with burst effects
+        if (showDevices.value) {
+            deviceList.forEach { (imageResId, position) ->
+                // Get the device name from the resource ID
+                val deviceName = getDeviceNameFromResId(imageResId)
+                val isActivated = activatedDevices.contains(deviceName)
+
                 Box(
                     modifier = Modifier
-                        .fillMaxSize()
-                        .background(Color.White.copy(alpha = 0.3f), shape = CircleShape)
-                        .scale(burstScale.value)
-                        .animateContentSize()
-                )
-            }
+                        .size(60.dp)
+                        .offset(
+                            x = with(LocalDensity.current) { position.x.toDp() },
+                            y = with(LocalDensity.current) { position.y.toDp() }
+                        )
+                ) {
+                    // Burst effect
+                    if (burstEffectVisible.value) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(Color.White.copy(alpha = 0.3f), shape = CircleShape)
+                                .scale(burstScale.value)
+                                .animateContentSize()
+                        )
+                    }
 
-            // Actual Image
-            AnimatedVisibility(
-                visible = showImage.value,
-                enter = fadeIn(animationSpec = tween(500)) + scaleIn(initialScale = 0.8f, animationSpec = tween(500)),
-                exit = fadeOut(animationSpec = tween(500))
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.jjack), // Replace with your image resource
-                    contentDescription = null,
-                    modifier = Modifier.fillMaxSize()
-                )
+                    // Device image with conditional blinking
+                    AnimatedVisibility(
+                        visible = true,
+                        enter = fadeIn(animationSpec = tween(500)) + scaleIn(initialScale = 0.8f, animationSpec = tween(500)),
+                        exit = fadeOut(animationSpec = tween(500))
+                    ) {
+                        Image(
+                            painter = painterResource(id = imageResId),
+                            contentDescription = null,
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .graphicsLayer {
+                                    alpha = if (isActivated) blinkAlpha.value else 1f
+                                    scaleX = if (isActivated) 1.2f else 1f
+                                    scaleY = if (isActivated) 1.2f else 1f
+                                }
+                        )
+                    }
+                }
             }
         }
     }
 }
 
+// Helper function to get device name from resource ID
+private fun getDeviceNameFromResId(resId: Int): String {
+    return when (resId) {
+        R.drawable.iron_man -> "Iron_Man"
+        R.drawable.hulk_ -> "Hulk"
+        R.drawable.captain_marvel -> "Captain Marvel"
+        R.drawable.captain_america -> "Captain America"
+        R.drawable.scarlet_witch_ -> "Scarlet Witch"
+        R.drawable.black_widow_ -> "Black Widow"
+        R.drawable.wasp_ -> "Wasp"
+        R.drawable.hela_ -> "Hela"
+        R.drawable.thor_ -> "Thor"
+        R.drawable.spider_man_ -> "Spider Man"
+        else -> ""
+    }
+}
 
+fun generateMultiplePositions(count: Int, radius: Float): List<Offset> {
+    val positions = mutableListOf<Offset>()
+
+    // Number of items in inner and outer circles
+    val innerCount = count / 3
+    val middleCount = count / 3
+    val outerCount = count - innerCount - middleCount
+
+    // Generate positions for inner circle
+    for (i in 0 until innerCount) {
+        val angle = 2 * Math.PI * i / innerCount
+        val x = (radius * 0.33f * cos(angle)).toFloat()
+        val y = (radius * 0.33f * sin(angle)).toFloat()
+        positions.add(Offset(x, y))
+    }
+
+    // Generate positions for middle circle
+    for (i in 0 until middleCount) {
+        val angle = 2 * Math.PI * i / middleCount
+        val x = (radius * 0.66f * cos(angle)).toFloat()
+        val y = (radius * 0.66f * sin(angle)).toFloat()
+        positions.add(Offset(x, y))
+    }
+
+    // Generate positions for outer circle
+    for (i in 0 until outerCount) {
+        val angle = 2 * Math.PI * i / outerCount
+        val x = (radius * 0.95f * cos(angle)).toFloat()
+        val y = (radius * 0.95f * sin(angle)).toFloat()
+        positions.add(Offset(x, y))
+    }
+
+    return positions
+}
 // Function to generate a random position within one of the two circles
 fun generateRandomPosition(radius: Float): Offset {
     val randomRadius = listOf(radius * 0.33f, radius * 0.66f).random() // Choose one of the two radii
@@ -329,8 +523,6 @@ fun generateRandomPosition(radius: Float): Offset {
 
     return Offset(x, y)
 }
-
-
 
 
 
@@ -349,6 +541,12 @@ fun ScratchCardScreen(
             "Hulk" -> R.drawable.hulk_
             "Captain Marvel" -> R.drawable.captain_marvel
             "Captain America" -> R.drawable.captain_america
+            "Scarlet Witch" -> R.drawable.scarlet_witch_ // Replace with actual resource
+            "Black Widow" -> R.drawable.black_widow_ // Replace with actual resource
+            "Wasp" -> R.drawable.wasp_ // Replace with actual resource
+            "Hela" -> R.drawable.hela_ // Replace with actual resource
+            "Thor" -> R.drawable.thor_ // Replace with actual resource
+            "Spider Man" -> R.drawable.spider_man_ // Replace with actual resource
             else -> R.drawable.inner // Default fallback image
         }
     )
@@ -424,6 +622,12 @@ fun ScratchCardScreen(
                         "Hulk" -> R.drawable.hulk_
                         "Captain Marvel" -> R.drawable.captain_marvel
                         "Captain America" -> R.drawable.captain_america
+                        "Scarlet Witch" -> R.drawable.scarlet_witch_ // Replace with actual resource
+                        "Black Widow" -> R.drawable.black_widow_ // Replace with actual resource
+                        "Wasp" -> R.drawable.wasp_ // Replace with actual resource
+                        "Hela" -> R.drawable.hela_ // Replace with actual resource
+                        "Thor" -> R.drawable.thor_ // Replace with actual resource
+                        "Spider Man" -> R.drawable.spider_man_ // Replace with actual resource
                         else -> R.drawable.inner // Default fallback image
                     }
                 ),
@@ -513,3 +717,4 @@ data class DraggedPath(
     val path: Path,
     val width: Float = 50f
 )
+

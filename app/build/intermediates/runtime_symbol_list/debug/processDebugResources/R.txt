@@ -2892,6 +2892,7 @@ int drawable background 0x7f07007b
 int drawable bg_remove_2 0x7f07007c
 int drawable bg_remove_ble 0x7f07007d
 int drawable black_widow 0x7f070133
+int drawable black_widow_ 0x7f070139
 int drawable ble_games 0x7f07007e
 int drawable bluetooth 0x7f07007f
 int drawable btn_checkbox_checked_mtrl 0x7f070080
@@ -2945,6 +2946,7 @@ int drawable graph 0x7f0700af
 int drawable gth 0x7f0700b0
 int drawable guess_the_character 0x7f0700b1
 int drawable hela 0x7f070134
+int drawable hela_ 0x7f07013a
 int drawable home 0x7f0700b2
 int drawable hth 0x7f0700b3
 int drawable hulk_ 0x7f0700b4
@@ -3062,15 +3064,18 @@ int drawable open_box 0x7f070123
 int drawable parrot 0x7f070124
 int drawable pirate 0x7f070125
 int drawable scarlet_witch 0x7f070135
+int drawable scarlet_witch_ 0x7f07013e
 int drawable scratch 0x7f070126
 int drawable search 0x7f070127
 int drawable settings 0x7f070128
 int drawable soundoff 0x7f070129
 int drawable soundon 0x7f07012a
 int drawable spider_man 0x7f070136
+int drawable spider_man_ 0x7f07013b
 int drawable sun 0x7f07012b
 int drawable test_level_drawable 0x7f07012c
 int drawable thor 0x7f070137
+int drawable thor_ 0x7f07013c
 int drawable tooltip_frame_dark 0x7f07012d
 int drawable tooltip_frame_light 0x7f07012e
 int drawable ttr 0x7f07012f
@@ -3078,6 +3083,7 @@ int drawable visibility 0x7f070130
 int drawable visibility_off 0x7f070131
 int drawable visibility_on 0x7f070132
 int drawable wasp 0x7f070138
+int drawable wasp_ 0x7f07013d
 int font fonts 0x7f080000
 int font helvetica 0x7f080001
 int font helvetica_bold 0x7f080002
