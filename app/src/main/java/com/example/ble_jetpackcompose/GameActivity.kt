@@ -45,6 +45,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -109,8 +110,12 @@ fun GameActivityScreen(
         }
     }
 
+// Proper cleanup of Bluetooth scanning
     DisposableEffect(Unit) {
-        onDispose { mediaPlayer.release() }
+        onDispose {
+            bluetoothViewModel.stopScan()
+            mediaPlayer.release()
+        }
     }
 
     LaunchedEffect(isSoundOn) {
@@ -127,7 +132,7 @@ fun GameActivityScreen(
         initialValue = 0f,
         targetValue = 360f,
         animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = 3000, easing = LinearEasing), // Slower animation
+            animation = tween(durationMillis = 5000, easing = LinearEasing), // Slower animation
             repeatMode = RepeatMode.Restart
         ),
         label = "searchButtonRotation"
@@ -174,45 +179,38 @@ fun GameActivityScreen(
         }
     }
     LaunchedEffect(particles.isNotEmpty()) {
-                if (particles.isNotEmpty()) {
-                    while (particles.isNotEmpty()) {
-                        particles.forEachIndexed { index, (x, y, angle) ->
-                            // Only update every 3rd particle each frame to reduce computation
-                            if (index % 3 == 0) {
-                                val speedX = (cos(Math.toRadians(angle)) * Random.nextFloat() * 10).toFloat()
-                                val speedY = (sin(Math.toRadians(angle)) * Random.nextFloat() * 10).toFloat()
-                                val decay = Random.nextFloat() * 0.1f
-                                particles[index] = Triple(
-                                    x + speedX,
-                                    y + speedY - decay,
-                                    angle
-                                )
-                            }
-                        }
-                        delay(32) // Use roughly 30fps instead of 60+
+        if (particles.isNotEmpty()) {
+            // Reduce update frequency
+            val particlesToUpdate = particles.size.coerceAtMost(10) // Limit to 10 particles at a time
+
+            repeat(5) { // Reduce animatio
+                // n duration
+                particles.take(particlesToUpdate).forEachIndexed { index, (x, y, angle) ->
+                    val speedX = (cos(Math.toRadians(angle)) * 5).toFloat() // Reduce speed
+                    val speedY = (sin(Math.toRadians(angle)) * 5).toFloat()
+
+                    if (index < particles.size) {
+                        particles[index] = Triple(
+                            x + speedX,
+                            y + speedY,
+                            angle
+                        )
                     }
                 }
+                delay(50) // Slower frame rate
             }
+            particles.clear() // Clear after brief animation
+        }
+    }
 
-    Canvas(modifier = Modifier.fillMaxSize()) {
-        particles.forEach { (x, y, _) ->
-            val baseSize = Random.nextFloat() * 10 + 5
-            val trailLength = 5
-            for (i in 0 until trailLength) {
-                val trailAlpha = 1f - (i / trailLength.toFloat())
-                val trailSize = baseSize * (1f - (i / trailLength.toFloat()))
+    if (particles.isNotEmpty()) {
+        Canvas(modifier = Modifier.fillMaxSize()) {
+            particles.forEach { (x, y, _) ->
+                // Simplified drawing
                 drawCircle(
-                    color = Color(
-                        Random.nextInt(256),
-                        Random.nextInt(256),
-                        Random.nextInt(256),
-                        (trailAlpha * 255).toInt()
-                    ),
-                    radius = trailSize,
-                    center = Offset(
-                        x - i * 2,
-                        y - i * 2
-                    )
+                    color = Color.Red, // Use fixed color instead of random
+                    radius = 5f,
+                    center = Offset(x, y)
                 )
             }
         }
@@ -326,15 +324,34 @@ fun GameActivityScreen(
             }
         }
 
-        LaunchedEffect(expandedImage) {
-            if (expandedImage == R.drawable.hunt_the_heroes) {
-                // Add this line
-                bluetoothViewModel.setGameMode(BluetoothScanViewModel.GameMode.HUNT_THE_HEROES)
+        // Add scan throttling
+        val isScanningActive = remember { mutableStateOf(false) }
+        val scanInterval = 3000L // milliseconds between scans
 
-                bluetoothViewModel.startScan(activity)
+        LaunchedEffect(expandedImage) {
+            if (expandedImage == R.drawable.hunt_the_heroes || expandedImage == R.drawable.guess_the_character) {
+                // Set appropriate game mode
+                bluetoothViewModel.setGameMode(
+                    when (expandedImage) {
+                        R.drawable.hunt_the_heroes -> BluetoothScanViewModel.GameMode.HUNT_THE_HEROES
+                        else -> BluetoothScanViewModel.GameMode.GUESS_THE_CHARACTER
+                    }
+                )
+
+                // Throttled scanning
+                while (true) {
+                    if (!isScanningActive.value) {
+                        isScanningActive.value = true
+                        bluetoothViewModel.startScan(activity)
+                        delay(scanInterval)
+                        bluetoothViewModel.stopScan() // Make sure you implement this method
+                        isScanningActive.value = false
+                    }
+                    delay(500) // Check if we need to scan again after a short delay
+                }
             } else {
-                // Add this line when exiting the mode
                 bluetoothViewModel.setGameMode(BluetoothScanViewModel.GameMode.NONE)
+                bluetoothViewModel.stopScan()
             }
         }
 
@@ -495,22 +512,22 @@ fun GameActivityScreen(
                 }
             }
 
-            // Load hero images as ImageBitmap outside the Canvas
-            val heroImages = remember {
-                mapOf(
+            // Use lazy loading for hero images
+            val heroImages = produceState<Map<String, Int>>(initialValue = emptyMap()) {
+                value = mapOf(
                     "Iron_Man" to R.drawable.iron_man,
                     "Hulk" to R.drawable.hulk_,
                     "Captain Marvel" to R.drawable.captain_marvel,
                     "Captain America" to R.drawable.captain_america,
-                    "Scarlet Witch" to R.drawable.scarlet_witch_, // Replace with actual resource
-                    "Black Widow" to R.drawable.black_widow_, // Replace with actual resource
-                    "Wasp" to R.drawable.wasp_, // Replace with actual resource
-                    "Hela" to R.drawable.hela_, // Replace with actual resource
-                    "Thor" to R.drawable.thor_, // Replace with actual resource
-                    "Spider Man" to R.drawable.spider_man_, // Replace with actual resource
+                    "Scarlet Witch" to R.drawable.scarlet_witch_,
+                    "Black Widow" to R.drawable.black_widow_,
+                    "Wasp" to R.drawable.wasp_,
+                    "Hela" to R.drawable.hela_,
+                    "Thor" to R.drawable.thor_,
+                    "Spider Man" to R.drawable.spider_man_,
                     "Default" to R.drawable.search
                 )
-            }
+            }.value
 
             Box(modifier = Modifier.fillMaxSize()) {
                 heroAnimationState.forEach { (heroName, _) ->
@@ -641,9 +658,9 @@ fun GameActivityScreen(
                 }
             }
 
-            // Create a map of all hero images
-            val heroImages = remember {
-                mapOf(
+            // Use lazy loading for hero images
+            val heroImages = produceState <Map<String, Int>>(initialValue = emptyMap()) {
+                value = mapOf(
                     "Iron_Man" to R.drawable.iron_man,
                     "Hulk" to R.drawable.hulk_,
                     "Captain Marvel" to R.drawable.captain_marvel,
@@ -653,10 +670,10 @@ fun GameActivityScreen(
                     "Wasp" to R.drawable.wasp_,
                     "Hela" to R.drawable.hela_,
                     "Thor" to R.drawable.thor_,
-                    "Spider Man" to R.drawable.spider_man_
+                    "Spider Man" to R.drawable.spider_man_,
+                    "Default" to R.drawable.search
                 )
-            }
-
+            }.value
             // Create a list of all heroes with their positions on the radar
             val allHeroesDeviceList = remember {
                 val positions = generateMultiplePositions(allowedHeroes.size, 600f)

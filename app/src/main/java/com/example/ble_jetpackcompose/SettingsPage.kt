@@ -1,8 +1,11 @@
 package com.example.ble_jetpackcompose
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
@@ -17,6 +20,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.intl.Locale
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -35,6 +40,40 @@ object ThemeManager {
         _isDarkMode.value = value
     }
 }
+
+// Create a singleton object to manage language state
+object LanguageManager {
+    private val _currentLanguage = MutableStateFlow(java.util.Locale.ENGLISH.language)
+    val currentLanguage: StateFlow<String> = _currentLanguage
+
+    // List of supported Indian languages
+    val supportedLanguages = listOf(
+        LanguageOption("en", "English"),
+        LanguageOption("hi", "हिन्दी (Hindi)"),
+        LanguageOption("ta", "தமிழ் (Tamil)"),
+        LanguageOption("te", "తెలుగు (Telugu)"),
+        LanguageOption("bn", "বাংলা (Bengali)"),
+        LanguageOption("mr", "मराठी (Marathi)"),
+        LanguageOption("gu", "ગુજરાતી (Gujarati)"),
+        LanguageOption("kn", "ಕನ್ನಡ (Kannada)"),
+        LanguageOption("ml", "മലയാളം (Malayalam)"),
+        LanguageOption("pa", "ਪੰਜਾਬੀ (Punjabi)"),
+        LanguageOption("or", "ଓଡ଼ିଆ (Odia)")
+    )
+
+    fun setLanguage(languageCode: String) {
+        _currentLanguage.value = languageCode
+    }
+
+    fun getLanguageName(languageCode: String): String {
+        return supportedLanguages.find { it.code == languageCode }?.name ?: "English"
+    }
+}
+
+// Data class for language options
+data class LanguageOption(val code: String, val name: String)
+
+
 
 @Composable
 fun ModernSettingsScreen(
@@ -88,7 +127,6 @@ fun ModernSettingsScreen(
             )
         },
         bottomBar = {
-            // Add the CustomBottomNavigation with dark mode support
             BottomNavigation(
                 navController = navController,
                 isDarkMode = isDarkMode
@@ -101,7 +139,6 @@ fun ModernSettingsScreen(
                 .fillMaxSize()
                 .padding(horizontal = 16.dp)
         ) {
-            // User Profile Section with current user info and dark mode
             UserProfileCard(
                 cardBackground = cardBackground,
                 textColor = textColor,
@@ -125,7 +162,6 @@ fun ModernSettingsScreen(
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            // Settings Options with dark mode
             SettingsOptionsList(
                 cardBackground = cardBackground,
                 textColor = textColor,
@@ -135,7 +171,8 @@ fun ModernSettingsScreen(
                 isDarkMode = isDarkMode,
                 onDarkModeToggle = { newValue ->
                     ThemeManager.toggleDarkMode(newValue)
-                }
+                },
+                navController = navController
             )
         }
     }
@@ -209,7 +246,6 @@ fun UserProfileCard(
         }
     }
 }
-
 @Composable
 fun SettingsOptionsList(
     cardBackground: Color,
@@ -218,7 +254,8 @@ fun SettingsOptionsList(
     dividerColor: Color,
     iconTint: Color,
     isDarkMode: Boolean,
-    onDarkModeToggle: (Boolean) -> Unit
+    onDarkModeToggle: (Boolean) -> Unit,
+    navController: NavHostController
 ) {
     val settingsOptions = listOf(
         SettingsItem(Icons.Outlined.DarkMode, "Dark Mode", SettingsItemType.SWITCH),
@@ -237,21 +274,23 @@ fun SettingsOptionsList(
         Column {
             settingsOptions.forEachIndexed { index, item ->
                 if (item.title == "Dark Mode") {
-                    // Pass the isDarkMode value to the Dark Mode switch item
                     SettingsItemRow(
                         item = item,
                         textColor = textColor,
                         secondaryTextColor = secondaryTextColor,
                         iconTint = iconTint,
                         initialSwitchState = isDarkMode,
-                        onSwitchChange = onDarkModeToggle
+                        onSwitchChange = onDarkModeToggle,
+                        navController = navController
                     )
                 } else {
                     SettingsItemRow(
                         item = item,
                         textColor = textColor,
                         secondaryTextColor = secondaryTextColor,
-                        iconTint = iconTint
+                        iconTint = iconTint,
+                        initialSwitchState = isDarkMode,
+                        navController = navController
                     )
                 }
 
@@ -266,7 +305,7 @@ fun SettingsOptionsList(
         }
     }
 }
-
+// Modify your SettingsItemRow function to handle language selection
 @Composable
 fun SettingsItemRow(
     item: SettingsItem,
@@ -274,13 +313,24 @@ fun SettingsItemRow(
     secondaryTextColor: Color,
     iconTint: Color,
     initialSwitchState: Boolean = false,
-    onSwitchChange: ((Boolean) -> Unit)? = null
+    onSwitchChange: ((Boolean) -> Unit)? = null,
+    navController: NavHostController? = null
 ) {
     var switchState by remember { mutableStateOf(initialSwitchState) }
+    var showLanguageDialog by remember { mutableStateOf(false) }
+
+    // Collect current language
+    val currentLanguage by LanguageManager.currentLanguage.collectAsState()
 
     Row(
         modifier = Modifier
             .fillMaxWidth()
+            .clickable(enabled = item.type == SettingsItemType.DETAIL) {
+                if (item.title == "Language") {
+                    showLanguageDialog = true
+                }
+                // Handle other clickable items as needed
+            }
             .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -325,7 +375,7 @@ fun SettingsItemRow(
             SettingsItemType.DETAIL -> {
                 Text(
                     text = when(item.title) {
-                        "Language" -> "English"
+                        "Language" -> LanguageManager.getLanguageName(currentLanguage)
                         else -> ""
                     },
                     fontFamily = helveticaFont,
@@ -341,6 +391,59 @@ fun SettingsItemRow(
                 )
             }
         }
+    }
+
+    // Language selection dialog
+    if (showLanguageDialog) {
+        AlertDialog(
+            onDismissRequest = { showLanguageDialog = false },
+            title = {
+                Text(
+                    text = "Select Language",
+                    fontFamily = helveticaFont,
+                    style = MaterialTheme.typography.h6,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            },
+            text = {
+                LazyColumn  {
+                    items(LanguageManager.supportedLanguages) { language ->
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable {
+                                    LanguageManager.setLanguage(language.code)
+                                    showLanguageDialog = false
+                                }
+                                .padding(vertical = 12.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = language.name,
+                                fontFamily = helveticaFont,
+                                style = MaterialTheme.typography.body1,
+                                modifier = Modifier.weight(1f)
+                            )
+                            if (language.code == currentLanguage) {
+                                Icon(
+                                    imageVector = Icons.Outlined.Check,
+                                    contentDescription = "Selected",
+                                    tint = iconTint
+                                )
+                            }
+                        }
+                    }
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = { showLanguageDialog = false }) {
+                    Text("Cancel")
+                }
+            },
+            backgroundColor = if (initialSwitchState) Color(0xFF1E1E1E) else Color.White,
+            contentColor = if (initialSwitchState) Color.White else Color.Black
+        )
     }
 }
 
