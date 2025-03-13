@@ -127,7 +127,7 @@ fun GameActivityScreen(
         initialValue = 0f,
         targetValue = 360f,
         animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = 2000, easing = LinearEasing),
+            animation = tween(durationMillis = 3000, easing = LinearEasing), // Slower animation
             repeatMode = RepeatMode.Restart
         ),
         label = "searchButtonRotation"
@@ -164,29 +164,35 @@ fun GameActivityScreen(
 
     LaunchedEffect(scratchCompleted) {
         if (scratchCompleted && screenWidth > 0 && screenHeight > 0) {
-            repeat(100) {
+            repeat(35) { // Reduced particle count
                 val angle = Random.nextDouble(0.0, 360.0)
                 val distance = Random.nextFloat() * 50
                 val startX = (centerX + cos(Math.toRadians(angle)) * distance).toFloat()
                 val startY = (centerY + sin(Math.toRadians(angle)) * distance).toFloat()
                 particles.add(Triple(startX, startY, angle))
             }
-
-            while (particles.isNotEmpty()) {
-                particles.forEachIndexed { index, (x, y, angle) ->
-                    val speedX = (cos(Math.toRadians(angle)) * Random.nextFloat() * 10).toFloat()
-                    val speedY = (sin(Math.toRadians(angle)) * Random.nextFloat() * 10).toFloat()
-                    val decay = Random.nextFloat() * 0.1f
-                    particles[index] = Triple(
-                        x + speedX,
-                        y + speedY - decay,
-                        angle
-                    )
-                }
-                delay(16)
-            }
         }
     }
+    LaunchedEffect(particles.isNotEmpty()) {
+                if (particles.isNotEmpty()) {
+                    while (particles.isNotEmpty()) {
+                        particles.forEachIndexed { index, (x, y, angle) ->
+                            // Only update every 3rd particle each frame to reduce computation
+                            if (index % 3 == 0) {
+                                val speedX = (cos(Math.toRadians(angle)) * Random.nextFloat() * 10).toFloat()
+                                val speedY = (sin(Math.toRadians(angle)) * Random.nextFloat() * 10).toFloat()
+                                val decay = Random.nextFloat() * 0.1f
+                                particles[index] = Triple(
+                                    x + speedX,
+                                    y + speedY - decay,
+                                    angle
+                                )
+                            }
+                        }
+                        delay(32) // Use roughly 30fps instead of 60+
+                    }
+                }
+            }
 
     Canvas(modifier = Modifier.fillMaxSize()) {
         particles.forEach { (x, y, _) ->

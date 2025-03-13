@@ -325,14 +325,13 @@ fun RadarLayoutWithRotatingLine(
             targetValue = 360f,
             animationSpec = infiniteRepeatable(
                 animation = tween(
-                    durationMillis = 2000,
+                    durationMillis = 3000,  // Slow down the animation
                     easing = LinearEasing
                 ),
                 repeatMode = RepeatMode.Restart
             )
         )
     }
-
     // Blinking animation for activated devices
     LaunchedEffect(activatedDevices) {
         if (activatedDevices.isNotEmpty()) {
@@ -573,28 +572,29 @@ fun ScratchCardScreen(
         }
     }
 
+// Modify ScratchCardScreen's LaunchedEffect to be less computationally intensive
     LaunchedEffect(Unit) {
-        val stepSize = canvasSizePx / 8
+        val stepSize = canvasSizePx / 5  // Increased step size
         var scratchedArea: Float
         val totalArea = canvasSizePx * canvasSizePx
 
-        // Zigzag pattern
-        for (y in 0..canvasSizePx.toInt() step (stepSize / 1.5f).toInt()) {
+        // Simplified pattern with fewer operations
+        for (y in 0..canvasSizePx.toInt() step stepSize.toInt()) {
             val xRange = if (y % (stepSize.toInt() * 2) == 0) {
-                (0..canvasSizePx.toInt() step (stepSize / 1.5f).toInt())
+                (0..canvasSizePx.toInt() step stepSize.toInt())
             } else {
-                (canvasSizePx.toInt() downTo 0 step (stepSize / 1.5f).toInt())
+                (canvasSizePx.toInt() downTo 0 step stepSize.toInt())
             }
             for (x in xRange) {
                 currentPathState.value.path.addOval(
                     androidx.compose.ui.geometry.Rect(
                         center = Offset(x.toFloat(), y.toFloat()),
-                        radius = stepSize * 1.2f
+                        radius = stepSize * 1.5f  // Larger radius to scratch more with fewer operations
                     )
                 )
                 scratchedArea = (y * canvasSizePx + x) / totalArea * 100f
                 scratchedAreaPercentage = scratchedArea.coerceAtMost(100f)
-                delay(30)
+                delay(50)  // Slightly longer delay
             }
         }
     }
