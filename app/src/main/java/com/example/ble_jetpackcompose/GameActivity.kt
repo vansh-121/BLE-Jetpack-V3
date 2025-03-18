@@ -898,6 +898,5 @@ fun GameActivityScreen(
                 }
             }
         }
-
     }
 }

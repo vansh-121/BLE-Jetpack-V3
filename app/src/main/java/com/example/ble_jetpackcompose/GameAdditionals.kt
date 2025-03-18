@@ -186,11 +186,13 @@ fun RadarScreenWithAllCharacters(
         R.drawable.scarlet_witch_ to "Scarlet Witch",
         R.drawable.black_widow_ to "Black Widow",
         R.drawable.wasp_ to "Wasp",
+        R.drawable.hela_ to "Hela",
+        R.drawable.spider_man_ to "Spider Man",
         R.drawable.thor_ to "Thor"
     )
 
     // Generate symmetrical positions for the characters
-    val radius = 250f // Radius of the radar circle
+    val radius = 350f // Radius of the radar circle
     val positions = generateSymmetricalPositions(characters.size, radius)
 
     // Combine characters with their positions
@@ -223,81 +225,6 @@ fun generateSymmetricalPositions(count: Int, radius: Float): List<Offset> {
     return positions
 }
 
-//@Composable
-//fun RadarLayout(
-//    radarColor: Color,
-//    centerCircleColor: Color,
-//    deviceList: List<Pair<Int, Offset>> = emptyList(),
-//    activatedDevices: List<String> = emptyList()
-//) {
-//    // Blinking animation for activated devices
-//    val blinkAlpha = remember { Animatable(1f) }
-//
-//    // Trigger blinking animation when activatedDevices changes
-//    LaunchedEffect(activatedDevices) {
-//        if (activatedDevices.isNotEmpty()) {
-//            while (true) {
-//                blinkAlpha.animateTo(0.3f, animationSpec = tween(500))
-//                blinkAlpha.animateTo(1f, animationSpec = tween(500))
-//            }
-//        } else {
-//            // Reset alpha if no devices are activated
-//            blinkAlpha.snapTo(1f)
-//        }
-//    }
-//
-//    Box(
-//        modifier = Modifier
-//            .size(300.dp)
-//            .clip(CircleShape)
-//            .background(Color.Transparent),
-//        contentAlignment = Alignment.Center
-//    ) {
-//        Canvas(modifier = Modifier.fillMaxSize()) {
-//            val boxSize = size.minDimension
-//            val radius = boxSize / 2
-//
-//            // Draw rotating line
-//            rotate(degrees = 0f) {
-//                drawLine(
-//                    color = radarColor,
-//                    start = center,
-//                    end = center.copy(x = center.x, y = center.y - radius),
-//                    strokeWidth = 3.dp.toPx()
-//                )
-//            }
-//        }
-//
-//        // Display all devices organized in circles
-//        deviceList.forEach { (imageResId, position) ->
-//            // Get the device name from the resource ID
-//            val deviceName = getDeviceNameFromResId(imageResId)
-//            val isActivated = activatedDevices.contains(deviceName)
-//
-//            Box(
-//                modifier = Modifier
-//                    .size(60.dp)
-//                    .offset(
-//                        x = with(LocalDensity.current) { position.x.toDp() },
-//                        y = with(LocalDensity.current) { position.y.toDp() }
-//                    )
-//            ) {
-//                // Device image with conditional blinking
-//                Image(
-//                    painter = painterResource(id = imageResId),
-//                    contentDescription = null,
-//                    modifier = Modifier
-//                        .fillMaxSize()
-//                        .graphicsLayer {
-//                            alpha = if (isActivated) blinkAlpha.value else 1f
-//                            scaleX = if (isActivated) 1.2f else 1f
-//                            scaleY = if (isActivated) 1.2f else 1f
-//                        }
-//                )
-//            }
-//        }
-//    }
-//}
 
 
 @Composable
@@ -305,12 +232,12 @@ fun RadarLayoutWithRotatingLine(
     radarColor: Color,
     centerCircleColor: Color,
     deviceList: List<Pair<Int, Offset>> = emptyList(),
-    activatedDevices: List<String> = emptyList() // Add parameter for activated devices
+    activatedDevices: List<String> = emptyList() // List of activated/found devices
 ) {
     val lineRotation = remember { Animatable(0f) }
 
     // State for the visibility of devices
-    val showDevices = remember { mutableStateOf(false) }
+    val showDevices = remember { mutableStateOf(true) } // Always show devices immediately
 
     // State for burst effect
     val burstEffectVisible = remember { mutableStateOf(false) }
@@ -319,7 +246,7 @@ fun RadarLayoutWithRotatingLine(
     // Blinking animation for activated devices
     val blinkAlpha = remember { Animatable(1f) }
 
-    // Infinite rotation animation
+    // Infinite rotation animation (scanning effect)
     LaunchedEffect(Unit) {
         lineRotation.animateTo(
             targetValue = 360f,
@@ -332,6 +259,7 @@ fun RadarLayoutWithRotatingLine(
             )
         )
     }
+
     // Blinking animation for activated devices
     LaunchedEffect(activatedDevices) {
         if (activatedDevices.isNotEmpty()) {
@@ -342,12 +270,9 @@ fun RadarLayoutWithRotatingLine(
         }
     }
 
-    // Show devices after delay
+    // Show devices immediately (no delay)
     LaunchedEffect(Unit) {
-        delay(1500L)
         burstEffectVisible.value = true
-        delay(300)
-        showDevices.value = true
         burstScale.animateTo(1f, animationSpec = tween(500))
     }
 
@@ -426,8 +351,8 @@ fun RadarLayoutWithRotatingLine(
                             y = with(LocalDensity.current) { position.y.toDp() }
                         )
                 ) {
-                    // Burst effect
-                    if (burstEffectVisible.value) {
+                    // Burst effect (only for newly activated devices)
+                    if (isActivated && burstEffectVisible.value) {
                         Box(
                             modifier = Modifier
                                 .fillMaxSize()
@@ -717,4 +642,3 @@ data class DraggedPath(
     val path: Path,
     val width: Float = 50f
 )
-
