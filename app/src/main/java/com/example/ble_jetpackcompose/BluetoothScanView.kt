@@ -158,7 +158,7 @@ class BluetoothScanViewModel<T>(private val context: Context) : ViewModel() {
 
     private fun createScanSettings(): ScanSettings =
         ScanSettings.Builder()
-            .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
+            .setScanMode(ScanSettings.SCAN_MODE_LOW_POWER)
             .setLegacy(false)
             .setPhy(ScanSettings.PHY_LE_ALL_SUPPORTED)
             .build()

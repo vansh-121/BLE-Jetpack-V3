@@ -167,12 +167,11 @@ fun AnimatedImageButton(
 
 //GameAdditionals
 
-
 @Composable
 fun RadarScreenWithAllCharacters(
     modifier: Modifier = Modifier,
-    deviceList: List<Pair<Int, Offset>> = emptyList(),  // List of image resources and positions
-    activatedDevices: List<String> = emptyList()  // List of activated device names
+    deviceList: List<Pair<Int, Offset>> = emptyList(),
+    activatedDevices: List<String> = emptyList()
 ) {
     val radarColor = colorResource(id = R.color.radar_color)
     val centerCircleColor = colorResource(id = R.color.radar_color)
@@ -191,23 +190,26 @@ fun RadarScreenWithAllCharacters(
         R.drawable.thor_ to "Thor"
     )
 
-    // Generate symmetrical positions for the characters
-    val radius = 350f // Radius of the radar circle
-    val positions = generateSymmetricalPositions(characters.size, radius)
+    // Generate positions only once and store them
+    val positions = remember {
+        generateSymmetricalPositions(characters.size, 350f)
+    }
 
     // Combine characters with their positions
-    val deviceList = characters.zip(positions).map { (imageResId, position) ->
-        imageResId.first to position
+    val characterPositions = remember(positions) {
+        characters.zip(positions).map { (imageResId, position) ->
+            imageResId.first to position
+        }
     }
 
     Box(
         modifier = modifier,
         contentAlignment = Alignment.Center
     ) {
-        RadarLayoutWithRotatingLine(
+        OptimizedRadarLayout(
             radarColor = radarColor,
             centerCircleColor = centerCircleColor,
-            deviceList = deviceList,
+            deviceList = characterPositions,
             activatedDevices = activatedDevices
         )
     }
@@ -225,7 +227,174 @@ fun generateSymmetricalPositions(count: Int, radius: Float): List<Offset> {
     return positions
 }
 
+@Composable
+fun OptimizedRadarLayout(
+    radarColor: Color,
+    centerCircleColor: Color,
+    deviceList: List<Pair<Int, Offset>> = emptyList(),
+    activatedDevices: List<String> = emptyList()
+) {
+    // Use a state for rotation value instead of an Animatable
+    // This approach is more efficient for continuous animations
+    var rotationAngle by remember { mutableFloatStateOf(0f) }
+    val deviceVisible = remember { mutableStateOf(true) }
 
+    // Use a simpler animation approach for the radar line
+    LaunchedEffect(Unit) {
+        while (true) {
+            rotationAngle = (rotationAngle + 1) % 360
+            delay(16) // Roughly 60fps
+        }
+    }
+
+    // Use a separate effect for blinking to reduce composition overhead
+    val blinkAlpha = remember { mutableFloatStateOf(1f) }
+    LaunchedEffect(activatedDevices) {
+        if (activatedDevices.isNotEmpty()) {
+            while (true) {
+                blinkAlpha.floatValue = 0.3f
+                delay(500)
+                blinkAlpha.floatValue = 1f
+                delay(500)
+            }
+        }
+    }
+
+    Box(
+        modifier = Modifier
+            .size(300.dp)
+            .clip(CircleShape)
+            .background(Color.Transparent),
+        contentAlignment = Alignment.Center
+    ) {
+        // Radar base with circles - this rarely changes so we can optimize it
+        RadarBase(radarColor, centerCircleColor)
+
+        // Rotating line - this changes frequently so we separate it
+        RotatingRadarLine(radarColor, rotationAngle)
+
+        // Devices - these change state but not position, so we optimize rendering
+        if (deviceVisible.value) {
+            deviceList.forEach { (imageResId, position) ->
+                val deviceName = getDeviceNameFromResId(imageResId)
+                val isActivated = activatedDevices.contains(deviceName)
+
+                DeviceIcon(
+                    imageResId = imageResId,
+                    position = position,
+                    isActivated = isActivated,
+                    blinkAlpha = if (isActivated) blinkAlpha.floatValue else 1f
+                )
+            }
+        }
+    }
+}
+
+
+@Composable
+fun DeviceIcon(
+    imageResId: Int,
+    position: Offset,
+    isActivated: Boolean,
+    blinkAlpha: Float
+) {
+    val localDensity = LocalDensity.current
+
+    // Optimize by using more efficient animation and rendering
+    Box(
+        modifier = Modifier
+            .size(60.dp)
+            .offset(
+                x = with(localDensity) { position.x.toDp() },
+                y = with(localDensity) { position.y.toDp() }
+            )
+    ) {
+        // Optimize by conditionally rendering burst effect only when needed
+        if (isActivated) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.White.copy(alpha = 0.3f), shape = CircleShape)
+            )
+        }
+
+        // Optimize image rendering by using graphicsLayer more efficiently
+        Image(
+            painter = painterResource(id = imageResId),
+            contentDescription = null,
+            modifier = Modifier
+                .fillMaxSize()
+                .graphicsLayer {
+                    alpha = blinkAlpha
+                    scaleX = if (isActivated) 1.2f else 1f
+                    scaleY = if (isActivated) 1.2f else 1f
+                }
+        )
+    }
+}
+
+
+
+
+@Composable
+fun RotatingRadarLine(radarColor: Color, rotationAngle: Float) {
+    Canvas(modifier = Modifier.fillMaxSize()) {
+        val radius = size.minDimension / 2
+
+        // Draw rotating line
+        rotate(degrees = rotationAngle) {
+            drawLine(
+                color = radarColor,
+                start = center,
+                end = center.copy(x = center.x, y = center.y - radius),
+                strokeWidth = 3.dp.toPx()
+            )
+
+            // Draw radar sector shadow more efficiently
+            val shadowColor = Color.Black.copy(alpha = 0.2f)
+            drawArc(
+                color = shadowColor,
+                startAngle = 240f,
+                sweepAngle = 30f,
+                useCenter = true,
+                topLeft = Offset(center.x - radius, center.y - radius),
+                size = Size(radius * 2, radius * 2),
+                style = Fill
+            )
+        }
+    }
+}
+
+
+@Composable
+fun RadarBase(radarColor: Color, centerCircleColor: Color) {
+    Canvas(modifier = Modifier.fillMaxSize()) {
+        val boxSize = size.minDimension
+        val radius = boxSize / 2
+
+        // Draw the radar circles
+        val circles = listOf(
+            radius * 0.33f to 2.dp,
+            radius * 0.66f to 4.dp,
+            radius to 6.dp
+        )
+
+        circles.forEach { (circleRadius, strokeWidth) ->
+            drawCircle(
+                color = radarColor,
+                radius = circleRadius,
+                style = Stroke(width = strokeWidth.toPx())
+            )
+        }
+
+        // Draw center circle
+        drawCircle(
+            color = centerCircleColor,
+            radius = radius * 0.06f,
+            alpha = 1f
+        )
+    }
+}
 
 @Composable
 fun RadarLayoutWithRotatingLine(
@@ -385,7 +554,6 @@ fun RadarLayoutWithRotatingLine(
         }
     }
 }
-
 // Helper function to get device name from resource ID
 private fun getDeviceNameFromResId(resId: Int): String {
     return when (resId) {
@@ -450,7 +618,6 @@ fun generateRandomPosition(radius: Float): Offset {
 
 
 
-//@OptIn(ExperimentalComposeUiApi::class) // Opting into experimental API @Composable
 @Composable
 fun ScratchCardScreen(
     heroName: String,
@@ -459,21 +626,25 @@ fun ScratchCardScreen(
 ) {
     val overlayImage = ImageBitmap.imageResource(id = R.drawable.scratch)
     // Select base image based on hero name
-    val baseImage = ImageBitmap.imageResource(
-        id = when (heroName) {
+    // Get resource ID outside of ImageBitmap.imageResource call
+    val heroImageResId = remember(heroName) {
+        when (heroName) {
             "Iron_Man" -> R.drawable.iron_man
             "Hulk" -> R.drawable.hulk_
             "Captain Marvel" -> R.drawable.captain_marvel
             "Captain America" -> R.drawable.captain_america
-            "Scarlet Witch" -> R.drawable.scarlet_witch_ // Replace with actual resource
-            "Black Widow" -> R.drawable.black_widow_ // Replace with actual resource
-            "Wasp" -> R.drawable.wasp_ // Replace with actual resource
-            "Hela" -> R.drawable.hela_ // Replace with actual resource
-            "Thor" -> R.drawable.thor_ // Replace with actual resource
-            "Spider Man" -> R.drawable.spider_man_ // Replace with actual resource
+            "Scarlet Witch" -> R.drawable.scarlet_witch_
+            "Black Widow" -> R.drawable.black_widow_
+            "Wasp" -> R.drawable.wasp_
+            "Hela" -> R.drawable.hela_
+            "Thor" -> R.drawable.thor_
+            "Spider Man" -> R.drawable.spider_man_
             else -> R.drawable.inner // Default fallback image
         }
-    )
+    }
+
+// Then use the resource ID with ImageBitmap.imageResource
+    val baseImage = ImageBitmap.imageResource(id = heroImageResId)
 
     val currentPathState = remember { mutableStateOf(DraggedPath(path = Path(), width = 150f)) }
     var scratchedAreaPercentage by remember { mutableFloatStateOf(0f) }
@@ -497,29 +668,23 @@ fun ScratchCardScreen(
         }
     }
 
-// Modify ScratchCardScreen's LaunchedEffect to be less computationally intensive
+    // Optimize scratch animation by using larger steps and fewer operations
     LaunchedEffect(Unit) {
-        val stepSize = canvasSizePx / 5  // Increased step size
-        var scratchedArea: Float
+        val stepSize = canvasSizePx / 2  // Much larger step size
         val totalArea = canvasSizePx * canvasSizePx
+        val scratchPath = currentPathState.value.path
 
-        // Simplified pattern with fewer operations
+        // Use a simpler scratch pattern
         for (y in 0..canvasSizePx.toInt() step stepSize.toInt()) {
-            val xRange = if (y % (stepSize.toInt() * 2) == 0) {
-                (0..canvasSizePx.toInt() step stepSize.toInt())
-            } else {
-                (canvasSizePx.toInt() downTo 0 step stepSize.toInt())
-            }
-            for (x in xRange) {
-                currentPathState.value.path.addOval(
+            for (x in 0..canvasSizePx.toInt() step stepSize.toInt()) {
+                scratchPath.addOval(
                     androidx.compose.ui.geometry.Rect(
                         center = Offset(x.toFloat(), y.toFloat()),
-                        radius = stepSize * 1.5f  // Larger radius to scratch more with fewer operations
+                        radius = stepSize * 0.8f
                     )
                 )
-                scratchedArea = (y * canvasSizePx + x) / totalArea * 100f
-                scratchedAreaPercentage = scratchedArea.coerceAtMost(100f)
-                delay(50)  // Slightly longer delay
+                scratchedAreaPercentage = ((y * canvasSizePx + x) / totalArea * 100f).coerceAtMost(100f)
+                delay(80)  // Longer delay between operations
             }
         }
     }
@@ -528,9 +693,9 @@ fun ScratchCardScreen(
         contentAlignment = Alignment.Center,
         modifier = modifier
     ) {
-        // Scratch Canvas (Visible only while scratching)
+        // Optimize by conditional rendering based on scratch state
         if (scratchedAreaPercentage < 95f) {
-            ScratchCanvas(
+            OptimizedScratchCanvas(
                 overlayImage = overlayImage,
                 baseImage = baseImage,
                 currentPath = currentPathState.value.path,
@@ -547,13 +712,13 @@ fun ScratchCardScreen(
                         "Hulk" -> R.drawable.hulk_
                         "Captain Marvel" -> R.drawable.captain_marvel
                         "Captain America" -> R.drawable.captain_america
-                        "Scarlet Witch" -> R.drawable.scarlet_witch_ // Replace with actual resource
-                        "Black Widow" -> R.drawable.black_widow_ // Replace with actual resource
-                        "Wasp" -> R.drawable.wasp_ // Replace with actual resource
-                        "Hela" -> R.drawable.hela_ // Replace with actual resource
-                        "Thor" -> R.drawable.thor_ // Replace with actual resource
-                        "Spider Man" -> R.drawable.spider_man_ // Replace with actual resource
-                        else -> R.drawable.inner // Default fallback image
+                        "Scarlet Witch" -> R.drawable.scarlet_witch_
+                        "Black Widow" -> R.drawable.black_widow_
+                        "Wasp" -> R.drawable.wasp_
+                        "Hela" -> R.drawable.hela_
+                        "Thor" -> R.drawable.thor_
+                        "Spider Man" -> R.drawable.spider_man_
+                        else -> R.drawable.inner
                     }
                 ),
                 contentDescription = "Revealed Hero",
@@ -589,6 +754,56 @@ fun ScratchCardScreen(
         }
     }
 }
+
+
+
+@Composable
+fun OptimizedScratchCanvas(
+    overlayImage: ImageBitmap,
+    baseImage: ImageBitmap,
+    currentPath: Path,
+    modifier: Modifier = Modifier
+) {
+    Canvas(
+        modifier = modifier
+            .clipToBounds()
+            .background(Color(0xFFF7DCA7))
+    ) {
+        val canvasWidth = size.width
+        val canvasHeight = size.height
+
+        // Draw the overlay image to fit the entire canvas
+        drawImage(
+            image = overlayImage,
+            dstSize = IntSize(
+                canvasWidth.toInt(),
+                canvasHeight.toInt()
+            )
+        )
+
+        // Clip the base image to the current path
+        clipPath(path = currentPath) {
+            // Calculate a smaller size for the base image
+            val baseImageScaleFactor = 0.8f
+            val baseImageWidth = (canvasWidth * baseImageScaleFactor).toInt()
+            val baseImageHeight = (canvasHeight * baseImageScaleFactor).toInt()
+
+            // Center the base image within the canvas
+            val baseImageOffsetX = (canvasWidth - baseImageWidth) / 2
+            val baseImageOffsetY = (canvasHeight - baseImageHeight) / 2
+
+            drawImage(
+                image = baseImage,
+                dstSize = IntSize(baseImageWidth, baseImageHeight),
+                dstOffset = IntOffset(
+                    x = baseImageOffsetX.toInt(),
+                    y = baseImageOffsetY.toInt()
+                )
+            )
+        }
+    }
+}
+
 
 @Composable
 fun ScratchCanvas(
