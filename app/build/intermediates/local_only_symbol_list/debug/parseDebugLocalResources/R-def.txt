@@ -58,6 +58,7 @@ drawable logofinallast
 drawable monkey
 drawable open_box
 drawable parrot
+drawable party_popper_
 drawable pirate
 drawable scarlet_witch
 drawable scarlet_witch_
@@ -83,6 +84,8 @@ font helvetica_bold
 mipmap ic_launcher
 mipmap ic_launcher_round
 raw bgmusic
+raw wrong
+raw yayy
 string app_name
 string gcm_defaultSenderId
 string google_api_key

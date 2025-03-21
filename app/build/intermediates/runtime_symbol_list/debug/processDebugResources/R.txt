@@ -3062,6 +3062,7 @@ int drawable notification_tile_bg 0x7f070121
 int drawable notify_panel_notification_icon_bg 0x7f070122
 int drawable open_box 0x7f070123
 int drawable parrot 0x7f070124
+int drawable party_popper_ 0x7f07013f
 int drawable pirate 0x7f070125
 int drawable scarlet_witch 0x7f070135
 int drawable scarlet_witch_ 0x7f07013e
@@ -3759,6 +3760,8 @@ int mipmap ic_launcher_round 0x7f0e0001
 int plurals mtrl_badge_content_description 0x7f0f0000
 int raw bgmusic 0x7f100000
 int raw firebase_common_keep 0x7f100001
+int raw wrong 0x7f100002
+int raw yayy 0x7f100003
 int string abc_action_bar_home_description 0x7f110000
 int string abc_action_bar_up_description 0x7f110001
 int string abc_action_menu_overflow_description 0x7f110002

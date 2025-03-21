@@ -1,6 +1,7 @@
 package com.example.ble_jetpackcompose
 
 import android.app.Activity
+import android.media.AudioAttributes
 import android.media.MediaPlayer
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.FastOutSlowInEasing
@@ -91,6 +92,11 @@ fun GameActivityScreen(
     var showSearchImage by remember { mutableStateOf(true) } // Initially visible
     var showPopup by remember { mutableStateOf(false) }
     var scratchCompleted by remember { mutableStateOf(false) }
+    var showHeroSelectionDialog by remember { mutableStateOf(false) }
+    var currentHeroToGuess by remember { mutableStateOf<String?>(null) }
+    var showGuessResult by remember { mutableStateOf<Boolean?>(null) } // null, true (correct), false (incorrect)
+    var guessAnimationRunning by remember { mutableStateOf(false) }
+
 
     // Bluetooth-related states
     val allowedHeroes = listOf(
@@ -106,15 +112,52 @@ fun GameActivityScreen(
 // Create and manage MediaPlayer using DisposableEffect
     val mediaPlayer = remember {
         MediaPlayer.create(context, R.raw.bgmusic).apply {
-            isLooping = true // Ensure the music loops
+            isLooping = true
+            setAudioAttributes(
+                AudioAttributes.Builder()
+                    .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                    .setUsage(AudioAttributes.USAGE_GAME)
+                    .build()
+            )
+            setVolume(0.5f, 0.5f) // Lower the volume of background music
         }
     }
+
+// Use different audio attributes for sound effects
+    val correctSoundPlayer = remember {
+        MediaPlayer.create(context, R.raw.yayy).apply {
+            isLooping = false
+            setAudioAttributes(
+                AudioAttributes.Builder()
+                    .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                    .setUsage(AudioAttributes.USAGE_GAME)
+                    .build()
+            )
+            setVolume(1.0f, 1.0f) // Full volume for effects
+        }
+    }
+
+    val wrongSoundPlayer = remember {
+        MediaPlayer.create(context, R.raw.wrong).apply {
+            isLooping = false
+            setAudioAttributes(
+                AudioAttributes.Builder()
+                    .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                    .setUsage(AudioAttributes.USAGE_GAME)
+                    .build()
+            )
+            setVolume(1.0f, 1.0f) // Full volume for effects
+        }
+    }
+
 
 // Proper cleanup of Bluetooth scanning
     DisposableEffect(Unit) {
         onDispose {
             bluetoothViewModel.stopScan()
             mediaPlayer.release()
+            correctSoundPlayer.release()
+            wrongSoundPlayer.release()
         }
     }
 
@@ -421,6 +464,7 @@ fun GameActivityScreen(
                 }
             }
 
+            // Replace the existing TTR button section
             if (showTTHButton && !showScratchCard) {
                 Box(
                     modifier = Modifier
@@ -433,9 +477,166 @@ fun GameActivityScreen(
                         contentDescription = "TTR Button",
                         modifier = Modifier
                             .size(80.dp)
-                            .clickable { showScratchCard = true },
+                            .clickable {
+                                // Instead of showing scratchcard directly, show the hero selection dialog
+                                showHeroSelectionDialog = true
+                                // Randomly select a hero to guess from detected devices
+                                currentHeroToGuess = nearbyHeroDevice?.name
+                            },
                         contentScale = ContentScale.Crop
                     )
+                }
+            }
+
+            // Add this inside the main Box, at the same level as other dialogs
+            if (showHeroSelectionDialog) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Color.Black.copy(alpha = 0.8f))
+                        .zIndex(10f),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center,
+                        modifier = Modifier
+                            .background(Color.White, shape = RoundedCornerShape(16.dp))
+                            .padding(16.dp)
+                    ) {
+                        Text(
+                            text = "Which hero do you think is nearby?",
+                            fontFamily = helveticaFont,
+                            style = MaterialTheme.typography.h6,
+                            color = Color.Black
+                        )
+
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        // Display all heroes for selection
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(16.dp),
+                            modifier = Modifier.horizontalScroll(rememberScrollState())
+                        ) {
+                            allowedHeroes.forEach { character ->
+                                Column(
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                    modifier = Modifier.clickable {
+                                        // Handle hero selection
+                                        val isCorrect = character == currentHeroToGuess
+                                        showGuessResult = isCorrect
+                                        guessAnimationRunning = true
+                                        showHeroSelectionDialog = false
+
+                                        // Play appropriate sound
+                                        if (isCorrect) {
+                                            correctSoundPlayer.start()
+                                        } else {
+                                            wrongSoundPlayer.start()
+                                        }
+                                    }
+                                ) {
+                                    // Get the resource ID for the character
+                                    val resourceId = when (character) {
+                                        "Iron_Man" -> R.drawable.iron_man
+                                        "Hulk" -> R.drawable.hulk_
+                                        "Captain Marvel" -> R.drawable.captain_marvel
+                                        "Captain America" -> R.drawable.captain_america
+                                        "Scarlet Witch" -> R.drawable.scarlet_witch_
+                                        "Black Widow" -> R.drawable.black_widow_
+                                        "Wasp" -> R.drawable.wasp_
+                                        "Hela" -> R.drawable.hela_
+                                        "Thor" -> R.drawable.thor_
+                                        "Spider Man" -> R.drawable.spider_man_
+                                        else -> R.drawable.search
+                                    }
+
+                                    Image(
+                                        painter = painterResource(id = resourceId),
+                                        contentDescription = character,
+                                        modifier = Modifier.size(80.dp)
+                                    )
+
+                                    Text(
+                                        text = character.replace("_", " "),
+                                        style = MaterialTheme.typography.caption,
+                                        color = Color.Black
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            // Add this to show the result of the guess
+            if (guessAnimationRunning) {
+                // Use LaunchedEffect to handle the animation timing
+                LaunchedEffect(guessAnimationRunning) {
+                    delay(3000) // Show result for 3 seconds
+                    guessAnimationRunning = false
+
+                    if (showGuessResult == true) {
+                        // If correct, proceed to scratch card and reveal
+                        showScratchCard = true
+                    } else {
+                        // If wrong, reset and allow another guess
+                        showHeroSelectionDialog = true
+                    }
+                }
+
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Color.Black.copy(alpha = 0.5f))
+                        .zIndex(10f),
+                    contentAlignment = Alignment.Center
+                ) {
+                    if (showGuessResult == true) {
+                        // Correct guess animation
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            // Party popper animation
+//                            PartyPopperAnimation()
+
+                            Text(
+                                text = "Correct!",
+                                style = MaterialTheme.typography.h4,
+                                fontFamily = helveticaFont,
+                                color = Color.Green
+                            )
+
+                            Spacer(modifier = Modifier.height(8.dp))
+
+                            Text(
+                                text = "You found ${currentHeroToGuess?.replace("_", " ")}!",
+                                style = MaterialTheme.typography.h6,
+                                fontFamily = helveticaFont,
+                                color = Color.White
+                            )
+                        }
+                    } else {
+                        // Wrong guess animation
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(
+                                text = "Wrong Guess!",
+                                fontFamily = helveticaFont,
+                                style = MaterialTheme.typography.h4,
+                                color = Color.Red
+                            )
+
+                            Spacer(modifier = Modifier.height(8.dp))
+
+                            Text(
+                                text = "Try again...",
+                                fontFamily = helveticaFont,
+                                style = MaterialTheme.typography.h6,
+                                color = Color.White
+                            )
+                        }
+                    }
                 }
             }
 
@@ -557,67 +758,6 @@ fun GameActivityScreen(
                             .size(50.dp), // Adjust size as needed
                         alpha = 1f
                     )
-                }
-            }
-
-
-            // Pop-up with Found Characters
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(bottom = 16.dp)
-                    .zIndex(8f),
-                contentAlignment = Alignment.BottomCenter
-            ) {
-                AnimatedVisibility(
-                    visible = showPopup && expandedImage == R.drawable.hunt_the_heroes,
-                    enter = slideInVertically(initialOffsetY = { it }) + fadeIn(),
-                    exit = slideOutVertically(targetOffsetY = { it }) + fadeOut()
-                ) {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
-                    ) {
-                        Text(
-                            text = "Found Characters:",
-                            style = MaterialTheme.typography.body1
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            foundCharacters.forEach { (character, count) ->
-                                Column(
-                                    horizontalAlignment = Alignment.CenterHorizontally
-                                ) {
-                                    Image(
-                                        painter = painterResource(
-                                            id = when (character) {
-                                                "Iron_Man" -> R.drawable.iron_man
-                                                "Hulk" -> R.drawable.hulk_
-                                                "Captain Marvel" -> R.drawable.captain_marvel
-                                                "Captain America" -> R.drawable.captain_america
-                                                "Scarlet Witch" -> R.drawable.scarlet_witch_ // Replace with actual resource
-                                                "Black Widow" -> R.drawable.black_widow_ // Replace with actual resource
-                                                "Wasp" -> R.drawable.wasp_ // Replace with actual resource
-                                                "Hela" -> R.drawable.hela_ // Replace with actual resource
-                                                "Thor" -> R.drawable.thor_ // Replace with actual resource
-                                                "Spider Man" -> R.drawable.spider_man_ // Replace with actual resource
-                                                else -> R.drawable.search
-                                            }
-                                        ),
-                                        contentDescription = character,
-                                        modifier = Modifier.size(80.dp)
-                                    )
-                                    Text(
-                                        text = "×$count",
-                                        style = MaterialTheme.typography.body2
-                                    )
-                                }
-                            }
-                        }
-                    }
                 }
             }
         }
@@ -808,12 +948,14 @@ fun GameActivityScreen(
                 ) {
                     Text(
                         text = "Heroes Collection",
+                        fontFamily = helveticaFont,
                         style = MaterialTheme.typography.h6,
                         color = Color.Black
                     )
 
                     Text(
                         text = "Collected: ${foundCharacters.size}/${allowedHeroes.size}",
+                        fontFamily = helveticaFont,
                         style = MaterialTheme.typography.body1,
                         color = Color.Gray
                     )
@@ -900,3 +1042,57 @@ fun GameActivityScreen(
         }
     }
 }
+
+//@Composable
+//fun PartyPopperAnimation() {
+//    var particleCount = 100
+//    var animationDuration = 2000
+//    val particles = remember { mutableStateListOf<Triple<Float, Float, Float>>() }
+//    val centerX = 0f
+//    val centerY = 0f
+//
+//    // Create particles in different directions
+//    LaunchedEffect(Unit) {
+//        repeat(particleCount) {
+//            val angle = Random.nextFloat() * 360
+//            val speed = Random.nextFloat() * 5 + 2
+//            particles.add(Triple(centerX, centerY, angle))
+//        }
+//
+//        // Animate particles
+//        repeat(animationDuration / 16) { // roughly 60fps
+//            particles.forEachIndexed { index, (x, y, angle) ->
+//                val radians = Math.toRadians(angle.toDouble())
+//                val dx = (cos(radians) * 10).toFloat()
+//                val dy = (sin(radians) * 10).toFloat()
+//                particles[index] = Triple(x + dx, y + dy, angle)
+//            }
+//            delay(16)
+//        }
+//    }
+//
+//    // Draw particles
+//    Canvas(
+//        modifier = Modifier
+//            .size(300.dp)
+//    ) {
+//        particles.forEach { (x, y, _) ->
+//            drawCircle(
+//                color = Color(
+//                    Random.nextInt(256),
+//                    Random.nextInt(256),
+//                    Random.nextInt(256)
+//                ),
+//                radius = Random.nextFloat() * 8 + 2,
+//                center = Offset(x + size.width / 2, y + size.height / 2)
+//            )
+//        }
+//    }
+//
+//    // Add party popper image
+//    Image(
+//        painter = painterResource(id = R.drawable.party_popper_), // Add this resource
+//        contentDescription = "Party Popper",
+//        modifier = Modifier.size(150.dp)
+//    )
+//}

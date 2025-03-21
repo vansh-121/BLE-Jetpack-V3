@@ -3063,6 +3063,7 @@ drawable notification_tile_bg
 drawable notify_panel_notification_icon_bg
 drawable open_box
 drawable parrot
+drawable party_popper_
 drawable pirate
 drawable scarlet_witch
 drawable scarlet_witch_
@@ -3760,6 +3761,8 @@ mipmap ic_launcher_round
 plurals mtrl_badge_content_description
 raw bgmusic
 raw firebase_common_keep
+raw wrong
+raw yayy
 string abc_action_bar_home_description
 string abc_action_bar_up_description
 string abc_action_menu_overflow_description
