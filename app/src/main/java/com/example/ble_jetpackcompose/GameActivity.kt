@@ -60,11 +60,14 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.delay
 import kotlin.math.cos
@@ -110,6 +113,9 @@ fun GameActivityScreen(
     val context = LocalContext.current
 
 // Create and manage MediaPlayer using DisposableEffect
+    val lifecycle = LocalLifecycleOwner.current.lifecycle
+
+    // Create and manage MediaPlayer using DisposableEffect with lifecycle
     val mediaPlayer = remember {
         MediaPlayer.create(context, R.raw.bgmusic).apply {
             isLooping = true
@@ -119,11 +125,10 @@ fun GameActivityScreen(
                     .setUsage(AudioAttributes.USAGE_GAME)
                     .build()
             )
-            setVolume(0.5f, 0.5f) // Lower the volume of background music
+            setVolume(0.5f, 0.5f)
         }
     }
-
-// Use different audio attributes for sound effects
+    // Use different audio attributes for sound effects
     val correctSoundPlayer = remember {
         MediaPlayer.create(context, R.raw.yayy).apply {
             isLooping = false
@@ -151,15 +156,54 @@ fun GameActivityScreen(
     }
 
 
-// Proper cleanup of Bluetooth scanning
-    DisposableEffect(Unit) {
+    // Your other MediaPlayer instances
+
+    // Properly dispose of all resources when the composable leaves composition OR when the activity is destroyed
+    DisposableEffect(lifecycle) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_PAUSE) {
+                // Pause the audio when the app goes to background
+                if (mediaPlayer.isPlaying) mediaPlayer.pause()
+                // Also pause any other playing audio
+                if (correctSoundPlayer.isPlaying) correctSoundPlayer.pause()
+                if (wrongSoundPlayer.isPlaying) wrongSoundPlayer.pause()
+            } else if (event == Lifecycle.Event.ON_RESUME) {
+                // Resume background music if it was on when app returns to foreground
+                if (isSoundOn && !mediaPlayer.isPlaying) mediaPlayer.start()
+            } else if (event == Lifecycle.Event.ON_DESTROY) {
+                // Release all media resources when activity is destroyed
+                mediaPlayer.release()
+                correctSoundPlayer.release()
+                wrongSoundPlayer.release()
+                bluetoothViewModel.stopScan()
+            }
+        }
+
+        // Add the observer to the lifecycle
+        lifecycle.addObserver(observer)
+
+        // When the effect leaves composition, remove the observer and clean up
         onDispose {
+            lifecycle.removeObserver(observer)
             bluetoothViewModel.stopScan()
             mediaPlayer.release()
             correctSoundPlayer.release()
             wrongSoundPlayer.release()
         }
     }
+
+
+
+
+// Proper cleanup of Bluetooth scanning
+//    DisposableEffect(Unit) {
+//        onDispose {
+//            bluetoothViewModel.stopScan()
+//            mediaPlayer.release()
+//            correctSoundPlayer.release()
+//            wrongSoundPlayer.release()
+//        }
+//    }
 
     LaunchedEffect(isSoundOn) {
         if (isSoundOn) {
@@ -1043,56 +1087,3 @@ fun GameActivityScreen(
     }
 }
 
-//@Composable
-//fun PartyPopperAnimation() {
-//    var particleCount = 100
-//    var animationDuration = 2000
-//    val particles = remember { mutableStateListOf<Triple<Float, Float, Float>>() }
-//    val centerX = 0f
-//    val centerY = 0f
-//
-//    // Create particles in different directions
-//    LaunchedEffect(Unit) {
-//        repeat(particleCount) {
-//            val angle = Random.nextFloat() * 360
-//            val speed = Random.nextFloat() * 5 + 2
-//            particles.add(Triple(centerX, centerY, angle))
-//        }
-//
-//        // Animate particles
-//        repeat(animationDuration / 16) { // roughly 60fps
-//            particles.forEachIndexed { index, (x, y, angle) ->
-//                val radians = Math.toRadians(angle.toDouble())
-//                val dx = (cos(radians) * 10).toFloat()
-//                val dy = (sin(radians) * 10).toFloat()
-//                particles[index] = Triple(x + dx, y + dy, angle)
-//            }
-//            delay(16)
-//        }
-//    }
-//
-//    // Draw particles
-//    Canvas(
-//        modifier = Modifier
-//            .size(300.dp)
-//    ) {
-//        particles.forEach { (x, y, _) ->
-//            drawCircle(
-//                color = Color(
-//                    Random.nextInt(256),
-//                    Random.nextInt(256),
-//                    Random.nextInt(256)
-//                ),
-//                radius = Random.nextFloat() * 8 + 2,
-//                center = Offset(x + size.width / 2, y + size.height / 2)
-//            )
-//        }
-//    }
-//
-//    // Add party popper image
-//    Image(
-//        painter = painterResource(id = R.drawable.party_popper_), // Add this resource
-//        contentDescription = "Party Popper",
-//        modifier = Modifier.size(150.dp)
-//    )
-//}

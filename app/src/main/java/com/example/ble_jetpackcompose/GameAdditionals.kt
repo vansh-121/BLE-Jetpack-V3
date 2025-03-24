@@ -10,6 +10,7 @@ import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.updateTransition
@@ -35,6 +36,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -226,7 +228,6 @@ fun generateSymmetricalPositions(count: Int, radius: Float): List<Offset> {
     }
     return positions
 }
-
 @Composable
 fun OptimizedRadarLayout(
     radarColor: Color,
@@ -234,31 +235,30 @@ fun OptimizedRadarLayout(
     deviceList: List<Pair<Int, Offset>> = emptyList(),
     activatedDevices: List<String> = emptyList()
 ) {
-    // Use a state for rotation value instead of an Animatable
-    // This approach is more efficient for continuous animations
-    var rotationAngle by remember { mutableFloatStateOf(0f) }
-    val deviceVisible = remember { mutableStateOf(true) }
+    // Use rememberUpdatedState to reduce recompositions
+    val rememberActivatedDevices = remember(activatedDevices) { activatedDevices }
 
-    // Use a simpler animation approach for the radar line
-    LaunchedEffect(Unit) {
-        while (true) {
-            rotationAngle = (rotationAngle + 1) % 360
-            delay(16) // Roughly 60fps
-        }
-    }
+    // Use animateFloatAsState for rotation instead of direct state changes
+    // This improves performance by letting the animation system handle updates
+    val infiniteTransition = rememberInfiniteTransition(label = "radar_rotation")
+    val rotationAngle by infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = 360f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(4000, easing = LinearEasing),
+            repeatMode = RepeatMode.Restart
+        ), label = "radar_angle"
+    )
 
-    // Use a separate effect for blinking to reduce composition overhead
-    val blinkAlpha = remember { mutableFloatStateOf(1f) }
-    LaunchedEffect(activatedDevices) {
-        if (activatedDevices.isNotEmpty()) {
-            while (true) {
-                blinkAlpha.floatValue = 0.3f
-                delay(500)
-                blinkAlpha.floatValue = 1f
-                delay(500)
-            }
-        }
-    }
+    // Also use transition-based animation for blinking
+    val blinkAlpha by infiniteTransition.animateFloat(
+        initialValue = 1f,
+        targetValue = 0.3f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(500, easing = LinearEasing),
+            repeatMode = RepeatMode.Reverse
+        ), label = "blink_alpha"
+    )
 
     Box(
         modifier = Modifier
@@ -267,30 +267,53 @@ fun OptimizedRadarLayout(
             .background(Color.Transparent),
         contentAlignment = Alignment.Center
     ) {
-        // Radar base with circles - this rarely changes so we can optimize it
+        // Radar base with circles
         RadarBase(radarColor, centerCircleColor)
 
-        // Rotating line - this changes frequently so we separate it
-        RotatingRadarLine(radarColor, rotationAngle)
+        // Rotating line - Now handled by Compose's animation system
+        Canvas(modifier = Modifier.fillMaxSize()) {
+            val radius = size.minDimension / 2
 
-        // Devices - these change state but not position, so we optimize rendering
-        if (deviceVisible.value) {
-            deviceList.forEach { (imageResId, position) ->
-                val deviceName = getDeviceNameFromResId(imageResId)
-                val isActivated = activatedDevices.contains(deviceName)
+            // Draw rotating line
+            rotate(degrees = rotationAngle) {
+                drawLine(
+                    color = radarColor,
+                    start = center,
+                    end = center.copy(x = center.x, y = center.y - radius),
+                    strokeWidth = 3.dp.toPx()
+                )
 
+                // Draw radar sector shadow
+                val shadowColor = Color.Black.copy(alpha = 0.2f)
+                drawArc(
+                    color = shadowColor,
+                    startAngle = 240f,
+                    sweepAngle = 30f,
+                    useCenter = true,
+                    topLeft = Offset(center.x - radius, center.y - radius),
+                    size = Size(radius * 2, radius * 2),
+                    style = Fill
+                )
+            }
+        }
+
+        // Devices - now using more efficient rendering approach
+        deviceList.forEach { (imageResId, position) ->
+            val deviceName = getDeviceNameFromResId(imageResId)
+            val isActivated = rememberActivatedDevices.contains(deviceName)
+
+            key(imageResId) {  // Use key to prevent unnecessary recompositions
                 DeviceIcon(
                     imageResId = imageResId,
                     position = position,
                     isActivated = isActivated,
-                    blinkAlpha = if (isActivated) blinkAlpha.floatValue else 1f
+                    blinkAlpha = if (isActivated) blinkAlpha else 1f
                 )
             }
         }
     }
 }
-
-
+// Updated DeviceIcon to be more efficient
 @Composable
 fun DeviceIcon(
     imageResId: Int,
@@ -300,16 +323,16 @@ fun DeviceIcon(
 ) {
     val localDensity = LocalDensity.current
 
-    // Optimize by using more efficient animation and rendering
-    Box(
-        modifier = Modifier
-            .size(60.dp)
-            .offset(
-                x = with(localDensity) { position.x.toDp() },
-                y = with(localDensity) { position.y.toDp() }
-            )
-    ) {
-        // Optimize by conditionally rendering burst effect only when needed
+    // Avoid creating new modifiers on each recomposition
+    val baseModifier = Modifier
+        .size(60.dp)
+        .offset(
+            x = with(localDensity) { position.x.toDp() },
+            y = with(localDensity) { position.y.toDp() }
+        )
+
+    Box(modifier = baseModifier) {
+        // Only render activated effect when needed
         if (isActivated) {
             Box(
                 modifier = Modifier
@@ -318,7 +341,16 @@ fun DeviceIcon(
             )
         }
 
-        // Optimize image rendering by using graphicsLayer more efficiently
+        // Create scale animation only when activated to reduce overhead
+        val scaleAnimation by animateFloatAsState(
+            targetValue = if (isActivated) 1.2f else 1f,
+            animationSpec = spring(
+                dampingRatio = Spring.DampingRatioMediumBouncy,
+                stiffness = Spring.StiffnessLow
+            ),
+            label = "device_scale"
+        )
+
         Image(
             painter = painterResource(id = imageResId),
             contentDescription = null,
@@ -326,8 +358,8 @@ fun DeviceIcon(
                 .fillMaxSize()
                 .graphicsLayer {
                     alpha = blinkAlpha
-                    scaleX = if (isActivated) 1.2f else 1f
-                    scaleY = if (isActivated) 1.2f else 1f
+                    scaleX = scaleAnimation
+                    scaleY = scaleAnimation
                 }
         )
     }
@@ -396,164 +428,6 @@ fun RadarBase(radarColor: Color, centerCircleColor: Color) {
     }
 }
 
-@Composable
-fun RadarLayoutWithRotatingLine(
-    radarColor: Color,
-    centerCircleColor: Color,
-    deviceList: List<Pair<Int, Offset>> = emptyList(),
-    activatedDevices: List<String> = emptyList() // List of activated/found devices
-) {
-    val lineRotation = remember { Animatable(0f) }
-
-    // State for the visibility of devices
-    val showDevices = remember { mutableStateOf(true) } // Always show devices immediately
-
-    // State for burst effect
-    val burstEffectVisible = remember { mutableStateOf(false) }
-    val burstScale = remember { Animatable(0f) }
-
-    // Blinking animation for activated devices
-    val blinkAlpha = remember { Animatable(1f) }
-
-    // Infinite rotation animation (scanning effect)
-    LaunchedEffect(Unit) {
-        lineRotation.animateTo(
-            targetValue = 360f,
-            animationSpec = infiniteRepeatable(
-                animation = tween(
-                    durationMillis = 3000,  // Slow down the animation
-                    easing = LinearEasing
-                ),
-                repeatMode = RepeatMode.Restart
-            )
-        )
-    }
-
-    // Blinking animation for activated devices
-    LaunchedEffect(activatedDevices) {
-        if (activatedDevices.isNotEmpty()) {
-            while (true) {
-                blinkAlpha.animateTo(0.3f, animationSpec = tween(500))
-                blinkAlpha.animateTo(1f, animationSpec = tween(500))
-            }
-        }
-    }
-
-    // Show devices immediately (no delay)
-    LaunchedEffect(Unit) {
-        burstEffectVisible.value = true
-        burstScale.animateTo(1f, animationSpec = tween(500))
-    }
-
-    Box(
-        modifier = Modifier
-            .size(300.dp)
-            .clip(CircleShape)
-            .background(Color.Transparent),
-        contentAlignment = Alignment.Center
-    ) {
-        Canvas(modifier = Modifier.fillMaxSize()) {
-            val boxSize = size.minDimension
-            val radius = boxSize / 2
-
-            // Draw the radar circles
-            val circles = listOf(
-                radius * 0.33f to 2.dp,
-                radius * 0.66f to 4.dp,
-                radius to 6.dp
-            )
-
-            circles.forEach { (circleRadius, strokeWidth) ->
-                drawCircle(
-                    color = radarColor,
-                    radius = circleRadius,
-                    style = Stroke(width = strokeWidth.toPx())
-                )
-            }
-
-            // Draw center circle
-            drawCircle(
-                color = centerCircleColor,
-                radius = radius * 0.06f,
-                alpha = 1f
-            )
-
-            // Draw rotating line
-            rotate(degrees = lineRotation.value) {
-                drawLine(
-                    color = radarColor,
-                    start = center,
-                    end = center.copy(x = center.x, y = center.y - radius),
-                    strokeWidth = 3.dp.toPx()
-                )
-            }
-
-            // Draw radar sector shadow
-            val angle = lineRotation.value
-            val shadowColor = Color.Black.copy(alpha = 0.2f)
-
-            rotate(degrees = angle) {
-                drawArc(
-                    color = shadowColor,
-                    startAngle = 240f,
-                    sweepAngle = 30f,
-                    useCenter = true,
-                    topLeft = Offset(center.x - radius, center.y - radius),
-                    size = Size(radius * 2, radius * 2),
-                    style = Fill
-                )
-            }
-        }
-
-        // Display all devices with burst effects
-        if (showDevices.value) {
-            deviceList.forEach { (imageResId, position) ->
-                // Get the device name from the resource ID
-                val deviceName = getDeviceNameFromResId(imageResId)
-                val isActivated = activatedDevices.contains(deviceName)
-
-                Box(
-                    modifier = Modifier
-                        .size(60.dp)
-                        .offset(
-                            x = with(LocalDensity.current) { position.x.toDp() },
-                            y = with(LocalDensity.current) { position.y.toDp() }
-                        )
-                ) {
-                    // Burst effect (only for newly activated devices)
-                    if (isActivated && burstEffectVisible.value) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .background(Color.White.copy(alpha = 0.3f), shape = CircleShape)
-                                .scale(burstScale.value)
-                                .animateContentSize()
-                        )
-                    }
-
-                    // Device image with conditional blinking
-                    AnimatedVisibility(
-                        visible = true,
-                        enter = fadeIn(animationSpec = tween(500)) + scaleIn(initialScale = 0.8f, animationSpec = tween(500)),
-                        exit = fadeOut(animationSpec = tween(500))
-                    ) {
-                        Image(
-                            painter = painterResource(id = imageResId),
-                            contentDescription = null,
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .graphicsLayer {
-                                    alpha = if (isActivated) blinkAlpha.value else 1f
-                                    scaleX = if (isActivated) 1.2f else 1f
-                                    scaleY = if (isActivated) 1.2f else 1f
-                                }
-                        )
-                    }
-                }
-            }
-        }
-    }
-}
 // Helper function to get device name from resource ID
 private fun getDeviceNameFromResId(resId: Int): String {
     return when (resId) {
@@ -605,18 +479,6 @@ fun generateMultiplePositions(count: Int, radius: Float): List<Offset> {
 
     return positions
 }
-// Function to generate a random position within one of the two circles
-fun generateRandomPosition(radius: Float): Offset {
-    val randomRadius = listOf(radius * 0.33f, radius * 0.66f).random() // Choose one of the two radii
-    val randomAngle = Math.random() * 2 * Math.PI // Random angle in radians
-
-    val x = (randomRadius * cos(randomAngle)).toFloat()
-    val y = (randomRadius * sin(randomAngle)).toFloat()
-
-    return Offset(x, y)
-}
-
-
 
 @Composable
 fun ScratchCardScreen(
@@ -645,13 +507,13 @@ fun ScratchCardScreen(
 
 // Then use the resource ID with ImageBitmap.imageResource
     val baseImage = ImageBitmap.imageResource(id = heroImageResId)
-
     val currentPathState = remember { mutableStateOf(DraggedPath(path = Path(), width = 150f)) }
     var scratchedAreaPercentage by remember { mutableFloatStateOf(0f) }
     var hasCalledCompletion by remember { mutableStateOf(false) }
     val canvasSizePx = with(LocalDensity.current) { 300.dp.toPx() }
 
     // Animation state for hero reveal
+
     var showHeroReveal by remember { mutableStateOf(false) }
     val animatedScale by animateFloatAsState(
         targetValue = if (showHeroReveal) 1.2f else 1f,
@@ -755,8 +617,6 @@ fun ScratchCardScreen(
     }
 }
 
-
-
 @Composable
 fun OptimizedScratchCanvas(
     overlayImage: ImageBitmap,
@@ -804,54 +664,6 @@ fun OptimizedScratchCanvas(
     }
 }
 
-
-@Composable
-fun ScratchCanvas(
-    overlayImage: ImageBitmap,
-    baseImage: ImageBitmap,
-    currentPath: Path,
-    modifier: Modifier = Modifier
-) {
-    Canvas(
-        modifier = modifier
-            .size(400.dp)
-            .clipToBounds()
-            .background(Color(0xFFF7DCA7)) // Added background color F7DCA7
-    ) {
-        val canvasWidth = size.width
-        val canvasHeight = size.height
-
-        // Draw the overlay image to fit the entire canvas
-        drawImage(
-            image = overlayImage,
-            dstSize = IntSize(
-                canvasWidth.toInt(),
-                canvasHeight.toInt()
-            )
-        )
-
-        // Clip the base image to the current path
-        clipPath(path = currentPath) {
-            // Calculate a smaller size for the base image
-            val baseImageScaleFactor = 0.8f
-            val baseImageWidth = (canvasWidth * baseImageScaleFactor).toInt()
-            val baseImageHeight = (canvasHeight * baseImageScaleFactor).toInt()
-
-            // Center the base image within the canvas
-            val baseImageOffsetX = (canvasWidth - baseImageWidth) / 2
-            val baseImageOffsetY = (canvasHeight - baseImageHeight) / 2
-
-            drawImage(
-                image = baseImage,
-                dstSize = IntSize(baseImageWidth, baseImageHeight),
-                dstOffset = IntOffset(
-                    x = baseImageOffsetX.toInt(),
-                    y = baseImageOffsetY.toInt()
-                )
-            )
-        }
-    }
-}
 
 data class DraggedPath(
     val path: Path,
