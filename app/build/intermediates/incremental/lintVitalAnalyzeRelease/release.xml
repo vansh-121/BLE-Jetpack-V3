@@ -5,9 +5,9 @@
     targetSdkVersion="35"
     shrinking="true"
     mergedManifest="build\intermediates\merged_manifest\release\processReleaseMainManifest\AndroidManifest.xml"
-    proguardFiles="build\intermediates\default_proguard_files\global\proguard-android-optimize.txt-8.8.2;proguard-rules.pro"
+    proguardFiles="build\intermediates\default_proguard_files\global\proguard-android-optimize.txt-8.9.0;proguard-rules.pro"
     partialResultsDir="build\intermediates\lint_vital_partial_results\release\lintVitalAnalyzeRelease\out"
-    desugaredMethodsFiles="C:\Users\DELL\.gradle\caches\8.10.2\transforms\74eb8a0b33d1595b767b039e86a63798\transformed\D8BackportedDesugaredMethods.txt">
+    desugaredMethodsFiles="C:\Users\DELL\.gradle\caches\8.11.1\transforms\75e8f3b73fe325693d63751046a78615\transformed\D8BackportedDesugaredMethods.txt">
   <buildFeatures
       namespacing="REQUIRED"/>
   <sourceProviders>
@@ -27,6 +27,6 @@
       applicationId="com.example.ble_jetpackcompose"
       generatedSourceFolders="build\generated\ap_generated_sources\release\out"
       generatedResourceFolders="build\generated\res\processReleaseGoogleServices;build\generated\res\resValues\release"
-      desugaredMethodsFiles="C:\Users\DELL\.gradle\caches\8.10.2\transforms\74eb8a0b33d1595b767b039e86a63798\transformed\D8BackportedDesugaredMethods.txt">
+      desugaredMethodsFiles="C:\Users\DELL\.gradle\caches\8.11.1\transforms\75e8f3b73fe325693d63751046a78615\transformed\D8BackportedDesugaredMethods.txt">
   </artifact>
 </variant>

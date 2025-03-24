@@ -107,7 +107,7 @@
 
 
 # End of content from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\aapt_proguard_file\release\processReleaseResources\aapt_rules.txt
-# The proguard configuration file for the following section is C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\default_proguard_files\global\proguard-android-optimize.txt-8.8.2
+# The proguard configuration file for the following section is C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\default_proguard_files\global\proguard-android-optimize.txt-8.9.0
 # This is a configuration file for ProGuard.
 # http://proguard.sourceforge.net/index.html#manual/usage.html
 #
@@ -198,7 +198,7 @@
 # These classes are duplicated between android.jar and core-lambda-stubs.jar.
 -dontnote java.lang.invoke.**
 
-# End of content from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\default_proguard_files\global\proguard-android-optimize.txt-8.8.2
+# End of content from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\build\intermediates\default_proguard_files\global\proguard-android-optimize.txt-8.9.0
 # The proguard configuration file for the following section is C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\proguard-rules.pro
 # Add project specific ProGuard rules here.
 # You can control the set of applied configuration files using the
@@ -222,7 +222,7 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 # End of content from C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\proguard-rules.pro
-# The proguard configuration file for the following section is C:\Users\DELL\.gradle\caches\8.10.2\transforms\82f0dc094f0b1d6cf360527d28f95ce3\transformed\material-1.9.0\proguard.txt
+# The proguard configuration file for the following section is C:\Users\DELL\.gradle\caches\8.11.1\transforms\289ad281d3c424fa2928d5bb9c67039a\transformed\material-1.9.0\proguard.txt
 # Copyright (C) 2015 The Android Open Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -270,8 +270,8 @@
 }
 
 
-# End of content from C:\Users\DELL\.gradle\caches\8.10.2\transforms\82f0dc094f0b1d6cf360527d28f95ce3\transformed\material-1.9.0\proguard.txt
-# The proguard configuration file for the following section is C:\Users\DELL\.gradle\caches\8.10.2\transforms\3c90da3ab7f346914dfddd38d1aa6773\transformed\firebase-auth-23.1.0\proguard.txt
+# End of content from C:\Users\DELL\.gradle\caches\8.11.1\transforms\289ad281d3c424fa2928d5bb9c67039a\transformed\material-1.9.0\proguard.txt
+# The proguard configuration file for the following section is C:\Users\DELL\.gradle\caches\8.11.1\transforms\e38744ba42fb8cfe021c04b4eb87aff4\transformed\firebase-auth-23.1.0\proguard.txt
 -dontwarn com.google.appengine.api.**
 -dontwarn okio.**
 -dontwarn org.apache.**
@@ -300,14 +300,14 @@
   <fields>;
 }
 
-# End of content from C:\Users\DELL\.gradle\caches\8.10.2\transforms\3c90da3ab7f346914dfddd38d1aa6773\transformed\firebase-auth-23.1.0\proguard.txt
-# The proguard configuration file for the following section is C:\Users\DELL\.gradle\caches\8.10.2\transforms\c3495709298a8dbcfe45fd51c41b576d\transformed\credentials-play-services-auth-1.2.0-rc01\proguard.txt
+# End of content from C:\Users\DELL\.gradle\caches\8.11.1\transforms\e38744ba42fb8cfe021c04b4eb87aff4\transformed\firebase-auth-23.1.0\proguard.txt
+# The proguard configuration file for the following section is C:\Users\DELL\.gradle\caches\8.11.1\transforms\90e805a9e00270f3e708b4cdfd27cc08\transformed\credentials-play-services-auth-1.2.0-rc01\proguard.txt
 -if class androidx.credentials.CredentialManager
 -keep class androidx.credentials.playservices.** {
   *;
 }
-# End of content from C:\Users\DELL\.gradle\caches\8.10.2\transforms\c3495709298a8dbcfe45fd51c41b576d\transformed\credentials-play-services-auth-1.2.0-rc01\proguard.txt
-# The proguard configuration file for the following section is C:\Users\DELL\.gradle\caches\8.10.2\transforms\d69e5fd1004b503d51af8dbd9fc710e1\transformed\recaptcha-18.5.1\proguard.txt
+# End of content from C:\Users\DELL\.gradle\caches\8.11.1\transforms\90e805a9e00270f3e708b4cdfd27cc08\transformed\credentials-play-services-auth-1.2.0-rc01\proguard.txt
+# The proguard configuration file for the following section is C:\Users\DELL\.gradle\caches\8.11.1\transforms\cc95da70f16e5f3e26811cd00677d578\transformed\recaptcha-18.5.1\proguard.txt
 # Proguard cannot process META-INF/versions/9.
 # See https://discuss.gradle.org/t/meta-inf-version-duplicate-error-when-using-proguard/31380
 -dontwarn module-info
@@ -343,27 +343,27 @@
   <fields>;
 }
 
-# End of content from C:\Users\DELL\.gradle\caches\8.10.2\transforms\d69e5fd1004b503d51af8dbd9fc710e1\transformed\recaptcha-18.5.1\proguard.txt
-# The proguard configuration file for the following section is C:\Users\DELL\.gradle\caches\8.10.2\transforms\b7f775040a437d38ac6b5ccb24d851ea\transformed\firebase-auth-interop-20.0.0\proguard.txt
+# End of content from C:\Users\DELL\.gradle\caches\8.11.1\transforms\cc95da70f16e5f3e26811cd00677d578\transformed\recaptcha-18.5.1\proguard.txt
+# The proguard configuration file for the following section is C:\Users\DELL\.gradle\caches\8.11.1\transforms\11d9ac671f8ea23e30fe4ec761f5f5b2\transformed\firebase-auth-interop-20.0.0\proguard.txt
 # Can be removed once we pull in a dependency on firebase-common that includes
 # https://github.com/firebase/firebase-android-sdk/pull/1472/commits/856f1ca1151cdd88679bbc778892f23dfa34fc06#diff-a2ed34b5a38b4c6c686b09e54865eb48
 -dontwarn com.google.auto.value.AutoValue
 -dontwarn com.google.auto.value.AutoValue$Builder
 
-# End of content from C:\Users\DELL\.gradle\caches\8.10.2\transforms\b7f775040a437d38ac6b5ccb24d851ea\transformed\firebase-auth-interop-20.0.0\proguard.txt
-# The proguard configuration file for the following section is C:\Users\DELL\.gradle\caches\8.10.2\transforms\c4d20ebb26adb74fa97cc95f801698be\transformed\firebase-common-21.0.0\proguard.txt
+# End of content from C:\Users\DELL\.gradle\caches\8.11.1\transforms\11d9ac671f8ea23e30fe4ec761f5f5b2\transformed\firebase-auth-interop-20.0.0\proguard.txt
+# The proguard configuration file for the following section is C:\Users\DELL\.gradle\caches\8.11.1\transforms\0cdc21a3b2d78f46e432384640bd21c0\transformed\firebase-common-21.0.0\proguard.txt
 -dontwarn com.google.firebase.platforminfo.KotlinDetector
 -dontwarn com.google.auto.value.AutoValue
 -dontwarn com.google.auto.value.AutoValue$Builder
 
-# End of content from C:\Users\DELL\.gradle\caches\8.10.2\transforms\c4d20ebb26adb74fa97cc95f801698be\transformed\firebase-common-21.0.0\proguard.txt
-# The proguard configuration file for the following section is C:\Users\DELL\.gradle\caches\8.10.2\transforms\d05b85a40af6ea08fa6f4a553fcab08e\transformed\play-services-fido-20.1.0\proguard.txt
+# End of content from C:\Users\DELL\.gradle\caches\8.11.1\transforms\0cdc21a3b2d78f46e432384640bd21c0\transformed\firebase-common-21.0.0\proguard.txt
+# The proguard configuration file for the following section is C:\Users\DELL\.gradle\caches\8.11.1\transforms\afa0d37b38524a9b5dd61e8aac2f1c5f\transformed\play-services-fido-20.1.0\proguard.txt
 # Methods enable and disable in this class are complained as unresolved
 # references, but they are system APIs and are not used by Fido client apps.
 -dontwarn android.nfc.NfcAdapter
 
-# End of content from C:\Users\DELL\.gradle\caches\8.10.2\transforms\d05b85a40af6ea08fa6f4a553fcab08e\transformed\play-services-fido-20.1.0\proguard.txt
-# The proguard configuration file for the following section is C:\Users\DELL\.gradle\caches\8.10.2\transforms\465fa1f3652208cd27815efb8409e87b\transformed\play-services-auth-base-18.0.4\proguard.txt
+# End of content from C:\Users\DELL\.gradle\caches\8.11.1\transforms\afa0d37b38524a9b5dd61e8aac2f1c5f\transformed\play-services-fido-20.1.0\proguard.txt
+# The proguard configuration file for the following section is C:\Users\DELL\.gradle\caches\8.11.1\transforms\0047b3b383177061e4fe8df5e67161d8\transformed\play-services-auth-base-18.0.4\proguard.txt
 # We keep all fields for every generated proto file as the runtime uses
 # reflection over them that ProGuard cannot detect. Without this keep
 # rule, fields may be removed that would cause runtime failures.
@@ -371,8 +371,8 @@
   <fields>;
 }
 
-# End of content from C:\Users\DELL\.gradle\caches\8.10.2\transforms\465fa1f3652208cd27815efb8409e87b\transformed\play-services-auth-base-18.0.4\proguard.txt
-# The proguard configuration file for the following section is C:\Users\DELL\.gradle\caches\8.10.2\transforms\985b1ed20dc09f52a75e529980cfcd59\transformed\play-services-base-18.0.1\proguard.txt
+# End of content from C:\Users\DELL\.gradle\caches\8.11.1\transforms\0047b3b383177061e4fe8df5e67161d8\transformed\play-services-auth-base-18.0.4\proguard.txt
+# The proguard configuration file for the following section is C:\Users\DELL\.gradle\caches\8.11.1\transforms\299144a04fa2aebf30cb18b9fc6059c1\transformed\play-services-base-18.0.1\proguard.txt
 # b/35135904 Ensure that proguard will not strip the mResultGuardian.
 -keepclassmembers class com.google.android.gms.common.api.internal.BasePendingResult {
   com.google.android.gms.common.api.internal.BasePendingResult$ReleasableResultGuardian mResultGuardian;
@@ -380,8 +380,8 @@
 
 
 
-# End of content from C:\Users\DELL\.gradle\caches\8.10.2\transforms\985b1ed20dc09f52a75e529980cfcd59\transformed\play-services-base-18.0.1\proguard.txt
-# The proguard configuration file for the following section is C:\Users\DELL\.gradle\caches\8.10.2\transforms\0b9f68152a4cfca7501ae489d102cc3c\transformed\navigation-common-2.7.0\proguard.txt
+# End of content from C:\Users\DELL\.gradle\caches\8.11.1\transforms\299144a04fa2aebf30cb18b9fc6059c1\transformed\play-services-base-18.0.1\proguard.txt
+# The proguard configuration file for the following section is C:\Users\DELL\.gradle\caches\8.11.1\transforms\216f6f3f95ff9d22080300939a9226aa\transformed\navigation-common-2.7.0\proguard.txt
 # Copyright (C) 2019 The Android Open Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -411,8 +411,8 @@
 -keepattributes RuntimeVisibleAnnotations
 -keep,allowobfuscation,allowshrinking class * extends androidx.navigation.Navigator
 
-# End of content from C:\Users\DELL\.gradle\caches\8.10.2\transforms\0b9f68152a4cfca7501ae489d102cc3c\transformed\navigation-common-2.7.0\proguard.txt
-# The proguard configuration file for the following section is C:\Users\DELL\.gradle\caches\8.10.2\transforms\23399ed6cd047541aebc37a19ede9397\transformed\appcompat-1.5.0\proguard.txt
+# End of content from C:\Users\DELL\.gradle\caches\8.11.1\transforms\216f6f3f95ff9d22080300939a9226aa\transformed\navigation-common-2.7.0\proguard.txt
+# The proguard configuration file for the following section is C:\Users\DELL\.gradle\caches\8.11.1\transforms\55d419d37888059ff2f44e465564ffd2\transformed\appcompat-1.5.0\proguard.txt
 # Copyright (C) 2018 The Android Open Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -436,8 +436,8 @@
   <methods>;
 }
 
-# End of content from C:\Users\DELL\.gradle\caches\8.10.2\transforms\23399ed6cd047541aebc37a19ede9397\transformed\appcompat-1.5.0\proguard.txt
-# The proguard configuration file for the following section is C:\Users\DELL\.gradle\caches\8.10.2\transforms\eaa8d4e474273e8308577fe849dec100\transformed\fragment-1.3.6\proguard.txt
+# End of content from C:\Users\DELL\.gradle\caches\8.11.1\transforms\55d419d37888059ff2f44e465564ffd2\transformed\appcompat-1.5.0\proguard.txt
+# The proguard configuration file for the following section is C:\Users\DELL\.gradle\caches\8.11.1\transforms\97b7c182a3a90112a214bcfc3d2fc864\transformed\fragment-1.3.6\proguard.txt
 # Copyright (C) 2020 The Android Open Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -458,8 +458,8 @@
     public <init>();
 }
 
-# End of content from C:\Users\DELL\.gradle\caches\8.10.2\transforms\eaa8d4e474273e8308577fe849dec100\transformed\fragment-1.3.6\proguard.txt
-# The proguard configuration file for the following section is C:\Users\DELL\.gradle\caches\8.10.2\transforms\841768938ba55b50660e16142d8abf26\transformed\savedstate-1.2.1\proguard.txt
+# End of content from C:\Users\DELL\.gradle\caches\8.11.1\transforms\97b7c182a3a90112a214bcfc3d2fc864\transformed\fragment-1.3.6\proguard.txt
+# The proguard configuration file for the following section is C:\Users\DELL\.gradle\caches\8.11.1\transforms\4fea19d0b580d4c99a392c30a31cd148\transformed\savedstate-1.2.1\proguard.txt
 # Copyright (C) 2019 The Android Open Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -478,12 +478,12 @@
     <init>();
 }
 
-# End of content from C:\Users\DELL\.gradle\caches\8.10.2\transforms\841768938ba55b50660e16142d8abf26\transformed\savedstate-1.2.1\proguard.txt
-# The proguard configuration file for the following section is C:\Users\DELL\.gradle\caches\8.10.2\transforms\49ca76242081fb45511fe33f9b53c58c\transformed\lifecycle-process-2.8.7\proguard.txt
+# End of content from C:\Users\DELL\.gradle\caches\8.11.1\transforms\4fea19d0b580d4c99a392c30a31cd148\transformed\savedstate-1.2.1\proguard.txt
+# The proguard configuration file for the following section is C:\Users\DELL\.gradle\caches\8.11.1\transforms\2d576de051a49f5a604a4244ccc87ff3\transformed\lifecycle-process-2.8.7\proguard.txt
 # this rule is need to work properly when app is compiled with api 28, see b/142778206
 -keepclassmembers class * extends androidx.lifecycle.EmptyActivityLifecycleCallbacks { *; }
-# End of content from C:\Users\DELL\.gradle\caches\8.10.2\transforms\49ca76242081fb45511fe33f9b53c58c\transformed\lifecycle-process-2.8.7\proguard.txt
-# The proguard configuration file for the following section is C:\Users\DELL\.gradle\caches\8.10.2\transforms\69d6889b0d7a120d6439238a5ee2d45c\transformed\lifecycle-viewmodel-release\proguard.txt
+# End of content from C:\Users\DELL\.gradle\caches\8.11.1\transforms\2d576de051a49f5a604a4244ccc87ff3\transformed\lifecycle-process-2.8.7\proguard.txt
+# The proguard configuration file for the following section is C:\Users\DELL\.gradle\caches\8.11.1\transforms\0a34e178af069ada6cce0bb39a664d65\transformed\lifecycle-viewmodel-release\proguard.txt
 -keepclassmembers,allowobfuscation class * extends androidx.lifecycle.ViewModel {
     <init>();
 }
@@ -492,8 +492,8 @@
     <init>(android.app.Application);
 }
 
-# End of content from C:\Users\DELL\.gradle\caches\8.10.2\transforms\69d6889b0d7a120d6439238a5ee2d45c\transformed\lifecycle-viewmodel-release\proguard.txt
-# The proguard configuration file for the following section is C:\Users\DELL\.gradle\caches\8.10.2\transforms\44eca131e7a9902f29e8c81e1f43ce02\transformed\lifecycle-runtime-release\proguard.txt
+# End of content from C:\Users\DELL\.gradle\caches\8.11.1\transforms\0a34e178af069ada6cce0bb39a664d65\transformed\lifecycle-viewmodel-release\proguard.txt
+# The proguard configuration file for the following section is C:\Users\DELL\.gradle\caches\8.11.1\transforms\57942dd05f612a1535c6eb199e6a06be\transformed\lifecycle-runtime-release\proguard.txt
 -keepattributes AnnotationDefault,
                 RuntimeVisibleAnnotations,
                 RuntimeVisibleParameterAnnotations,
@@ -521,8 +521,8 @@
 # Also this rule prevents registerIn from being inlined.
 -keepclassmembers class androidx.lifecycle.ReportFragment$LifecycleCallbacks { *; }
 
-# End of content from C:\Users\DELL\.gradle\caches\8.10.2\transforms\44eca131e7a9902f29e8c81e1f43ce02\transformed\lifecycle-runtime-release\proguard.txt
-# The proguard configuration file for the following section is C:\Users\DELL\.gradle\caches\8.10.2\transforms\844190ed6c4c476ce59b02cb6b3a73dc\transformed\lifecycle-viewmodel-savedstate-2.8.7\proguard.txt
+# End of content from C:\Users\DELL\.gradle\caches\8.11.1\transforms\57942dd05f612a1535c6eb199e6a06be\transformed\lifecycle-runtime-release\proguard.txt
+# The proguard configuration file for the following section is C:\Users\DELL\.gradle\caches\8.11.1\transforms\05818c9a475302b4340092442a0b564c\transformed\lifecycle-viewmodel-savedstate-2.8.7\proguard.txt
 -keepclassmembers,allowobfuscation class * extends androidx.lifecycle.ViewModel {
     <init>(androidx.lifecycle.SavedStateHandle);
 }
@@ -531,8 +531,8 @@
     <init>(android.app.Application,androidx.lifecycle.SavedStateHandle);
 }
 
-# End of content from C:\Users\DELL\.gradle\caches\8.10.2\transforms\844190ed6c4c476ce59b02cb6b3a73dc\transformed\lifecycle-viewmodel-savedstate-2.8.7\proguard.txt
-# The proguard configuration file for the following section is C:\Users\DELL\.gradle\caches\8.10.2\transforms\58f59c74808431300393d6869ec7b3a4\transformed\ui-release\proguard.txt
+# End of content from C:\Users\DELL\.gradle\caches\8.11.1\transforms\05818c9a475302b4340092442a0b564c\transformed\lifecycle-viewmodel-savedstate-2.8.7\proguard.txt
+# The proguard configuration file for the following section is C:\Users\DELL\.gradle\caches\8.11.1\transforms\c463734b8f720ee47f7509b7c3ff763c\transformed\ui-release\proguard.txt
 # Copyright (C) 2020 The Android Open Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -566,8 +566,8 @@
 # reflection to determine the class type. See b/265188224 for more context.
 -keep,allowshrinking class * extends androidx.compose.ui.node.ModifierNodeElement
 
-# End of content from C:\Users\DELL\.gradle\caches\8.10.2\transforms\58f59c74808431300393d6869ec7b3a4\transformed\ui-release\proguard.txt
-# The proguard configuration file for the following section is C:\Users\DELL\.gradle\caches\8.10.2\transforms\baf9e962eb0d207810c5e5202300ed9b\transformed\runtime-release\proguard.txt
+# End of content from C:\Users\DELL\.gradle\caches\8.11.1\transforms\c463734b8f720ee47f7509b7c3ff763c\transformed\ui-release\proguard.txt
+# The proguard configuration file for the following section is C:\Users\DELL\.gradle\caches\8.11.1\transforms\05db97b70a593fcc72861084c1f58eea\transformed\runtime-release\proguard.txt
 -assumenosideeffects public class androidx.compose.runtime.ComposerKt {
     void sourceInformation(androidx.compose.runtime.Composer,java.lang.String);
     void sourceInformationMarkerStart(androidx.compose.runtime.Composer,int,java.lang.String);
@@ -583,8 +583,8 @@
 -assumenosideeffects public class androidx.compose.runtime.ComposerImpl {
     void <clinit>();
 }
-# End of content from C:\Users\DELL\.gradle\caches\8.10.2\transforms\baf9e962eb0d207810c5e5202300ed9b\transformed\runtime-release\proguard.txt
-# The proguard configuration file for the following section is C:\Users\DELL\.gradle\caches\8.10.2\transforms\836f717c2d6661a4172c85549c54ec2c\transformed\rules\lib\META-INF\com.android.tools\r8-from-1.6.0\coroutines.pro
+# End of content from C:\Users\DELL\.gradle\caches\8.11.1\transforms\05db97b70a593fcc72861084c1f58eea\transformed\runtime-release\proguard.txt
+# The proguard configuration file for the following section is C:\Users\DELL\.gradle\caches\8.11.1\transforms\0f798e327d7164ad013adda4c830d738\transformed\rules\lib\META-INF\com.android.tools\r8-from-1.6.0\coroutines.pro
 # Allow R8 to optimize away the FastServiceLoader.
 # Together with ServiceLoader optimization in R8
 # this results in direct instantiation when loading Dispatchers.Main
@@ -608,8 +608,8 @@
     boolean getRECOVER_STACK_TRACES() return false;
 }
 
-# End of content from C:\Users\DELL\.gradle\caches\8.10.2\transforms\836f717c2d6661a4172c85549c54ec2c\transformed\rules\lib\META-INF\com.android.tools\r8-from-1.6.0\coroutines.pro
-# The proguard configuration file for the following section is C:\Users\DELL\.gradle\caches\8.10.2\transforms\0bce8e6a332417179296cf5f3515a94c\transformed\rules\lib\META-INF\com.android.tools\r8\coroutines.pro
+# End of content from C:\Users\DELL\.gradle\caches\8.11.1\transforms\0f798e327d7164ad013adda4c830d738\transformed\rules\lib\META-INF\com.android.tools\r8-from-1.6.0\coroutines.pro
+# The proguard configuration file for the following section is C:\Users\DELL\.gradle\caches\8.11.1\transforms\7bef06b580dd47def40ea4c7687fe32f\transformed\rules\lib\META-INF\com.android.tools\r8\coroutines.pro
 # When editing this file, update the following files as well:
 # - META-INF/proguard/coroutines.pro
 # - META-INF/com.android.tools/proguard/coroutines.pro
@@ -637,12 +637,12 @@
 
 # An annotation used for build tooling, won't be directly accessed.
 -dontwarn org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement
-# End of content from C:\Users\DELL\.gradle\caches\8.10.2\transforms\0bce8e6a332417179296cf5f3515a94c\transformed\rules\lib\META-INF\com.android.tools\r8\coroutines.pro
-# The proguard configuration file for the following section is C:\Users\DELL\.gradle\caches\8.10.2\transforms\6858c78a920a223860b2e6bf41a281cb\transformed\play-services-tasks-18.2.0\proguard.txt
+# End of content from C:\Users\DELL\.gradle\caches\8.11.1\transforms\7bef06b580dd47def40ea4c7687fe32f\transformed\rules\lib\META-INF\com.android.tools\r8\coroutines.pro
+# The proguard configuration file for the following section is C:\Users\DELL\.gradle\caches\8.11.1\transforms\29e000aa7901342eb424c18bb2523e6a\transformed\play-services-tasks-18.2.0\proguard.txt
 
 
-# End of content from C:\Users\DELL\.gradle\caches\8.10.2\transforms\6858c78a920a223860b2e6bf41a281cb\transformed\play-services-tasks-18.2.0\proguard.txt
-# The proguard configuration file for the following section is C:\Users\DELL\.gradle\caches\8.10.2\transforms\242345f0067fa626e8fc7233d6db8c70\transformed\play-services-basement-18.4.0\proguard.txt
+# End of content from C:\Users\DELL\.gradle\caches\8.11.1\transforms\29e000aa7901342eb424c18bb2523e6a\transformed\play-services-tasks-18.2.0\proguard.txt
+# The proguard configuration file for the following section is C:\Users\DELL\.gradle\caches\8.11.1\transforms\02c73a040e1bb05bfca3dfb219926ab1\transformed\play-services-basement-18.4.0\proguard.txt
 # Needed when building against pre-Marshmallow SDK.
 -dontwarn android.security.NetworkSecurityPolicy
 
@@ -720,8 +720,8 @@
 
 
 
-# End of content from C:\Users\DELL\.gradle\caches\8.10.2\transforms\242345f0067fa626e8fc7233d6db8c70\transformed\play-services-basement-18.4.0\proguard.txt
-# The proguard configuration file for the following section is C:\Users\DELL\.gradle\caches\8.10.2\transforms\89021d31b7fa8f74a2c3528871bfcb26\transformed\coordinatorlayout-1.1.0\proguard.txt
+# End of content from C:\Users\DELL\.gradle\caches\8.11.1\transforms\02c73a040e1bb05bfca3dfb219926ab1\transformed\play-services-basement-18.4.0\proguard.txt
+# The proguard configuration file for the following section is C:\Users\DELL\.gradle\caches\8.11.1\transforms\77ea688dc523942c523143f4e54593c2\transformed\coordinatorlayout-1.1.0\proguard.txt
 # Copyright (C) 2016 The Android Open Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -745,8 +745,8 @@
 # Make sure we keep annotations for CoordinatorLayout's DefaultBehavior and ViewPager's DecorView
 -keepattributes *Annotation*
 
-# End of content from C:\Users\DELL\.gradle\caches\8.10.2\transforms\89021d31b7fa8f74a2c3528871bfcb26\transformed\coordinatorlayout-1.1.0\proguard.txt
-# The proguard configuration file for the following section is C:\Users\DELL\.gradle\caches\8.10.2\transforms\4e5ff136def5014b60c3abeaac6af320\transformed\transition-1.2.0\proguard.txt
+# End of content from C:\Users\DELL\.gradle\caches\8.11.1\transforms\77ea688dc523942c523143f4e54593c2\transformed\coordinatorlayout-1.1.0\proguard.txt
+# The proguard configuration file for the following section is C:\Users\DELL\.gradle\caches\8.11.1\transforms\ceb4297b5081112b307aa55b9e134b4b\transformed\transition-1.2.0\proguard.txt
 # Copyright (C) 2017 The Android Open Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -766,8 +766,8 @@
   androidx.transition.ChangeBounds$ViewBounds mViewBounds;
 }
 
-# End of content from C:\Users\DELL\.gradle\caches\8.10.2\transforms\4e5ff136def5014b60c3abeaac6af320\transformed\transition-1.2.0\proguard.txt
-# The proguard configuration file for the following section is C:\Users\DELL\.gradle\caches\8.10.2\transforms\3272b0edfb1cb831abb2797cabfcd90e\transformed\vectordrawable-animated-1.1.0\proguard.txt
+# End of content from C:\Users\DELL\.gradle\caches\8.11.1\transforms\ceb4297b5081112b307aa55b9e134b4b\transformed\transition-1.2.0\proguard.txt
+# The proguard configuration file for the following section is C:\Users\DELL\.gradle\caches\8.11.1\transforms\7ee265c0dbb17c4e8680c1d018a880eb\transformed\vectordrawable-animated-1.1.0\proguard.txt
 # Copyright (C) 2016 The Android Open Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -788,8 +788,8 @@
    *** get*();
 }
 
-# End of content from C:\Users\DELL\.gradle\caches\8.10.2\transforms\3272b0edfb1cb831abb2797cabfcd90e\transformed\vectordrawable-animated-1.1.0\proguard.txt
-# The proguard configuration file for the following section is C:\Users\DELL\.gradle\caches\8.10.2\transforms\125526402952fcb59d84248fbbe3c3a6\transformed\recyclerview-1.1.0\proguard.txt
+# End of content from C:\Users\DELL\.gradle\caches\8.11.1\transforms\7ee265c0dbb17c4e8680c1d018a880eb\transformed\vectordrawable-animated-1.1.0\proguard.txt
+# The proguard configuration file for the following section is C:\Users\DELL\.gradle\caches\8.11.1\transforms\dcaf679a06578d96b87310fe2e7f2b84\transformed\recyclerview-1.1.0\proguard.txt
 # Copyright (C) 2015 The Android Open Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -815,8 +815,8 @@
     public void suppressLayout(boolean);
     public boolean isLayoutSuppressed();
 }
-# End of content from C:\Users\DELL\.gradle\caches\8.10.2\transforms\125526402952fcb59d84248fbbe3c3a6\transformed\recyclerview-1.1.0\proguard.txt
-# The proguard configuration file for the following section is C:\Users\DELL\.gradle\caches\8.10.2\transforms\2952717b3a84bbc046ad3798099fed43\transformed\core-1.15.0\proguard.txt
+# End of content from C:\Users\DELL\.gradle\caches\8.11.1\transforms\dcaf679a06578d96b87310fe2e7f2b84\transformed\recyclerview-1.1.0\proguard.txt
+# The proguard configuration file for the following section is C:\Users\DELL\.gradle\caches\8.11.1\transforms\1e435ce1ddb5b273dbbc8d5e8fd8f2e2\transformed\core-1.15.0\proguard.txt
 # Never inline methods, but allow shrinking and obfuscation.
 -keepclassmembernames,allowobfuscation,allowshrinking class androidx.core.view.ViewCompat$Api* {
   <methods>;
@@ -834,22 +834,22 @@
   <methods>;
 }
 
-# End of content from C:\Users\DELL\.gradle\caches\8.10.2\transforms\2952717b3a84bbc046ad3798099fed43\transformed\core-1.15.0\proguard.txt
-# The proguard configuration file for the following section is C:\Users\DELL\.gradle\caches\8.10.2\transforms\44ee43fe6cfb34ceb4f9e4018abd793d\transformed\googleid-1.1.0\proguard.txt
+# End of content from C:\Users\DELL\.gradle\caches\8.11.1\transforms\1e435ce1ddb5b273dbbc8d5e8fd8f2e2\transformed\core-1.15.0\proguard.txt
+# The proguard configuration file for the following section is C:\Users\DELL\.gradle\caches\8.11.1\transforms\687dbba49912b90d74b3c1582c913695\transformed\googleid-1.1.0\proguard.txt
 # Proguard cannot process META-INF/versions/9.
 # See https://discuss.gradle.org/t/meta-inf-version-duplicate-error-when-using-proguard/31380
 -dontwarn module-info
 
-# End of content from C:\Users\DELL\.gradle\caches\8.10.2\transforms\44ee43fe6cfb34ceb4f9e4018abd793d\transformed\googleid-1.1.0\proguard.txt
-# The proguard configuration file for the following section is C:\Users\DELL\.gradle\caches\8.10.2\transforms\90e5110f7ff8f346e531e6f92002eea3\transformed\firebase-components-18.0.0\proguard.txt
+# End of content from C:\Users\DELL\.gradle\caches\8.11.1\transforms\687dbba49912b90d74b3c1582c913695\transformed\googleid-1.1.0\proguard.txt
+# The proguard configuration file for the following section is C:\Users\DELL\.gradle\caches\8.11.1\transforms\53905d68d40665727668b750a8060d53\transformed\firebase-components-18.0.0\proguard.txt
 -dontwarn com.google.firebase.components.Component$Instantiation
 -dontwarn com.google.firebase.components.Component$ComponentType
 
 -keep class * implements com.google.firebase.components.ComponentRegistrar
 -keep,allowshrinking interface com.google.firebase.components.ComponentRegistrar
 
-# End of content from C:\Users\DELL\.gradle\caches\8.10.2\transforms\90e5110f7ff8f346e531e6f92002eea3\transformed\firebase-components-18.0.0\proguard.txt
-# The proguard configuration file for the following section is C:\Users\DELL\.gradle\caches\8.10.2\transforms\561449ae8e7167502b834a7cc0ebb0a9\transformed\startup-runtime-1.1.1\proguard.txt
+# End of content from C:\Users\DELL\.gradle\caches\8.11.1\transforms\53905d68d40665727668b750a8060d53\transformed\firebase-components-18.0.0\proguard.txt
+# The proguard configuration file for the following section is C:\Users\DELL\.gradle\caches\8.11.1\transforms\065c63f548516166e4f9330e7fc7edc6\transformed\startup-runtime-1.1.1\proguard.txt
 # It's important that we preserve initializer names, given they are used in the AndroidManifest.xml.
 -keepnames class * extends androidx.startup.Initializer
 
@@ -863,15 +863,15 @@
 
 -assumenosideeffects class androidx.startup.StartupLogger { public static <methods>; }
 
-# End of content from C:\Users\DELL\.gradle\caches\8.10.2\transforms\561449ae8e7167502b834a7cc0ebb0a9\transformed\startup-runtime-1.1.1\proguard.txt
-# The proguard configuration file for the following section is C:\Users\DELL\.gradle\caches\8.10.2\transforms\ce77d2e2c6f9f5ad15794c1b384c458e\transformed\versionedparcelable-1.1.1\proguard.txt
+# End of content from C:\Users\DELL\.gradle\caches\8.11.1\transforms\065c63f548516166e4f9330e7fc7edc6\transformed\startup-runtime-1.1.1\proguard.txt
+# The proguard configuration file for the following section is C:\Users\DELL\.gradle\caches\8.11.1\transforms\cbb69b9c86b4de38999fa153b77ddda1\transformed\versionedparcelable-1.1.1\proguard.txt
 -keep class * implements androidx.versionedparcelable.VersionedParcelable
 -keep public class android.support.**Parcelizer { *; }
 -keep public class androidx.**Parcelizer { *; }
 -keep public class androidx.versionedparcelable.ParcelImpl
 
-# End of content from C:\Users\DELL\.gradle\caches\8.10.2\transforms\ce77d2e2c6f9f5ad15794c1b384c458e\transformed\versionedparcelable-1.1.1\proguard.txt
-# The proguard configuration file for the following section is C:\Users\DELL\.gradle\caches\8.10.2\transforms\e308d9127c8c78d9abc231f26a9e8681\transformed\rules\lib\META-INF\proguard\androidx-annotations.pro
+# End of content from C:\Users\DELL\.gradle\caches\8.11.1\transforms\cbb69b9c86b4de38999fa153b77ddda1\transformed\versionedparcelable-1.1.1\proguard.txt
+# The proguard configuration file for the following section is C:\Users\DELL\.gradle\caches\8.11.1\transforms\8edb33c0947a77c795d2ec7591d2c793\transformed\rules\lib\META-INF\proguard\androidx-annotations.pro
 -keep,allowobfuscation @interface androidx.annotation.Keep
 -keep @androidx.annotation.Keep class * {*;}
 
@@ -891,7 +891,7 @@
   @androidx.annotation.DoNotInline <methods>;
 }
 
-# End of content from C:\Users\DELL\.gradle\caches\8.10.2\transforms\e308d9127c8c78d9abc231f26a9e8681\transformed\rules\lib\META-INF\proguard\androidx-annotations.pro
+# End of content from C:\Users\DELL\.gradle\caches\8.11.1\transforms\8edb33c0947a77c795d2ec7591d2c793\transformed\rules\lib\META-INF\proguard\androidx-annotations.pro
 # The proguard configuration file for the following section is <unknown>
 
 # End of content from <unknown>

@@ -343,7 +343,7 @@ fun GameActivityScreen(
             // Stack "Hunt the Heroes" and "Guess the Character" buttons vertically
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(16.dp) // Add spacing between buttons
+                verticalArrangement = Arrangement.spacedBy(0.dp)  // Add spacing between buttons
             ) {
 
                 // Hunt the Heroes Section
@@ -351,7 +351,7 @@ fun GameActivityScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(start = 16.dp)
-                        .offset(y = (-60).dp)
+                        .offset(y = (-30).dp)
                         .zIndex(if (expandedImage == R.drawable.hunt_the_heroes) 2f else 1f),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Start
@@ -382,7 +382,8 @@ fun GameActivityScreen(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 16.dp, end = 16.dp)
+                        .padding(end = 16.dp)
+                        .offset(y = (-30).dp)
                         .zIndex(if (expandedImage == R.drawable.guess_the_character) 2f else 1f),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.End
@@ -919,60 +920,63 @@ fun GameActivityScreen(
             }
         }
     }
-        Box(
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(bottom = 16.dp),
+        contentAlignment = Alignment.BottomCenter
+    ) {
+        Row(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(bottom = 16.dp),
-            contentAlignment = Alignment.BottomCenter
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 8.dp) // Added vertical padding
+                .zIndex(15f), // Higher z-index to keep row above other elements
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.Bottom
         ) {
-            Row(
+            // Game Box Button in the bottom-left corner
+            Box(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.Bottom
+                    .size(80.dp)
+                    .clickable {
+                        isGameBoxOpen = true
+                    }
             ) {
-                // Game Box Button in the bottom-left corner
-                Box(
-                    modifier = Modifier
-                        .size(80.dp)
-                        .clickable {
-                            isGameBoxOpen = true // Open the Game Box when clicked
-                        }
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.close_box),
-                        contentDescription = "Game Box",
-                        modifier = Modifier.fillMaxSize(),
-                        contentScale = ContentScale.Crop
-                    )
+                Image(
+                    painter = painterResource(id = R.drawable.close_box),
+                    contentDescription = "Game Box",
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.Crop
+                )
 
-                    // Display the number of collected heroes on the Game Box
-                    Text(
-                        text = "${foundCharacters.size}/${allowedHeroes.size}",
-                        style = MaterialTheme.typography.body2,
-                        color = Color.White,
-                        modifier = Modifier
-                            .align(Alignment.TopEnd)
-                            .background(Color.Black.copy(alpha = 0.7f), shape = RoundedCornerShape(4.dp))
-                            .padding(4.dp)
-                    )
-                }
-
-                // Sound Button - Moved to bottom-right corner
-                Box(
+                // Display counter with better contrast
+                Text(
+                    text = "${foundCharacters.size}/${allowedHeroes.size}",
+                    style = MaterialTheme.typography.body2,
+                    color = Color.White,
                     modifier = Modifier
-                        .size(60.dp)
-                        .clickable { isSoundOn = !isSoundOn }
-                        .zIndex(10f) // Higher z-index to ensure it doesn't get covered
-                ) {
-                    Image(
-                        painter = painterResource(id = if (isSoundOn) R.drawable.soundon else R.drawable.soundoff),
-                        contentDescription = if (isSoundOn) "Sound On" else "Sound Off",
-                        modifier = Modifier.fillMaxSize()
-                    )
-                }
+                        .align(Alignment.TopEnd)
+                        .background(Color.Black.copy(alpha = 0.8f), shape = RoundedCornerShape(4.dp))
+                        .padding(4.dp)
+                )
             }
+
+            // Sound Button with clearer position and higher z-index
+            Box(
+                modifier = Modifier
+                    .size(60.dp)
+                    .clickable { isSoundOn = !isSoundOn }
+                    .zIndex(20f) // Even higher z-index than the row
+                    .background(Color.Black.copy(alpha = 0.3f), RoundedCornerShape(30.dp)) // Add slight background for visibility
+                    .padding(4.dp) // Add padding inside the background
+            ) {
+                Image(
+                    painter = painterResource(id = if (isSoundOn) R.drawable.soundon else R.drawable.soundoff),
+                    contentDescription = if (isSoundOn) "Sound On" else "Sound Off",
+                    modifier = Modifier.fillMaxSize()
+                )
+            }
+        }
 
         // Open Game Box Popup
         if (isGameBoxOpen) {

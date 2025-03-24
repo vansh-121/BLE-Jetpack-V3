@@ -4,7 +4,41 @@
             "outputFile": "com.example.ble_jetpackcompose.app-mergeReleaseResources-71:/values-bn/values-bn.xml",
             "map": [
                 {
-                    "source": "C:\\Users\\DELL\\.gradle\\caches\\8.10.2\\transforms\\23399ed6cd047541aebc37a19ede9397\\transformed\\appcompat-1.5.0\\res\\values-bn\\values-bn.xml",
+                    "source": "C:\\Users\\DELL\\.gradle\\caches\\8.11.1\\transforms\\299144a04fa2aebf30cb18b9fc6059c1\\transformed\\play-services-base-18.0.1\\res\\values-bn\\values.xml",
+                    "from": {
+                        "startLines": "4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20",
+                        "startColumns": "0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0",
+                        "startOffsets": "193,298,453,577,684,816,934,1042,1142,1281,1386,1538,1662,1791,1935,1991,2054",
+                        "endColumns": "104,154,123,106,131,117,107,99,138,104,151,123,128,143,55,62,85",
+                        "endOffsets": "297,452,576,683,815,933,1041,1141,1280,1385,1537,1661,1790,1934,1990,2053,2139"
+                    },
+                    "to": {
+                        "startLines": "52,53,54,55,56,57,58,59,61,62,63,64,65,66,67,68,69",
+                        "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
+                        "startOffsets": "4953,5062,5221,5349,5460,5596,5718,5830,6086,6229,6338,6494,6622,6755,6903,6963,7030",
+                        "endColumns": "108,158,127,110,135,121,111,103,142,108,155,127,132,147,59,66,89",
+                        "endOffsets": "5057,5216,5344,5455,5591,5713,5825,5929,6224,6333,6489,6617,6750,6898,6958,7025,7115"
+                    }
+                },
+                {
+                    "source": "C:\\Users\\DELL\\.gradle\\caches\\8.11.1\\transforms\\13097c0b5f9ea1410395fd0db9910444\\transformed\\foundation-release\\res\\values-bn\\values-bn.xml",
+                    "from": {
+                        "startLines": "2,3",
+                        "startColumns": "4,4",
+                        "startOffsets": "55,140",
+                        "endColumns": "84,84",
+                        "endOffsets": "135,220"
+                    },
+                    "to": {
+                        "startLines": "201,202",
+                        "startColumns": "4,4",
+                        "startOffsets": "19436,19521",
+                        "endColumns": "84,84",
+                        "endOffsets": "19516,19601"
+                    }
+                },
+                {
+                    "source": "C:\\Users\\DELL\\.gradle\\caches\\8.11.1\\transforms\\55d419d37888059ff2f44e465564ffd2\\transformed\\appcompat-1.5.0\\res\\values-bn\\values-bn.xml",
                     "from": {
                         "startLines": "2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29",
                         "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
@@ -21,7 +55,7 @@
                     }
                 },
                 {
-                    "source": "C:\\Users\\DELL\\.gradle\\caches\\8.10.2\\transforms\\242345f0067fa626e8fc7233d6db8c70\\transformed\\play-services-basement-18.4.0\\res\\values-bn\\values.xml",
+                    "source": "C:\\Users\\DELL\\.gradle\\caches\\8.11.1\\transforms\\02c73a040e1bb05bfca3dfb219926ab1\\transformed\\play-services-basement-18.4.0\\res\\values-bn\\values.xml",
                     "from": {
                         "startLines": "4",
                         "startColumns": "0",
@@ -38,24 +72,24 @@
                     }
                 },
                 {
-                    "source": "C:\\Users\\DELL\\.gradle\\caches\\8.10.2\\transforms\\3cb42b58bb570a716d016e26e0b08f58\\transformed\\credentials-1.2.0-rc01\\res\\values-bn\\values-bn.xml",
+                    "source": "C:\\Users\\DELL\\.gradle\\caches\\8.11.1\\transforms\\1e435ce1ddb5b273dbbc8d5e8fd8f2e2\\transformed\\core-1.15.0\\res\\values-bn\\values-bn.xml",
                     "from": {
-                        "startLines": "2,3",
-                        "startColumns": "4,4",
-                        "startOffsets": "55,169",
-                        "endColumns": "113,111",
-                        "endOffsets": "164,276"
+                        "startLines": "2,3,4,5,6,7,8,9",
+                        "startColumns": "4,4,4,4,4,4,4,4",
+                        "startOffsets": "55,154,256,358,461,562,664,784",
+                        "endColumns": "98,101,101,102,100,101,119,100",
+                        "endOffsets": "149,251,353,456,557,659,779,880"
                     },
                     "to": {
-                        "startLines": "33,34",
-                        "startColumns": "4,4",
-                        "startOffsets": "3051,3165",
-                        "endColumns": "113,111",
-                        "endOffsets": "3160,3272"
+                        "startLines": "40,41,42,43,44,45,46,197",
+                        "startColumns": "4,4,4,4,4,4,4,4",
+                        "startOffsets": "3744,3843,3945,4047,4150,4251,4353,19074",
+                        "endColumns": "98,101,101,102,100,101,119,100",
+                        "endOffsets": "3838,3940,4042,4145,4246,4348,4468,19170"
                     }
                 },
                 {
-                    "source": "C:\\Users\\DELL\\.gradle\\caches\\8.10.2\\transforms\\82f0dc094f0b1d6cf360527d28f95ce3\\transformed\\material-1.9.0\\res\\values-bn\\values-bn.xml",
+                    "source": "C:\\Users\\DELL\\.gradle\\caches\\8.11.1\\transforms\\289ad281d3c424fa2928d5bb9c67039a\\transformed\\material-1.9.0\\res\\values-bn\\values-bn.xml",
                     "from": {
                         "startLines": "2,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67",
                         "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
@@ -74,75 +108,41 @@
                     }
                 },
                 {
-                    "source": "C:\\Users\\DELL\\.gradle\\caches\\8.10.2\\transforms\\2952717b3a84bbc046ad3798099fed43\\transformed\\core-1.15.0\\res\\values-bn\\values-bn.xml",
+                    "source": "C:\\Users\\DELL\\.gradle\\caches\\8.11.1\\transforms\\ccc20bea7fb250e6e89e0cafc5376712\\transformed\\browser-1.4.0\\res\\values-bn\\values-bn.xml",
                     "from": {
-                        "startLines": "2,3,4,5,6,7,8,9",
-                        "startColumns": "4,4,4,4,4,4,4,4",
-                        "startOffsets": "55,154,256,358,461,562,664,784",
-                        "endColumns": "98,101,101,102,100,101,119,100",
-                        "endOffsets": "149,251,353,456,557,659,779,880"
+                        "startLines": "2,3,4,5",
+                        "startColumns": "4,4,4,4",
+                        "startOffsets": "55,161,263,372",
+                        "endColumns": "105,101,108,105",
+                        "endOffsets": "156,258,367,473"
                     },
                     "to": {
-                        "startLines": "40,41,42,43,44,45,46,197",
-                        "startColumns": "4,4,4,4,4,4,4,4",
-                        "startOffsets": "3744,3843,3945,4047,4150,4251,4353,19074",
-                        "endColumns": "98,101,101,102,100,101,119,100",
-                        "endOffsets": "3838,3940,4042,4145,4246,4348,4468,19170"
+                        "startLines": "70,76,77,78",
+                        "startColumns": "4,4,4,4",
+                        "startOffsets": "7120,7657,7759,7868",
+                        "endColumns": "105,101,108,105",
+                        "endOffsets": "7221,7754,7863,7969"
                     }
                 },
                 {
-                    "source": "C:\\Users\\DELL\\.gradle\\caches\\8.10.2\\transforms\\bc89b280eb5d1726279e1655edd6715c\\transformed\\foundation-release\\res\\values-bn\\values-bn.xml",
+                    "source": "C:\\Users\\DELL\\.gradle\\caches\\8.11.1\\transforms\\08e0fb4f6e1005c5a25c598a9957d8b2\\transformed\\credentials-1.2.0-rc01\\res\\values-bn\\values-bn.xml",
                     "from": {
                         "startLines": "2,3",
                         "startColumns": "4,4",
-                        "startOffsets": "55,140",
-                        "endColumns": "84,84",
-                        "endOffsets": "135,220"
+                        "startOffsets": "55,169",
+                        "endColumns": "113,111",
+                        "endOffsets": "164,276"
                     },
                     "to": {
-                        "startLines": "201,202",
+                        "startLines": "33,34",
                         "startColumns": "4,4",
-                        "startOffsets": "19436,19521",
-                        "endColumns": "84,84",
-                        "endOffsets": "19516,19601"
+                        "startOffsets": "3051,3165",
+                        "endColumns": "113,111",
+                        "endOffsets": "3160,3272"
                     }
                 },
                 {
-                    "source": "C:\\Users\\DELL\\.gradle\\caches\\8.10.2\\transforms\\58f59c74808431300393d6869ec7b3a4\\transformed\\ui-release\\res\\values-bn\\values-bn.xml",
-                    "from": {
-                        "startLines": "2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18",
-                        "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
-                        "startOffsets": "105,199,283,373,471,557,636,742,829,918,988,1058,1136,1217,1300,1375,1443",
-                        "endColumns": "93,83,89,97,85,78,105,86,88,69,69,77,80,82,74,67,117",
-                        "endOffsets": "194,278,368,466,552,631,737,824,913,983,1053,1131,1212,1295,1370,1438,1556"
-                    },
-                    "to": {
-                        "startLines": "50,51,71,72,73,80,81,188,189,190,191,193,194,196,198,199,200",
-                        "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
-                        "startOffsets": "4775,4869,7226,7316,7414,8040,8119,18349,18436,18525,18595,18745,18823,18991,19175,19250,19318",
-                        "endColumns": "93,83,89,97,85,78,105,86,88,69,69,77,80,82,74,67,117",
-                        "endOffsets": "4864,4948,7311,7409,7495,8114,8220,18431,18520,18590,18660,18818,18899,19069,19245,19313,19431"
-                    }
-                },
-                {
-                    "source": "C:\\Users\\DELL\\.gradle\\caches\\8.10.2\\transforms\\985b1ed20dc09f52a75e529980cfcd59\\transformed\\play-services-base-18.0.1\\res\\values-bn\\values.xml",
-                    "from": {
-                        "startLines": "4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20",
-                        "startColumns": "0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0",
-                        "startOffsets": "193,298,453,577,684,816,934,1042,1142,1281,1386,1538,1662,1791,1935,1991,2054",
-                        "endColumns": "104,154,123,106,131,117,107,99,138,104,151,123,128,143,55,62,85",
-                        "endOffsets": "297,452,576,683,815,933,1041,1141,1280,1385,1537,1661,1790,1934,1990,2053,2139"
-                    },
-                    "to": {
-                        "startLines": "52,53,54,55,56,57,58,59,61,62,63,64,65,66,67,68,69",
-                        "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
-                        "startOffsets": "4953,5062,5221,5349,5460,5596,5718,5830,6086,6229,6338,6494,6622,6755,6903,6963,7030",
-                        "endColumns": "108,158,127,110,135,121,111,103,142,108,155,127,132,147,59,66,89",
-                        "endOffsets": "5057,5216,5344,5455,5591,5713,5825,5929,6224,6333,6489,6617,6750,6898,6958,7025,7115"
-                    }
-                },
-                {
-                    "source": "C:\\Users\\DELL\\.gradle\\caches\\8.10.2\\transforms\\dffec8664e91f551901f9f89c07821d3\\transformed\\material3-release\\res\\values-bn\\values-bn.xml",
+                    "source": "C:\\Users\\DELL\\.gradle\\caches\\8.11.1\\transforms\\c1dbf289a97abf4db80d343cac4b39ad\\transformed\\material3-release\\res\\values-bn\\values-bn.xml",
                     "from": {
                         "startLines": "2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57",
                         "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
@@ -159,20 +159,20 @@
                     }
                 },
                 {
-                    "source": "C:\\Users\\DELL\\.gradle\\caches\\8.10.2\\transforms\\606c564ae6aa0ba1341fa50dd187e031\\transformed\\browser-1.4.0\\res\\values-bn\\values-bn.xml",
+                    "source": "C:\\Users\\DELL\\.gradle\\caches\\8.11.1\\transforms\\c463734b8f720ee47f7509b7c3ff763c\\transformed\\ui-release\\res\\values-bn\\values-bn.xml",
                     "from": {
-                        "startLines": "2,3,4,5",
-                        "startColumns": "4,4,4,4",
-                        "startOffsets": "55,161,263,372",
-                        "endColumns": "105,101,108,105",
-                        "endOffsets": "156,258,367,473"
+                        "startLines": "2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18",
+                        "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
+                        "startOffsets": "105,199,283,373,471,557,636,742,829,918,988,1058,1136,1217,1300,1375,1443",
+                        "endColumns": "93,83,89,97,85,78,105,86,88,69,69,77,80,82,74,67,117",
+                        "endOffsets": "194,278,368,466,552,631,737,824,913,983,1053,1131,1212,1295,1370,1438,1556"
                     },
                     "to": {
-                        "startLines": "70,76,77,78",
-                        "startColumns": "4,4,4,4",
-                        "startOffsets": "7120,7657,7759,7868",
-                        "endColumns": "105,101,108,105",
-                        "endOffsets": "7221,7754,7863,7969"
+                        "startLines": "50,51,71,72,73,80,81,188,189,190,191,193,194,196,198,199,200",
+                        "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
+                        "startOffsets": "4775,4869,7226,7316,7414,8040,8119,18349,18436,18525,18595,18745,18823,18991,19175,19250,19318",
+                        "endColumns": "93,83,89,97,85,78,105,86,88,69,69,77,80,82,74,67,117",
+                        "endOffsets": "4864,4948,7311,7409,7495,8114,8220,18431,18520,18590,18660,18818,18899,19069,19245,19313,19431"
                     }
                 }
             ]

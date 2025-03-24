@@ -4,7 +4,7 @@
     name=":app"
     type="APP"
     maven="BLE Sense - Jetpack Compose:app:unspecified"
-    agpVersion="8.8.2"
+    agpVersion="8.9.0"
     buildFolder="build"
     bootClassPath="C:\Users\DELL\AppData\Local\Android\Sdk\platforms\android-35\android.jar;C:\Users\DELL\AppData\Local\Android\Sdk\build-tools\35.0.0\core-lambda-stubs.jar"
     javaSourceLevel="11"

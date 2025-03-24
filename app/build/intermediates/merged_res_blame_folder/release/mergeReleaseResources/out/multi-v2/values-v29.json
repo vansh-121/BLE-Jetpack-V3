@@ -4,7 +4,7 @@
             "outputFile": "com.example.ble_jetpackcompose.app-mergeReleaseResources-71:/values-v29/values-v29.xml",
             "map": [
                 {
-                    "source": "C:\\Users\\DELL\\.gradle\\caches\\8.10.2\\transforms\\d4f97a3af5119303a6be51665ccd00c9\\transformed\\core-splashscreen-1.0.0\\res\\values-v29\\values-v29.xml",
+                    "source": "C:\\Users\\DELL\\.gradle\\caches\\8.11.1\\transforms\\912553162d76f59fbf9e9b7a562d4f92\\transformed\\core-splashscreen-1.0.0\\res\\values-v29\\values-v29.xml",
                     "from": {
                         "startLines": "2,7",
                         "startColumns": "4,4",
