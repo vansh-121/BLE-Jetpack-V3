@@ -4,6 +4,7 @@ import android.app.Activity
 import android.media.AudioAttributes
 import android.media.MediaPlayer
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
@@ -21,6 +22,7 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -57,6 +59,7 @@ import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
@@ -238,7 +241,6 @@ fun GameActivityScreen(
         animationSpec = tween(durationMillis = 1000, easing = LinearEasing),
         label = "heroTransition"
     )
-
     // State for Game Box visibility
     var isGameBoxOpen by remember { mutableStateOf(false) }
 
@@ -338,7 +340,7 @@ fun GameActivityScreen(
                     .height(150.dp)
             )
 
-            Spacer(modifier = Modifier.height(24.dp))
+//            Spacer(modifier = Modifier.height(24.dp))
 
             // Stack "Hunt the Heroes" and "Guess the Character" buttons vertically
             Column(
@@ -938,9 +940,16 @@ fun GameActivityScreen(
             Box(
                 modifier = Modifier
                     .size(80.dp)
-                    .clickable {
-                        isGameBoxOpen = true
+                    .pointerInput(Unit) {
+                        detectTapGestures(
+                            onTap = { isGameBoxOpen = true },
+                            onLongPress = {
+                                // Optional: Add a different interaction for long press
+                                // For example, you could show a preview or additional info
+                            }
+                        )
                     }
+                    .animateContentSize() // Smooth size changes
             ) {
                 Image(
                     painter = painterResource(id = R.drawable.close_box),
@@ -950,13 +959,17 @@ fun GameActivityScreen(
                 )
 
                 // Display counter with better contrast
+                // Counter with smoother background
                 Text(
                     text = "${foundCharacters.size}/${allowedHeroes.size}",
                     style = MaterialTheme.typography.body2,
                     color = Color.White,
                     modifier = Modifier
                         .align(Alignment.TopEnd)
-                        .background(Color.Black.copy(alpha = 0.8f), shape = RoundedCornerShape(4.dp))
+                        .background(
+                            Color.Black.copy(alpha = 0.8f),
+                            shape = RoundedCornerShape(4.dp)
+                        )
                         .padding(4.dp)
                 )
             }
@@ -965,7 +978,11 @@ fun GameActivityScreen(
             Box(
                 modifier = Modifier
                     .size(60.dp)
-                    .clickable { isSoundOn = !isSoundOn }
+                    .pointerInput(Unit) {
+                        detectTapGestures(
+                            onTap = { isSoundOn = !isSoundOn },
+                        )
+                    }
                     .zIndex(20f) // Even higher z-index than the row
                     .background(Color.Black.copy(alpha = 0.3f), RoundedCornerShape(30.dp)) // Add slight background for visibility
                     .padding(4.dp) // Add padding inside the background
@@ -980,6 +997,11 @@ fun GameActivityScreen(
 
         // Open Game Box Popup
         if (isGameBoxOpen) {
+            AnimatedVisibility(
+                visible = isGameBoxOpen,
+                enter = fadeIn() + slideInVertically(),
+                exit = fadeOut() + slideOutVertically()
+            ){
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -1090,4 +1112,4 @@ fun GameActivityScreen(
         }
     }
 }
-
+}
