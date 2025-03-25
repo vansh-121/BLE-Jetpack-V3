@@ -136,7 +136,7 @@ object TranslationCache {
 
 // Modified GoogleTranslationService
 class GoogleTranslationService(
-    private val apiKey: String = "AIzaSyCf2lBMD9qOmPH_F2PSR-WV4mYmrrIUEis" // Replace with your actual API key
+    private val apiKey: String = "AIzaSyCf2lBMD9qOmPH_F2PSR-WV4mYmrrIUEis" // Replace with your actual API key and
 ) : TranslationService {
     private val retrofit = Retrofit.Builder()
         .baseUrl("https://generativelanguage.googleapis.com/")
