@@ -28,8 +28,23 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody.Companion.toRequestBody
+import org.json.JSONObject
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.http.Body
+import retrofit2.http.POST
+import retrofit2.http.Query
+import java.net.URL
+import java.net.URLEncoder
 
 // Create a singleton object to manage app-wide theme state
 object ThemeManager {
@@ -43,7 +58,8 @@ object ThemeManager {
 
 // Create a singleton object to manage language state
 object LanguageManager {
-    private val _currentLanguage = MutableStateFlow(java.util.Locale.ENGLISH.language)
+    // Add the missing private mutable state flow
+    val _currentLanguage = MutableStateFlow(java.util.Locale.ENGLISH.language)
     val currentLanguage: StateFlow<String> = _currentLanguage
 
     // List of supported Indian languages
@@ -69,28 +85,187 @@ object LanguageManager {
         return supportedLanguages.find { it.code == languageCode }?.name ?: "English"
     }
 }
+//interface TranslationService {
+//    suspend fun translateText(text: String, targetLanguage: String): String
+//}
+interface GeminiTranslationApi {
+    @POST("v1beta/models/gemini-2.0-flash:generateContent")
+    suspend fun translateText(
+        @Body request: TranslationRequest,
+        @Query("key") apiKey: String
+    ): TranslationResponse
+}
+
+// Update TranslationRequest and Response models
+data class TranslationRequest(
+    val contents: List<Content>,
+    val generationConfig: GenerationConfig
+)
+
+data class Content(
+    val parts: List<Part>
+)
+
+data class Part(
+    val text: String
+)
+
+data class GenerationConfig(
+    val temperature: Float = 0.7f
+)
+
+data class TranslationResponse(
+    val candidates: List<TranslationCandidate>
+)
+
+data class TranslationCandidate(
+    val content: Content
+)
+interface TranslationService {
+    suspend fun translateText(text: String, targetLanguage: String): String
+}
+
+object TranslationCache {
+    private val cache = mutableMapOf<String, String>()
+
+    fun get(key: String): String? = cache[key]
+    fun put(key: String, value: String) {
+        cache[key] = value
+    }
+}
+
+// Modified GoogleTranslationService
+class GoogleTranslationService(
+    private val apiKey: String = "AIzaSyCf2lBMD9qOmPH_F2PSR-WV4mYmrrIUEis" // Replace with your actual API key
+) : TranslationService {
+    private val retrofit = Retrofit.Builder()
+        .baseUrl("https://generativelanguage.googleapis.com/")
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+
+    private val translationApi = retrofit.create(GeminiTranslationApi::class.java)
+
+    override suspend fun translateText(
+        text: String,
+        targetLanguage: String
+    ): String = translateBatch(listOf(text), targetLanguage).first()
+
+    // Batch translation method
+    suspend fun translateBatch(
+        texts: List<String>,
+        targetLanguage: String
+    ): List<String> {
+        return try {
+            // Check cache first
+            val uncachedTexts = texts.filter { text ->
+                TranslationCache.get("$text-$targetLanguage") == null
+            }
+
+            if (uncachedTexts.isEmpty()) {
+                return texts.map { TranslationCache.get("$it-$targetLanguage")!! }
+            }
+
+            val prompt = """
+                Provide only the translations of the following texts into ${getLanguageName(targetLanguage)}, 
+                one per line, in the same order, with no additional text or explanations:
+                ${texts.joinToString("\n") { "\"$it\"" }}
+            """.trimIndent()
+
+            val request = TranslationRequest(
+                contents = listOf(
+                    Content(
+                        parts = listOf(Part(prompt))
+                    )
+                ),
+                generationConfig = GenerationConfig()
+            )
+
+            val response = translationApi.translateText(request, apiKey)
+            val translatedText = response.candidates.firstOrNull()
+                ?.content?.parts?.firstOrNull()?.text
+                ?.trim() ?: texts.joinToString("\n")
+
+            val translatedList = translatedText.split("\n")
+            // Cache results
+            texts.forEachIndexed { index, original ->
+                val translated = translatedList.getOrElse(index) { original }
+                TranslationCache.put("$original-$targetLanguage", translated)
+            }
+
+            texts.map { TranslationCache.get("$it-$targetLanguage") ?: it }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            texts // Return original texts if translation fails
+        }
+    }
+
+    private fun getLanguageName(languageCode: String): String {
+        return when (languageCode) {
+            "en" -> "English"
+            "hi" -> "Hindi"
+            "ta" -> "Tamil"
+            "te" -> "Telugu"
+            "bn" -> "Bengali"
+            "mr" -> "Marathi"
+            "gu" -> "Gujarati"
+            "kn" -> "Kannada"
+            "ml" -> "Malayalam"
+            "pa" -> "Punjabi"
+            "or" -> "Odia"
+            else -> languageCode
+        }
+    }
+}
+
+// Extension function for easy translation
+suspend fun String.translateTo(
+    targetLanguage: String,
+    apiKey: String = "AIzaSyCf2lBMD9qOmPH_F2PSR-WV4mYmrrIUEis"
+): String {
+    val translator = GoogleTranslationService(apiKey)
+    return translator.translateText(this, targetLanguage)
+}
 
 // Data class for language options
 data class LanguageOption(val code: String, val name: String)
 
+data class TranslatedSettings(
+    val settingsTitle: String = "Settings",
+    val darkMode: String = "Dark Mode",
+    val language: String = "Language",
+    val help: String = "Help",
+    val accounts: String = "Accounts",
+    val about: String = "About BLE"
+)
 
-
+// Update ModernSettingsScreen
 @Composable
 fun ModernSettingsScreen(
     viewModel: AuthViewModel = viewModel(),
     onSignOut: () -> Unit,
     navController: NavHostController
 ) {
-    // Get system dark mode as initial value
     val systemDarkMode = isSystemInDarkTheme()
-
-    // Collect dark mode state from ThemeManager
     val isDarkMode by ThemeManager.isDarkMode.collectAsState()
-
-    // Remember if we've initialized from system theme
+    val currentLanguage by LanguageManager.currentLanguage.collectAsState()
     val initializedFromSystem = remember { mutableStateOf(false) }
 
-    // Initialize from system theme only once
+    // State for translated text
+    var translatedText by remember { mutableStateOf(TranslatedSettings()) }
+
+    // Update translations when language changes
+    LaunchedEffect(currentLanguage) {
+        val translator = GoogleTranslationService()
+        translatedText = TranslatedSettings(
+            settingsTitle = "Settings".translateTo(currentLanguage),
+            darkMode = "Dark Mode".translateTo(currentLanguage),
+            language = "Language".translateTo(currentLanguage),
+            help = "Help".translateTo(currentLanguage),
+            accounts = "Accounts".translateTo(currentLanguage),
+            about = "About BLE".translateTo(currentLanguage)
+        )
+    }
+
     LaunchedEffect(Unit) {
         if (!initializedFromSystem.value) {
             ThemeManager.toggleDarkMode(systemDarkMode)
@@ -98,7 +273,6 @@ fun ModernSettingsScreen(
         }
     }
 
-    // Define colors based on theme
     val backgroundColor = if (isDarkMode) Color(0xFF121212) else Color(0xFFF2F2F7)
     val cardBackground = if (isDarkMode) Color(0xFF1E1E1E) else Color.White
     val textColor = if (isDarkMode) Color.White else Color.Black
@@ -114,7 +288,7 @@ fun ModernSettingsScreen(
             TopAppBar(
                 title = {
                     Text(
-                        text = "Settings",
+                        text = translatedText.settingsTitle,
                         fontFamily = helveticaFont,
                         style = MaterialTheme.typography.h5.copy(
                             fontWeight = FontWeight.Bold,
@@ -169,6 +343,7 @@ fun ModernSettingsScreen(
                 dividerColor = dividerColor,
                 iconTint = iconTint,
                 isDarkMode = isDarkMode,
+                translatedText = translatedText,
                 onDarkModeToggle = { newValue ->
                     ThemeManager.toggleDarkMode(newValue)
                 },
@@ -245,8 +420,7 @@ fun UserProfileCard(
             }
         }
     }
-}
-@Composable
+}@Composable
 fun SettingsOptionsList(
     cardBackground: Color,
     textColor: Color,
@@ -254,15 +428,16 @@ fun SettingsOptionsList(
     dividerColor: Color,
     iconTint: Color,
     isDarkMode: Boolean,
+    translatedText: TranslatedSettings,
     onDarkModeToggle: (Boolean) -> Unit,
     navController: NavHostController
 ) {
     val settingsOptions = listOf(
-        SettingsItem(Icons.Outlined.DarkMode, "Dark Mode", SettingsItemType.SWITCH),
-        SettingsItem(Icons.Outlined.Language, "Language", SettingsItemType.DETAIL),
-        SettingsItem(Icons.AutoMirrored.Outlined.Help, "Help", SettingsItemType.DETAIL),
-        SettingsItem(Icons.Outlined.AccountCircle, "Accounts", SettingsItemType.DETAIL),
-        SettingsItem(Icons.Outlined.Info, "About BLE", SettingsItemType.DETAIL)
+        SettingsItem(Icons.Outlined.DarkMode, translatedText.darkMode, SettingsItemType.SWITCH),
+        SettingsItem(Icons.Outlined.Language, translatedText.language, SettingsItemType.DETAIL),
+        SettingsItem(Icons.AutoMirrored.Outlined.Help, translatedText.help, SettingsItemType.DETAIL),
+        SettingsItem(Icons.Outlined.AccountCircle, translatedText.accounts, SettingsItemType.DETAIL),
+        SettingsItem(Icons.Outlined.Info, translatedText.about, SettingsItemType.DETAIL)
     )
 
     Card(
@@ -273,7 +448,7 @@ fun SettingsOptionsList(
     ) {
         Column {
             settingsOptions.forEachIndexed { index, item ->
-                if (item.title == "Dark Mode") {
+                if (item.title == translatedText.darkMode) {
                     SettingsItemRow(
                         item = item,
                         textColor = textColor,
@@ -306,6 +481,7 @@ fun SettingsOptionsList(
     }
 }
 // Modify your SettingsItemRow function to handle language selection
+// Update SettingsItemRow with better dialog state management
 @Composable
 fun SettingsItemRow(
     item: SettingsItem,
@@ -317,24 +493,21 @@ fun SettingsItemRow(
     navController: NavHostController? = null
 ) {
     var switchState by remember { mutableStateOf(initialSwitchState) }
-    var showLanguageDialog by remember { mutableStateOf(false) }
-
-    // Collect current language
+    var showLanguageDialog by remember { mutableStateOf(false) } // Reset dialog state properly
     val currentLanguage by LanguageManager.currentLanguage.collectAsState()
+
+    // Use the icon or a unique identifier to determine if this is the Language item
+    val isLanguageItem = item.icon == Icons.Outlined.Language
 
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable(enabled = item.type == SettingsItemType.DETAIL) {
-                if (item.title == "Language") {
-                    showLanguageDialog = true
-                }
-                // Handle other clickable items as needed
+            .clickable(enabled = item.type == SettingsItemType.DETAIL && isLanguageItem) {
+                showLanguageDialog = true
             }
             .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // Icon
         Icon(
             imageVector = item.icon,
             contentDescription = item.title,
@@ -344,7 +517,6 @@ fun SettingsItemRow(
 
         Spacer(modifier = Modifier.width(16.dp))
 
-        // Title
         Text(
             text = item.title,
             fontFamily = helveticaFont,
@@ -355,7 +527,6 @@ fun SettingsItemRow(
             modifier = Modifier.weight(1f)
         )
 
-        // Right side content based on item type
         when (item.type) {
             SettingsItemType.SWITCH -> {
                 Switch(
@@ -374,10 +545,7 @@ fun SettingsItemRow(
             }
             SettingsItemType.DETAIL -> {
                 Text(
-                    text = when(item.title) {
-                        "Language" -> LanguageManager.getLanguageName(currentLanguage)
-                        else -> ""
-                    },
+                    text = if (isLanguageItem) LanguageManager.getLanguageName(currentLanguage) else "",
                     fontFamily = helveticaFont,
                     style = MaterialTheme.typography.body2.copy(
                         color = secondaryTextColor
@@ -399,7 +567,7 @@ fun SettingsItemRow(
             onDismissRequest = { showLanguageDialog = false },
             title = {
                 Text(
-                    text = "Select Language",
+                    text = "Select Language", // Keep this in English or translate it separately if needed
                     fontFamily = helveticaFont,
                     style = MaterialTheme.typography.h6,
                     textAlign = TextAlign.Center,
@@ -407,7 +575,7 @@ fun SettingsItemRow(
                 )
             },
             text = {
-                LazyColumn  {
+                LazyColumn {
                     items(LanguageManager.supportedLanguages) { language ->
                         Row(
                             modifier = Modifier
@@ -446,6 +614,7 @@ fun SettingsItemRow(
         )
     }
 }
+
 
 @Composable
 fun BottomNavigation(

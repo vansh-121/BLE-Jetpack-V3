@@ -1,342 +1,342 @@
 [
     {
-        "merged": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-debug-76:\\drawable_captain_america.png.flat",
-        "source": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-main-78:\\drawable\\captain_america.png"
+        "merged": "com.example.ble_jetpackcompose.app-debug-76:/drawable_gamepad.xml.flat",
+        "source": "com.example.ble_jetpackcompose.app-main-78:/drawable/gamepad.xml"
     },
     {
         "merged": "com.example.ble_jetpackcompose.app-debug-76:/raw_wrong.mp3.flat",
         "source": "com.example.ble_jetpackcompose.app-main-78:/raw/wrong.mp3"
     },
     {
-        "merged": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-debug-76:\\drawable_bg_remove_ble.png.flat",
-        "source": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-main-78:\\drawable\\bg_remove_ble.png"
+        "merged": "com.example.ble_jetpackcompose.app-debug-76:/drawable_logofinallast.png.flat",
+        "source": "com.example.ble_jetpackcompose.app-main-78:/drawable/logofinallast.png"
     },
     {
-        "merged": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-debug-76:\\drawable_eyes.png.flat",
-        "source": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-main-78:\\drawable\\eyes.png"
+        "merged": "com.example.ble_jetpackcompose.app-debug-76:/drawable_eyes.png.flat",
+        "source": "com.example.ble_jetpackcompose.app-main-78:/drawable/eyes.png"
     },
     {
-        "merged": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-debug-76:\\drawable_inner.png.flat",
-        "source": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-main-78:\\drawable\\inner.png"
+        "merged": "com.example.ble_jetpackcompose.app-debug-76:/drawable_background.jpg.flat",
+        "source": "com.example.ble_jetpackcompose.app-main-78:/drawable/background.jpg"
     },
     {
-        "merged": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-debug-76:\\drawable_gth.png.flat",
-        "source": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-main-78:\\drawable\\gth.png"
+        "merged": "com.example.ble_jetpackcompose.app-debug-76:/mipmap-mdpi_ic_launcher_round.webp.flat",
+        "source": "com.example.ble_jetpackcompose.app-main-78:/mipmap-mdpi/ic_launcher_round.webp"
     },
     {
-        "merged": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-debug-76:\\drawable_facebook_f_.png.flat",
-        "source": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-main-78:\\drawable\\facebook_f_.png"
+        "merged": "com.example.ble_jetpackcompose.app-debug-76:/mipmap-xhdpi_ic_launcher_round.webp.flat",
+        "source": "com.example.ble_jetpackcompose.app-main-78:/mipmap-xhdpi/ic_launcher_round.webp"
     },
     {
-        "merged": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-debug-76:\\drawable_logo3.png.flat",
-        "source": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-main-78:\\drawable\\logo3.png"
+        "merged": "com.example.ble_jetpackcompose.app-debug-76:/drawable_open_box.png.flat",
+        "source": "com.example.ble_jetpackcompose.app-main-78:/drawable/open_box.png"
     },
     {
-        "merged": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-debug-76:\\drawable_hth.png.flat",
-        "source": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-main-78:\\drawable\\hth.png"
+        "merged": "com.example.ble_jetpackcompose.app-debug-76:/drawable_logoble_round.png.flat",
+        "source": "com.example.ble_jetpackcompose.app-main-78:/drawable/logoble_round.png"
     },
     {
-        "merged": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-debug-76:\\drawable_monkey.png.flat",
-        "source": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-main-78:\\drawable\\monkey.png"
+        "merged": "com.example.ble_jetpackcompose.app-debug-76:/mipmap-mdpi_ic_launcher.webp.flat",
+        "source": "com.example.ble_jetpackcompose.app-main-78:/mipmap-mdpi/ic_launcher.webp"
     },
     {
-        "merged": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-debug-76:\\drawable_hunt_the_heroes.png.flat",
-        "source": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-main-78:\\drawable\\hunt_the_heroes.png"
-    },
-    {
-        "merged": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-debug-76:\\drawable_gamepad.xml.flat",
-        "source": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-main-78:\\drawable\\gamepad.xml"
-    },
-    {
-        "merged": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-debug-76:\\drawable_search.png.flat",
-        "source": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-main-78:\\drawable\\search.png"
-    },
-    {
-        "merged": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-debug-76:\\font_helvetica_bold.ttf.flat",
-        "source": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-main-78:\\font\\helvetica_bold.ttf"
-    },
-    {
-        "merged": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-debug-76:\\drawable_ttr.png.flat",
-        "source": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-main-78:\\drawable\\ttr.png"
+        "merged": "com.example.ble_jetpackcompose.app-debug-76:/drawable_visibility_off.png.flat",
+        "source": "com.example.ble_jetpackcompose.app-main-78:/drawable/visibility_off.png"
     },
     {
         "merged": "com.example.ble_jetpackcompose.app-debug-76:/drawable_party_popper_.png.flat",
         "source": "com.example.ble_jetpackcompose.app-main-78:/drawable/party_popper_.png"
     },
     {
-        "merged": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-debug-76:\\drawable_facebook_f.webp.flat",
-        "source": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-main-78:\\drawable\\facebook_f.webp"
+        "merged": "com.example.ble_jetpackcompose.app-debug-76:/drawable_sun.png.flat",
+        "source": "com.example.ble_jetpackcompose.app-main-78:/drawable/sun.png"
     },
     {
-        "merged": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-debug-76:\\drawable_black_widow_.png.flat",
-        "source": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-main-78:\\drawable\\black_widow_.png"
+        "merged": "com.example.ble_jetpackcompose.app-debug-76:/drawable_inner.png.flat",
+        "source": "com.example.ble_jetpackcompose.app-main-78:/drawable/inner.png"
     },
     {
-        "merged": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-debug-76:\\drawable_graph.png.flat",
-        "source": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-main-78:\\drawable\\graph.png"
+        "merged": "com.example.ble_jetpackcompose.app-debug-76:/drawable_google_g.png.flat",
+        "source": "com.example.ble_jetpackcompose.app-main-78:/drawable/google_g.png"
     },
     {
-        "merged": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-debug-76:\\drawable_google_g.png.flat",
-        "source": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-main-78:\\drawable\\google_g.png"
+        "merged": "com.example.ble_jetpackcompose.app-debug-76:/drawable_visibility.xml.flat",
+        "source": "com.example.ble_jetpackcompose.app-main-78:/drawable/visibility.xml"
     },
     {
-        "merged": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-debug-76:\\drawable_captain_marvel.png.flat",
-        "source": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-main-78:\\drawable\\captain_marvel.png"
+        "merged": "com.example.ble_jetpackcompose.app-debug-76:/drawable_parrot.png.flat",
+        "source": "com.example.ble_jetpackcompose.app-main-78:/drawable/parrot.png"
     },
     {
-        "merged": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-debug-76:\\mipmap-mdpi_ic_launcher.webp.flat",
-        "source": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-main-78:\\mipmap-mdpi\\ic_launcher.webp"
+        "merged": "com.example.ble_jetpackcompose.app-debug-76:/drawable_bg_remove_ble.png.flat",
+        "source": "com.example.ble_jetpackcompose.app-main-78:/drawable/bg_remove_ble.png"
     },
     {
-        "merged": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-debug-76:\\drawable_logofinal.png.flat",
-        "source": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-main-78:\\drawable\\logofinal.png"
+        "merged": "com.example.ble_jetpackcompose.app-debug-76:/drawable_wasp.jpeg.flat",
+        "source": "com.example.ble_jetpackcompose.app-main-78:/drawable/wasp.jpeg"
     },
     {
-        "merged": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-debug-76:\\drawable_parrot.png.flat",
-        "source": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-main-78:\\drawable\\parrot.png"
+        "merged": "com.example.ble_jetpackcompose.app-debug-76:/drawable_scarlet_witch.jpeg.flat",
+        "source": "com.example.ble_jetpackcompose.app-main-78:/drawable/scarlet_witch.jpeg"
     },
     {
-        "merged": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-debug-76:\\drawable_hulk_.png.flat",
-        "source": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-main-78:\\drawable\\hulk_.png"
+        "merged": "com.example.ble_jetpackcompose.app-debug-76:/drawable_wasp_.png.flat",
+        "source": "com.example.ble_jetpackcompose.app-main-78:/drawable/wasp_.png"
     },
     {
-        "merged": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-debug-76:\\mipmap-hdpi_ic_launcher_round.webp.flat",
-        "source": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-main-78:\\mipmap-hdpi\\ic_launcher_round.webp"
+        "merged": "com.example.ble_jetpackcompose.app-debug-76:/drawable_facebook_f_.png.flat",
+        "source": "com.example.ble_jetpackcompose.app-main-78:/drawable/facebook_f_.png"
     },
     {
-        "merged": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-debug-76:\\drawable_logo_square.png.flat",
-        "source": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-main-78:\\drawable\\logo_square.png"
+        "merged": "com.example.ble_jetpackcompose.app-debug-76:/drawable_logo3.png.flat",
+        "source": "com.example.ble_jetpackcompose.app-main-78:/drawable/logo3.png"
     },
     {
-        "merged": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-debug-76:\\drawable_google.png.flat",
-        "source": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-main-78:\\drawable\\google.png"
+        "merged": "com.example.ble_jetpackcompose.app-debug-76:/mipmap-anydpi-v26_ic_launcher.xml.flat",
+        "source": "com.example.ble_jetpackcompose.app-main-78:/mipmap-anydpi-v26/ic_launcher.xml"
     },
     {
-        "merged": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-debug-76:\\mipmap-xhdpi_ic_launcher.webp.flat",
-        "source": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-main-78:\\mipmap-xhdpi\\ic_launcher.webp"
+        "merged": "com.example.ble_jetpackcompose.app-debug-76:/mipmap-xxhdpi_ic_launcher_round.webp.flat",
+        "source": "com.example.ble_jetpackcompose.app-main-78:/mipmap-xxhdpi/ic_launcher_round.webp"
     },
     {
-        "merged": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-debug-76:\\drawable_ic_launcher_foreground.xml.flat",
-        "source": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-main-78:\\drawable\\ic_launcher_foreground.xml"
+        "merged": "com.example.ble_jetpackcompose.app-debug-76:/xml_data_extraction_rules.xml.flat",
+        "source": "com.example.ble_jetpackcompose.app-main-78:/xml/data_extraction_rules.xml"
     },
     {
-        "merged": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-debug-76:\\drawable_visibility_on.png.flat",
-        "source": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-main-78:\\drawable\\visibility_on.png"
+        "merged": "com.example.ble_jetpackcompose.app-debug-76:/font_fonts.xml.flat",
+        "source": "com.example.ble_jetpackcompose.app-main-78:/font/fonts.xml"
     },
     {
-        "merged": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-debug-76:\\drawable_guess_the_character.png.flat",
-        "source": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-main-78:\\drawable\\guess_the_character.png"
+        "merged": "com.example.ble_jetpackcompose.app-debug-76:/drawable_search.png.flat",
+        "source": "com.example.ble_jetpackcompose.app-main-78:/drawable/search.png"
     },
     {
-        "merged": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-debug-76:\\mipmap-xxxhdpi_ic_launcher_round.webp.flat",
-        "source": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-main-78:\\mipmap-xxxhdpi\\ic_launcher_round.webp"
+        "merged": "com.example.ble_jetpackcompose.app-debug-76:/mipmap-anydpi-v26_ic_launcher_round.xml.flat",
+        "source": "com.example.ble_jetpackcompose.app-main-78:/mipmap-anydpi-v26/ic_launcher_round.xml"
     },
     {
-        "merged": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-debug-76:\\drawable_jjack.png.flat",
-        "source": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-main-78:\\drawable\\jjack.png"
+        "merged": "com.example.ble_jetpackcompose.app-debug-76:/mipmap-xhdpi_ic_launcher.webp.flat",
+        "source": "com.example.ble_jetpackcompose.app-main-78:/mipmap-xhdpi/ic_launcher.webp"
     },
     {
-        "merged": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-debug-76:\\xml_backup_rules.xml.flat",
-        "source": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-main-78:\\xml\\backup_rules.xml"
+        "merged": "com.example.ble_jetpackcompose.app-debug-76:/drawable_iron_man.png.flat",
+        "source": "com.example.ble_jetpackcompose.app-main-78:/drawable/iron_man.png"
     },
     {
-        "merged": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-debug-76:\\drawable_thor_.png.flat",
-        "source": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-main-78:\\drawable\\thor_.png"
+        "merged": "com.example.ble_jetpackcompose.app-debug-76:/font_helvetica_bold.ttf.flat",
+        "source": "com.example.ble_jetpackcompose.app-main-78:/font/helvetica_bold.ttf"
     },
     {
-        "merged": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-debug-76:\\drawable_jack.png.flat",
-        "source": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-main-78:\\drawable\\jack.png"
+        "merged": "com.example.ble_jetpackcompose.app-debug-76:/drawable_facebook_f.webp.flat",
+        "source": "com.example.ble_jetpackcompose.app-main-78:/drawable/facebook_f.webp"
     },
     {
-        "merged": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-debug-76:\\drawable_home.png.flat",
-        "source": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-main-78:\\drawable\\home.png"
+        "merged": "com.example.ble_jetpackcompose.app-debug-76:/drawable_black_widow.png.flat",
+        "source": "com.example.ble_jetpackcompose.app-main-78:/drawable/black_widow.png"
     },
     {
-        "merged": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-debug-76:\\drawable_spider_man.jpeg.flat",
-        "source": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-main-78:\\drawable\\spider_man.jpeg"
+        "merged": "com.example.ble_jetpackcompose.app-debug-76:/drawable_scratch.png.flat",
+        "source": "com.example.ble_jetpackcompose.app-main-78:/drawable/scratch.png"
     },
     {
-        "merged": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-debug-76:\\xml_data_extraction_rules.xml.flat",
-        "source": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-main-78:\\xml\\data_extraction_rules.xml"
+        "merged": "com.example.ble_jetpackcompose.app-debug-76:/drawable_captain_marvel.png.flat",
+        "source": "com.example.ble_jetpackcompose.app-main-78:/drawable/captain_marvel.png"
     },
     {
-        "merged": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-debug-76:\\drawable_iron_man.png.flat",
-        "source": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-main-78:\\drawable\\iron_man.png"
+        "merged": "com.example.ble_jetpackcompose.app-debug-76:/drawable_captain_america.png.flat",
+        "source": "com.example.ble_jetpackcompose.app-main-78:/drawable/captain_america.png"
     },
     {
-        "merged": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-debug-76:\\drawable_ic_launcher_background.xml.flat",
-        "source": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-main-78:\\drawable\\ic_launcher_background.xml"
+        "merged": "com.example.ble_jetpackcompose.app-debug-76:/drawable_bg_remove_2.png.flat",
+        "source": "com.example.ble_jetpackcompose.app-main-78:/drawable/bg_remove_2.png"
     },
     {
-        "merged": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-debug-76:\\drawable_sun.png.flat",
-        "source": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-main-78:\\drawable\\sun.png"
+        "merged": "com.example.ble_jetpackcompose.app-debug-76:/font_helvetica.ttf.flat",
+        "source": "com.example.ble_jetpackcompose.app-main-78:/font/helvetica.ttf"
     },
     {
-        "merged": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-debug-76:\\drawable_visibility_off.png.flat",
-        "source": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-main-78:\\drawable\\visibility_off.png"
+        "merged": "com.example.ble_jetpackcompose.app-debug-76:/drawable_ic_launcher_foreground.xml.flat",
+        "source": "com.example.ble_jetpackcompose.app-main-78:/drawable/ic_launcher_foreground.xml"
     },
     {
-        "merged": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-debug-76:\\drawable_thor.jpeg.flat",
-        "source": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-main-78:\\drawable\\thor.jpeg"
+        "merged": "com.example.ble_jetpackcompose.app-debug-76:/drawable_ttr.png.flat",
+        "source": "com.example.ble_jetpackcompose.app-main-78:/drawable/ttr.png"
     },
     {
-        "merged": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-debug-76:\\drawable_background.jpg.flat",
-        "source": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-main-78:\\drawable\\background.jpg"
+        "merged": "com.example.ble_jetpackcompose.app-debug-76:/mipmap-xxxhdpi_ic_launcher.webp.flat",
+        "source": "com.example.ble_jetpackcompose.app-main-78:/mipmap-xxxhdpi/ic_launcher.webp"
     },
     {
-        "merged": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-debug-76:\\drawable_wasp_.png.flat",
-        "source": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-main-78:\\drawable\\wasp_.png"
+        "merged": "com.example.ble_jetpackcompose.app-debug-76:/drawable_jjack.png.flat",
+        "source": "com.example.ble_jetpackcompose.app-main-78:/drawable/jjack.png"
     },
     {
-        "merged": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-debug-76:\\mipmap-xxhdpi_ic_launcher_round.webp.flat",
-        "source": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-main-78:\\mipmap-xxhdpi\\ic_launcher_round.webp"
+        "merged": "com.example.ble_jetpackcompose.app-debug-76:/drawable_home.png.flat",
+        "source": "com.example.ble_jetpackcompose.app-main-78:/drawable/home.png"
     },
     {
-        "merged": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-debug-76:\\drawable_wasp.jpeg.flat",
-        "source": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-main-78:\\drawable\\wasp.jpeg"
+        "merged": "com.example.ble_jetpackcompose.app-debug-76:/drawable_guess_the_character.png.flat",
+        "source": "com.example.ble_jetpackcompose.app-main-78:/drawable/guess_the_character.png"
     },
     {
-        "merged": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-debug-76:\\drawable_spider_man_.png.flat",
-        "source": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-main-78:\\drawable\\spider_man_.png"
+        "merged": "com.example.ble_jetpackcompose.app-debug-76:/drawable_jack.png.flat",
+        "source": "com.example.ble_jetpackcompose.app-main-78:/drawable/jack.png"
     },
     {
-        "merged": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-debug-76:\\drawable_arrow_back.png.flat",
-        "source": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-main-78:\\drawable\\arrow_back.png"
+        "merged": "com.example.ble_jetpackcompose.app-debug-76:/drawable_scarlet_witch_.png.flat",
+        "source": "com.example.ble_jetpackcompose.app-main-78:/drawable/scarlet_witch_.png"
     },
     {
-        "merged": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-debug-76:\\drawable_settings.xml.flat",
-        "source": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-main-78:\\drawable\\settings.xml"
+        "merged": "com.example.ble_jetpackcompose.app-debug-76:/drawable_spider_man_.png.flat",
+        "source": "com.example.ble_jetpackcompose.app-main-78:/drawable/spider_man_.png"
     },
     {
-        "merged": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-debug-76:\\drawable_bluetooth.xml.flat",
-        "source": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-main-78:\\drawable\\bluetooth.xml"
+        "merged": "com.example.ble_jetpackcompose.app-debug-76:/drawable_spider_man.jpeg.flat",
+        "source": "com.example.ble_jetpackcompose.app-main-78:/drawable/spider_man.jpeg"
     },
     {
-        "merged": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-debug-76:\\drawable_black_widow.png.flat",
-        "source": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-main-78:\\drawable\\black_widow.png"
+        "merged": "com.example.ble_jetpackcompose.app-debug-76:/xml_backup_rules.xml.flat",
+        "source": "com.example.ble_jetpackcompose.app-main-78:/xml/backup_rules.xml"
     },
     {
-        "merged": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-debug-76:\\drawable_logoble_round.png.flat",
-        "source": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-main-78:\\drawable\\logoble_round.png"
+        "merged": "com.example.ble_jetpackcompose.app-debug-76:/drawable_black_widow_.png.flat",
+        "source": "com.example.ble_jetpackcompose.app-main-78:/drawable/black_widow_.png"
     },
     {
-        "merged": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-debug-76:\\drawable_bg_remove_2.png.flat",
-        "source": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-main-78:\\drawable\\bg_remove_2.png"
+        "merged": "com.example.ble_jetpackcompose.app-debug-76:/drawable_monkey.png.flat",
+        "source": "com.example.ble_jetpackcompose.app-main-78:/drawable/monkey.png"
     },
     {
-        "merged": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-debug-76:\\drawable_facebook.png.flat",
-        "source": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-main-78:\\drawable\\facebook.png"
+        "merged": "com.example.ble_jetpackcompose.app-debug-76:/drawable_logofinal.png.flat",
+        "source": "com.example.ble_jetpackcompose.app-main-78:/drawable/logofinal.png"
     },
     {
-        "merged": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-debug-76:\\drawable_soundon.png.flat",
-        "source": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-main-78:\\drawable\\soundon.png"
+        "merged": "com.example.ble_jetpackcompose.app-debug-76:/mipmap-xxhdpi_ic_launcher.webp.flat",
+        "source": "com.example.ble_jetpackcompose.app-main-78:/mipmap-xxhdpi/ic_launcher.webp"
     },
     {
-        "merged": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-debug-76:\\drawable_logoble.png.flat",
-        "source": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-main-78:\\drawable\\logoble.png"
+        "merged": "com.example.ble_jetpackcompose.app-debug-76:/drawable_logoble.png.flat",
+        "source": "com.example.ble_jetpackcompose.app-main-78:/drawable/logoble.png"
     },
     {
-        "merged": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-debug-76:\\drawable_hela_.png.flat",
-        "source": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-main-78:\\drawable\\hela_.png"
+        "merged": "com.example.ble_jetpackcompose.app-debug-76:/drawable_bluetooth.xml.flat",
+        "source": "com.example.ble_jetpackcompose.app-main-78:/drawable/bluetooth.xml"
     },
     {
-        "merged": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-debug-76:\\mipmap-anydpi-v26_ic_launcher_round.xml.flat",
-        "source": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-main-78:\\mipmap-anydpi-v26\\ic_launcher_round.xml"
+        "merged": "com.example.ble_jetpackcompose.app-debug-76:/drawable_ic_launcher_background.xml.flat",
+        "source": "com.example.ble_jetpackcompose.app-main-78:/drawable/ic_launcher_background.xml"
     },
     {
-        "merged": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-debug-76:\\drawable_hela.jpeg.flat",
-        "source": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-main-78:\\drawable\\hela.jpeg"
+        "merged": "com.example.ble_jetpackcompose.app-debug-76:/drawable_soundon.png.flat",
+        "source": "com.example.ble_jetpackcompose.app-main-78:/drawable/soundon.png"
     },
     {
-        "merged": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-debug-76:\\font_helvetica.ttf.flat",
-        "source": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-main-78:\\font\\helvetica.ttf"
+        "merged": "com.example.ble_jetpackcompose.app-debug-76:/drawable_google.png.flat",
+        "source": "com.example.ble_jetpackcompose.app-main-78:/drawable/google.png"
     },
     {
-        "merged": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-debug-76:\\mipmap-anydpi-v26_ic_launcher.xml.flat",
-        "source": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-main-78:\\mipmap-anydpi-v26\\ic_launcher.xml"
+        "merged": "com.example.ble_jetpackcompose.app-debug-76:/drawable_hunt_the_heroes.png.flat",
+        "source": "com.example.ble_jetpackcompose.app-main-78:/drawable/hunt_the_heroes.png"
     },
     {
-        "merged": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-debug-76:\\drawable_logofinallast.png.flat",
-        "source": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-main-78:\\drawable\\logofinallast.png"
+        "merged": "com.example.ble_jetpackcompose.app-debug-76:/drawable_close_box.png.flat",
+        "source": "com.example.ble_jetpackcompose.app-main-78:/drawable/close_box.png"
     },
     {
-        "merged": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-debug-76:\\mipmap-xxxhdpi_ic_launcher.webp.flat",
-        "source": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-main-78:\\mipmap-xxxhdpi\\ic_launcher.webp"
+        "merged": "com.example.ble_jetpackcompose.app-debug-76:/drawable_graph.png.flat",
+        "source": "com.example.ble_jetpackcompose.app-main-78:/drawable/graph.png"
     },
     {
-        "merged": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-debug-76:\\mipmap-xxhdpi_ic_launcher.webp.flat",
-        "source": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-main-78:\\mipmap-xxhdpi\\ic_launcher.webp"
+        "merged": "com.example.ble_jetpackcompose.app-debug-76:/drawable_eyes_visibility.jpeg.flat",
+        "source": "com.example.ble_jetpackcompose.app-main-78:/drawable/eyes_visibility.jpeg"
     },
     {
-        "merged": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-debug-76:\\drawable_pirate.png.flat",
-        "source": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-main-78:\\drawable\\pirate.png"
+        "merged": "com.example.ble_jetpackcompose.app-debug-76:/drawable_hela_.png.flat",
+        "source": "com.example.ble_jetpackcompose.app-main-78:/drawable/hela_.png"
+    },
+    {
+        "merged": "com.example.ble_jetpackcompose.app-debug-76:/drawable_thor_.png.flat",
+        "source": "com.example.ble_jetpackcompose.app-main-78:/drawable/thor_.png"
+    },
+    {
+        "merged": "com.example.ble_jetpackcompose.app-debug-76:/drawable_logo_square.png.flat",
+        "source": "com.example.ble_jetpackcompose.app-main-78:/drawable/logo_square.png"
+    },
+    {
+        "merged": "com.example.ble_jetpackcompose.app-debug-76:/drawable_hela.jpeg.flat",
+        "source": "com.example.ble_jetpackcompose.app-main-78:/drawable/hela.jpeg"
     },
     {
         "merged": "com.example.ble_jetpackcompose.app-debug-76:/raw_yayy.mp3.flat",
         "source": "com.example.ble_jetpackcompose.app-main-78:/raw/yayy.mp3"
     },
     {
-        "merged": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-debug-76:\\mipmap-mdpi_ic_launcher_round.webp.flat",
-        "source": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-main-78:\\mipmap-mdpi\\ic_launcher_round.webp"
+        "merged": "com.example.ble_jetpackcompose.app-debug-76:/drawable_logoblelastfinal.png.flat",
+        "source": "com.example.ble_jetpackcompose.app-main-78:/drawable/logoblelastfinal.png"
     },
     {
-        "merged": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-debug-76:\\drawable_close_box.png.flat",
-        "source": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-main-78:\\drawable\\close_box.png"
+        "merged": "com.example.ble_jetpackcompose.app-debug-76:/drawable_pirate.png.flat",
+        "source": "com.example.ble_jetpackcompose.app-main-78:/drawable/pirate.png"
     },
     {
-        "merged": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-debug-76:\\mipmap-xhdpi_ic_launcher_round.webp.flat",
-        "source": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-main-78:\\mipmap-xhdpi\\ic_launcher_round.webp"
+        "merged": "com.example.ble_jetpackcompose.app-debug-76:/drawable_settings.xml.flat",
+        "source": "com.example.ble_jetpackcompose.app-main-78:/drawable/settings.xml"
     },
     {
-        "merged": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-debug-76:\\drawable_scratch.png.flat",
-        "source": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-main-78:\\drawable\\scratch.png"
+        "merged": "com.example.ble_jetpackcompose.app-debug-76:/drawable_ble_games.png.flat",
+        "source": "com.example.ble_jetpackcompose.app-main-78:/drawable/ble_games.png"
     },
     {
-        "merged": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-debug-76:\\drawable_open_box.png.flat",
-        "source": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-main-78:\\drawable\\open_box.png"
+        "merged": "com.example.ble_jetpackcompose.app-debug-76:/drawable_soundoff.png.flat",
+        "source": "com.example.ble_jetpackcompose.app-main-78:/drawable/soundoff.png"
     },
     {
-        "merged": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-debug-76:\\drawable_scarlet_witch_.png.flat",
-        "source": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-main-78:\\drawable\\scarlet_witch_.png"
+        "merged": "com.example.ble_jetpackcompose.app-debug-76:/raw_bgmusic.mp3.flat",
+        "source": "com.example.ble_jetpackcompose.app-main-78:/raw/bgmusic.mp3"
     },
     {
-        "merged": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-debug-76:\\raw_bgmusic.mp3.flat",
-        "source": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-main-78:\\raw\\bgmusic.mp3"
+        "merged": "com.example.ble_jetpackcompose.app-debug-76:/mipmap-hdpi_ic_launcher_round.webp.flat",
+        "source": "com.example.ble_jetpackcompose.app-main-78:/mipmap-hdpi/ic_launcher_round.webp"
     },
     {
-        "merged": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-debug-76:\\font_fonts.xml.flat",
-        "source": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-main-78:\\font\\fonts.xml"
+        "merged": "com.example.ble_jetpackcompose.app-debug-76:/drawable_visibility_on.png.flat",
+        "source": "com.example.ble_jetpackcompose.app-main-78:/drawable/visibility_on.png"
     },
     {
-        "merged": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-debug-76:\\drawable_eyes_visibility.jpeg.flat",
-        "source": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-main-78:\\drawable\\eyes_visibility.jpeg"
+        "merged": "com.example.ble_jetpackcompose.app-debug-76:/drawable_facebook.png.flat",
+        "source": "com.example.ble_jetpackcompose.app-main-78:/drawable/facebook.png"
     },
     {
-        "merged": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-debug-76:\\drawable_logoblelastfinal.png.flat",
-        "source": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-main-78:\\drawable\\logoblelastfinal.png"
+        "merged": "com.example.ble_jetpackcompose.app-debug-76:/drawable_arrow_back.png.flat",
+        "source": "com.example.ble_jetpackcompose.app-main-78:/drawable/arrow_back.png"
     },
     {
-        "merged": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-debug-76:\\drawable_scarlet_witch.jpeg.flat",
-        "source": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-main-78:\\drawable\\scarlet_witch.jpeg"
+        "merged": "com.example.ble_jetpackcompose.app-debug-76:/mipmap-xxxhdpi_ic_launcher_round.webp.flat",
+        "source": "com.example.ble_jetpackcompose.app-main-78:/mipmap-xxxhdpi/ic_launcher_round.webp"
     },
     {
-        "merged": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-debug-76:\\drawable_ble_games.png.flat",
-        "source": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-main-78:\\drawable\\ble_games.png"
+        "merged": "com.example.ble_jetpackcompose.app-debug-76:/drawable_hulk_.png.flat",
+        "source": "com.example.ble_jetpackcompose.app-main-78:/drawable/hulk_.png"
     },
     {
-        "merged": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-debug-76:\\mipmap-hdpi_ic_launcher.webp.flat",
-        "source": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-main-78:\\mipmap-hdpi\\ic_launcher.webp"
+        "merged": "com.example.ble_jetpackcompose.app-debug-76:/mipmap-hdpi_ic_launcher.webp.flat",
+        "source": "com.example.ble_jetpackcompose.app-main-78:/mipmap-hdpi/ic_launcher.webp"
     },
     {
-        "merged": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-debug-76:\\drawable_lock.png.flat",
-        "source": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-main-78:\\drawable\\lock.png"
+        "merged": "com.example.ble_jetpackcompose.app-debug-76:/drawable_thor.jpeg.flat",
+        "source": "com.example.ble_jetpackcompose.app-main-78:/drawable/thor.jpeg"
     },
     {
-        "merged": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-debug-76:\\drawable_visibility.xml.flat",
-        "source": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-main-78:\\drawable\\visibility.xml"
+        "merged": "com.example.ble_jetpackcompose.app-debug-76:/drawable_lock.png.flat",
+        "source": "com.example.ble_jetpackcompose.app-main-78:/drawable/lock.png"
     },
     {
-        "merged": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-debug-76:\\drawable_soundoff.png.flat",
-        "source": "C:\\Users\\DELL\\.gradle\\daemon\\8.11.1\\com.example.ble_jetpackcompose.app-main-78:\\drawable\\soundoff.png"
+        "merged": "com.example.ble_jetpackcompose.app-debug-76:/drawable_hth.png.flat",
+        "source": "com.example.ble_jetpackcompose.app-main-78:/drawable/hth.png"
+    },
+    {
+        "merged": "com.example.ble_jetpackcompose.app-debug-76:/drawable_gth.png.flat",
+        "source": "com.example.ble_jetpackcompose.app-main-78:/drawable/gth.png"
     }
 ]

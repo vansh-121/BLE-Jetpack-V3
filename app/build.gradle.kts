@@ -47,9 +47,17 @@ dependencies {
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4")
+//    implementation("com.google.ai.client:generativeai:0.3.1")
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation("com.squareup.okhttp3:okhttp:4.10.0")
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
+    implementation("com.squareup.okhttp3:okhttp:4.10.0")
+    implementation("org.json:json:20210307")
     implementation(libs.androidx.material3)
     implementation("com.google.accompanist:accompanist-navigation-animation:0.30.1")
     implementation(libs.firebase.auth)
@@ -60,7 +68,6 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
-
 
 
 //    implementation(libs.androidx.core.ktx)
@@ -99,7 +106,6 @@ dependencies {
 //    implementation(platform("com.google.firebase:firebase-bom:32.7.1"))
 //    implementation("com.google.firebase:firebase-auth-ktx")
 //    implementation("com.google.firebase:firebase-firestore")
-
 }
 
 
