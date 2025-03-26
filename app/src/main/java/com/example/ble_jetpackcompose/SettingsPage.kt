@@ -178,7 +178,7 @@ class GoogleTranslationService(
             val prompt = """
                 Provide only the translations of the following texts into ${getLanguageName(targetLanguage)}, 
                 one per line, in the same order, with no additional text or explanations:
-                ${texts.joinToString("\n") { "\"$it\"" }}
+                ${texts.joinToString("\n")}
             """.trimIndent()
 
             val request = TranslationRequest(
