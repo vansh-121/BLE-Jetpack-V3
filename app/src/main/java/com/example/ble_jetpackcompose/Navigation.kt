@@ -4,12 +4,13 @@ import android.app.Activity
 import android.app.Application
 import androidx.activity.ComponentActivity
 import androidx.activity.viewModels
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -24,7 +25,15 @@ fun AppNavigation(navController: NavHostController) {
     val context = LocalContext.current
     val application = context.applicationContext as Application
     val activity = context as ComponentActivity
-    val bluetoothViewModel: BluetoothScanViewModel<Any?> by activity.viewModels { BluetoothScanViewModelFactory(application)}
+    val bluetoothViewModel: BluetoothScanViewModel<Any?> by activity.viewModels { BluetoothScanViewModelFactory(application) }
+
+    // Get system theme and initialize ThemeManager
+    val systemDarkMode = isSystemInDarkTheme()
+
+    // Initialize ThemeManager with system theme on app start
+    LaunchedEffect(Unit) {
+        ThemeManager.initializeWithSystemTheme(systemDarkMode)
+    }
 
     // Check authentication state when the app starts
     LaunchedEffect(Unit) {
@@ -39,24 +48,21 @@ fun AppNavigation(navController: NavHostController) {
     LaunchedEffect(authState) {
         when (authState) {
             is AuthState.Success -> {
-                // Navigate to home screen when authentication is successful
                 navController.navigate("home_screen") {
                     popUpTo("first_screen") { inclusive = true }
                 }
             }
             is AuthState.Error -> {
                 // Handle error if needed
-                // You might want to show a toast or error message
             }
             is AuthState.Idle -> {
-                // Handle sign out - only navigate if we're not already on first_screen or splash_screen
                 if (navController.currentDestination?.route !in listOf("first_screen", "splash_screen")) {
                     navController.navigate("first_screen") {
                         popUpTo(0) { inclusive = true }
                     }
                 }
             }
-            else -> {} // Handle other states if needed
+            else -> {}
         }
     }
 
@@ -67,7 +73,6 @@ fun AppNavigation(navController: NavHostController) {
         composable("splash_screen") {
             SplashScreen(
                 onNavigateToLogin = {
-                    // Only navigate if user is not authenticated
                     if (!authViewModel.isUserAuthenticated()) {
                         navController.navigate("first_screen") {
                             popUpTo("splash_screen") { inclusive = true }
@@ -126,8 +131,8 @@ fun AppNavigation(navController: NavHostController) {
         }
 
         composable("game_screen") {
-            val activity = LocalContext.current as Activity  // ✅ Get current activity
-            GameActivityScreen(activity = activity)  // ✅ Pass activity correctly
+            val activity = LocalContext.current as Activity
+            GameActivityScreen(activity = activity)
         }
 
         composable("settings_screen") {
@@ -155,7 +160,6 @@ fun AppNavigation(navController: NavHostController) {
             val deviceAddress = backStackEntry.arguments?.getString("deviceAddress") ?: ""
             backStackEntry.arguments?.getString("sensorType") ?: ""
             val deviceId = backStackEntry.arguments?.getString("deviceId") ?: ""
-            // Get the device from the ViewModel using the address
             val viewModel: BluetoothScanViewModel<Any?> = viewModel(factory = BluetoothScanViewModelFactory(application))
             val devices by viewModel.devices.collectAsState()
             devices.find { it.address == deviceAddress }
@@ -168,13 +172,10 @@ fun AppNavigation(navController: NavHostController) {
             )
         }
 
-
         composable(
             route = "chart_screen/{deviceAddress}",
             arguments = listOf(
-                navArgument("deviceAddress") {
-                    type = NavType.StringType
-                }
+                navArgument("deviceAddress") { type = NavType.StringType }
             )
         ) { backStackEntry ->
             ChartScreen(
@@ -183,7 +184,6 @@ fun AppNavigation(navController: NavHostController) {
             )
         }
 
-
         composable("chart_screen_2/{title}/{value}") { backStackEntry ->
             val title = backStackEntry.arguments?.getString("title")
             val value = backStackEntry.arguments?.getString("value")
@@ -191,9 +191,7 @@ fun AppNavigation(navController: NavHostController) {
             ChartScreen2(navController = navController, title = title, value = value)
         }
 
-
         composable("home_screen") {
-//      val bluetoothViewModel = BluetoothScanViewModel(context = LocalContext.current)
             MainScreen(
                 navController = navController,
                 bluetoothViewModel = bluetoothViewModel

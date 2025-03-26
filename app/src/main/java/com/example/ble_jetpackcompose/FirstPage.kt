@@ -12,29 +12,11 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.GenericShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.Divider
-import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -49,12 +31,61 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
+// Data class for translatable text in AnimatedFirstScreen
+data class TranslatedFirstScreenText(
+    val appName: String = "BLE Sense",
+    val login: String = "Login",
+    val signUp: String = "Sign Up",
+    val or: String = "OR",
+    val continueAsGuest: String = "Continue as Guest"
+)
+
 @Composable
 fun AnimatedFirstScreen(
     onNavigateToLogin: () -> Unit,
     onNavigateToSignup: () -> Unit,
     onGuestSignIn: () -> Unit
 ) {
+    // Theme and Language state
+    val isDarkMode by ThemeManager.isDarkMode.collectAsState()
+    val currentLanguage by LanguageManager.currentLanguage.collectAsState()
+
+    // Translated text state
+    var translatedText by remember {
+        mutableStateOf(
+            TranslatedFirstScreenText(
+                appName = TranslationCache.get("BLE Sense-$currentLanguage") ?: "BLE Sense",
+                login = TranslationCache.get("Login-$currentLanguage") ?: "Login",
+                signUp = TranslationCache.get("Sign Up-$currentLanguage") ?: "Sign Up",
+                or = TranslationCache.get("OR-$currentLanguage") ?: "OR",
+                continueAsGuest = TranslationCache.get("Continue as Guest-$currentLanguage") ?: "Continue as Guest"
+            )
+        )
+    }
+
+    // Preload translations on language change
+    LaunchedEffect(currentLanguage) {
+        val translator = GoogleTranslationService()
+        val textsToTranslate = listOf("BLE Sense", "Login", "Sign Up", "OR", "Continue as Guest")
+        val translatedList = translator.translateBatch(textsToTranslate, currentLanguage)
+        translatedText = TranslatedFirstScreenText(
+            appName = translatedList[0],
+            login = translatedList[1],
+            signUp = translatedList[2],
+            or = translatedList[3],
+            continueAsGuest = translatedList[4]
+        )
+    }
+
+    // Theme-based colors
+    val backgroundColor = if (isDarkMode) Color(0xFF121212) else Color.White
+    val shapeBackgroundColor = if (isDarkMode) Color(0xFF1E1E1E) else Color(0xFFD9EFFF)
+    val textColor = if (isDarkMode) Color.White else Color.Black
+    val dividerColor = if (isDarkMode) Color(0xFFB0B0B0) else Color.Gray
+    val buttonBackgroundColor = if (isDarkMode) Color(0xFFBB86FC) else colorResource(R.color.btnColor)
+    val buttonTextColor = if (isDarkMode) Color.Black else Color.White
+    val loadingIndicatorColor = if (isDarkMode) Color(0xFFBB86FC) else colorResource(R.color.btnColor)
+
     // Animations
     val backgroundScale = remember { Animatable(0f) }
     val iconAlpha = remember { Animatable(0f) }
@@ -65,22 +96,19 @@ fun AnimatedFirstScreen(
     LaunchedEffect(Unit) {
         backgroundScale.animateTo(
             targetValue = 1f,
-            animationSpec = tween(durationMillis = 800, easing = FastOutSlowInEasing) // Reduced from 1200 to 800
+            animationSpec = tween(durationMillis = 800, easing = FastOutSlowInEasing)
         )
-
         iconAlpha.animateTo(
             targetValue = 1f,
-            animationSpec = tween(durationMillis = 500, easing = LinearEasing) // Reduced from 800 to 500
+            animationSpec = tween(durationMillis = 500, easing = LinearEasing)
         )
-
         textAlpha.animateTo(
             targetValue = 1f,
-            animationSpec = tween(durationMillis = 500, easing = LinearEasing) // Reduced from 800 to 500
+            animationSpec = tween(durationMillis = 500, easing = LinearEasing)
         )
-
         buttonAlpha.animateTo(
             targetValue = 1f,
-            animationSpec = tween(durationMillis = 500, easing = LinearEasing) // Reduced from 800 to 500
+            animationSpec = tween(durationMillis = 500, easing = LinearEasing)
         )
     }
 
@@ -89,9 +117,9 @@ fun AnimatedFirstScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.White)
+            .background(backgroundColor)
     ) {
-        // Animated Background
+        // Animated Background Shape
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -117,7 +145,7 @@ fun AnimatedFirstScreen(
                     }
                     addPath(path)
                 })
-                .background(Color(0xFFD9EFFF))
+                .background(shapeBackgroundColor)
         )
 
         // Content
@@ -137,11 +165,11 @@ fun AnimatedFirstScreen(
             )
 
             Text(
-                text = "BLE Sense",
+                text = translatedText.appName,
                 fontSize = 36.sp,
                 fontWeight = FontWeight.Bold,
                 fontFamily = helveticaFont,
-                color = Color.Black,
+                color = textColor,
                 modifier = Modifier
                     .alpha(textAlpha.value)
                     .padding(bottom = 140.dp)
@@ -158,13 +186,13 @@ fun AnimatedFirstScreen(
                     .padding(vertical = 8.dp)
                     .height(50.dp),
                 shape = RoundedCornerShape(12.dp),
-                colors = ButtonDefaults.buttonColors(backgroundColor = colorResource(R.color.btnColor)),
+                colors = ButtonDefaults.buttonColors(backgroundColor = buttonBackgroundColor),
                 elevation = ButtonDefaults.elevation(defaultElevation = 8.dp)
             ) {
                 Text(
-                    text = "Login",
+                    text = translatedText.login,
                     fontSize = 18.sp,
-                    color = Color.White,
+                    color = buttonTextColor,
                     fontFamily = helveticaFont,
                     fontWeight = FontWeight.SemiBold
                 )
@@ -181,13 +209,13 @@ fun AnimatedFirstScreen(
                     .padding(vertical = 8.dp)
                     .height(50.dp),
                 shape = RoundedCornerShape(12.dp),
-                colors = ButtonDefaults.buttonColors(backgroundColor = colorResource(R.color.btnColor)),
+                colors = ButtonDefaults.buttonColors(backgroundColor = buttonBackgroundColor),
                 elevation = ButtonDefaults.elevation(defaultElevation = 8.dp)
             ) {
                 Text(
-                    text = "Sign Up",
+                    text = translatedText.signUp,
                     fontSize = 18.sp,
-                    color = Color.White,
+                    color = buttonTextColor,
                     fontFamily = helveticaFont,
                     fontWeight = FontWeight.SemiBold
                 )
@@ -207,12 +235,12 @@ fun AnimatedFirstScreen(
                     modifier = Modifier
                         .weight(1f)
                         .alpha(0.5f),
-                    color = Color.Gray,
+                    color = dividerColor,
                     thickness = 1.dp
                 )
                 Text(
-                    text = "  OR  ",
-                    color = Color.Gray,
+                    text = "  ${translatedText.or}  ",
+                    color = dividerColor,
                     fontSize = 14.sp,
                     fontFamily = helveticaFont,
                     modifier = Modifier.padding(horizontal = 8.dp)
@@ -221,7 +249,7 @@ fun AnimatedFirstScreen(
                     modifier = Modifier
                         .weight(1f)
                         .alpha(0.5f),
-                    color = Color.Gray,
+                    color = dividerColor,
                     thickness = 1.dp
                 )
             }
@@ -232,13 +260,14 @@ fun AnimatedFirstScreen(
                 LoadingAnimation(
                     modifier = Modifier
                         .size(48.dp)
-                        .alpha(buttonAlpha.value)
+                        .alpha(buttonAlpha.value),
+                    color = loadingIndicatorColor
                 )
             } else {
                 Text(
-                    text = "Continue as Guest",
+                    text = translatedText.continueAsGuest,
                     fontSize = 16.sp,
-                    color = Color.Black,
+                    color = textColor,
                     fontFamily = helveticaFont,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier
@@ -259,14 +288,15 @@ fun AnimatedFirstScreen(
 
 @Composable
 fun LoadingAnimation(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    color: Color
 ) {
     val infiniteTransition = rememberInfiniteTransition()
     val rotationAngle by infiniteTransition.animateFloat(
         initialValue = 0f,
         targetValue = 360f,
         animationSpec = infiniteRepeatable(
-            animation = tween(800, easing = LinearEasing), // Reduced from 1000 to 800
+            animation = tween(800, easing = LinearEasing),
             repeatMode = RepeatMode.Restart
         )
     )
@@ -275,7 +305,7 @@ fun LoadingAnimation(
         initialValue = 0.6f,
         targetValue = 1f,
         animationSpec = infiniteRepeatable(
-            animation = tween(500, easing = FastOutSlowInEasing), // Reduced from 700 to 500
+            animation = tween(500, easing = FastOutSlowInEasing),
             repeatMode = RepeatMode.Reverse
         )
     )
@@ -292,7 +322,7 @@ fun LoadingAnimation(
                     rotationZ = rotationAngle
                 }
                 .size(32.dp),
-            color = colorResource(R.color.btnColor),
+            color = color,
             strokeWidth = 3.dp
         )
     }

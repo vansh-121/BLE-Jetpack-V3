@@ -8,19 +8,13 @@ import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Bluetooth
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -32,8 +26,41 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 
+// Data class for translatable text in LoadingDialog
+data class TranslatedLoadingDialogText(
+    val waitMessage: String = "Wait.It's Sensing..."
+)
+
 @Composable
 fun LoadingDialog(onDismissRequest: () -> Unit) {
+    // Theme and Language state
+    val isDarkMode by ThemeManager.isDarkMode.collectAsState()
+    val currentLanguage by LanguageManager.currentLanguage.collectAsState()
+
+    // Translated text state
+    var translatedText by remember {
+        mutableStateOf(
+            TranslatedLoadingDialogText(
+                waitMessage = TranslationCache.get("Wait.It's Sensing...-$currentLanguage") ?: "Wait.It's Sensing..."
+            )
+        )
+    }
+
+    // Preload translations on language change
+    LaunchedEffect(currentLanguage) {
+        val translator = GoogleTranslationService()
+        val textsToTranslate = listOf("Wait.It's Sensing...")
+        val translatedList = translator.translateBatch(textsToTranslate, currentLanguage)
+        translatedText = TranslatedLoadingDialogText(
+            waitMessage = translatedList[0]
+        )
+    }
+
+    // Theme-based colors
+    val dialogBackgroundColor = if (isDarkMode) Color(0xFF1E1E1E) else Color.White
+    val textColor = if (isDarkMode) Color.White else Color.Black
+    val primaryColor = if (isDarkMode) Color(0xFFBB86FC) else MaterialTheme.colorScheme.primary // Use Material primary in light mode
+
     Dialog(
         onDismissRequest = onDismissRequest,
         properties = DialogProperties(
@@ -42,15 +69,12 @@ fun LoadingDialog(onDismissRequest: () -> Unit) {
             usePlatformDefaultWidth = false
         )
     ) {
-        val primaryColor = MaterialTheme.colorScheme.primary
-        val onSurfaceColor = MaterialTheme.colorScheme.onSurface
-
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
                 .shadow(elevation = 8.dp, shape = MaterialTheme.shapes.medium)
                 .background(
-                    color = MaterialTheme.colorScheme.surface,
+                    color = dialogBackgroundColor,
                     shape = MaterialTheme.shapes.medium
                 )
                 .padding(24.dp)
@@ -67,9 +91,9 @@ fun LoadingDialog(onDismissRequest: () -> Unit) {
             }
             Spacer(modifier = Modifier.height(16.dp))
             Text(
-                text = "Wait.It's Sensing...",
+                text = translatedText.waitMessage,
                 style = MaterialTheme.typography.bodyMedium,
-                color = onSurfaceColor
+                color = textColor
             )
         }
     }

@@ -61,36 +61,78 @@ import androidx.core.content.ContextCompat
 import androidx.navigation.NavHostController
 import kotlinx.coroutines.delay
 
+data class TranslatedMainScreenText(
+    val appTitle: String = "BLE Sense",
+    val nearbyDevices: String = "Nearby Devices",
+    val gameDevices: String = "Game Devices",
+    val bluetoothPermissionsRequired: String = "Bluetooth permissions required",
+    val scanningForDevices: String = "Scanning for devices...",
+    val noDevicesFound: String = "No devices found",
+    val scanningForGameDevices: String = "Scanning for game devices...",
+    val noGameDevicesFound: String = "No game devices found",
+    val showMore: String = "Show More",
+    val showLess: String = "Show Less"
+)
+
 @Composable
 fun MainScreen(
     navController: NavHostController,
-    bluetoothViewModel: BluetoothScanViewModel<Any?>,
+    bluetoothViewModel: BluetoothScanViewModel<Any?>
 ) {
     val bluetoothDevices by bluetoothViewModel.devices.collectAsState(initial = emptyList())
     val isScanning by bluetoothViewModel.isScanning.collectAsState()
     val context = LocalContext.current
     val activity = context as ComponentActivity
 
-    // Fix: Don't call composable functions inside remember blocks
     val isPermissionGranted = remember { mutableStateOf(checkBluetoothPermissions(context)) }
     var expanded by remember { mutableStateOf(false) }
     val sensorTypes = listOf("SHT40", "LIS2DH", "Soil Sensor", "Weather", "LUX", "Speed Distance", "Metal Detector")
     var selectedSensor by remember { mutableStateOf(sensorTypes[0]) }
     var showAllDevices by remember { mutableStateOf(false) }
 
-    // Detect system theme
-    val systemDarkMode = isSystemInDarkTheme()
+    // Sync with ThemeManager and LanguageManager
+    val isDarkMode by ThemeManager.isDarkMode.collectAsState()
+    val currentLanguage by LanguageManager.currentLanguage.collectAsState()
 
-    // Initialize theme state based on system theme
-    var isDarkMode by remember { mutableStateOf(systemDarkMode) }
-    val initializedFromSystem = remember { mutableStateOf(false) }
+    // State for translated text
+    var translatedText by remember {
+        mutableStateOf(
+            TranslatedMainScreenText(
+                appTitle = TranslationCache.get("BLE Sense-$currentLanguage") ?: "BLE Sense",
+                nearbyDevices = TranslationCache.get("Nearby Devices-$currentLanguage") ?: "Nearby Devices",
+                gameDevices = TranslationCache.get("Game Devices-$currentLanguage") ?: "Game Devices",
+                bluetoothPermissionsRequired = TranslationCache.get("Bluetooth permissions required-$currentLanguage") ?: "Bluetooth permissions required",
+                scanningForDevices = TranslationCache.get("Scanning for devices...-$currentLanguage") ?: "Scanning for devices...",
+                noDevicesFound = TranslationCache.get("No devices found-$currentLanguage") ?: "No devices found",
+                scanningForGameDevices = TranslationCache.get("Scanning for game devices...-$currentLanguage") ?: "Scanning for game devices...",
+                noGameDevicesFound = TranslationCache.get("No game devices found-$currentLanguage") ?: "No game devices found",
+                showMore = TranslationCache.get("Show More-$currentLanguage") ?: "Show More",
+                showLess = TranslationCache.get("Show Less-$currentLanguage") ?: "Show Less"
+            )
+        )
+    }
 
-    // Initialize from system theme only once
-    LaunchedEffect(Unit) {
-        if (!initializedFromSystem.value) {
-            isDarkMode = systemDarkMode
-            initializedFromSystem.value = true
-        }
+    // Preload translations on language change
+    LaunchedEffect(currentLanguage) {
+        val translator = GoogleTranslationService()
+        val textsToTranslate = listOf(
+            "BLE Sense", "Nearby Devices", "Game Devices", "Bluetooth permissions required",
+            "Scanning for devices...", "No devices found", "Scanning for game devices...",
+            "No game devices found", "Show More", "Show Less"
+        )
+        val translatedList = translator.translateBatch(textsToTranslate, currentLanguage)
+        translatedText = TranslatedMainScreenText(
+            appTitle = translatedList[0],
+            nearbyDevices = translatedList[1],
+            gameDevices = translatedList[2],
+            bluetoothPermissionsRequired = translatedList[3],
+            scanningForDevices = translatedList[4],
+            noDevicesFound = translatedList[5],
+            scanningForGameDevices = translatedList[6],
+            noGameDevicesFound = translatedList[7],
+            showMore = translatedList[8],
+            showLess = translatedList[9]
+        )
     }
 
     // Define colors based on theme
@@ -99,7 +141,6 @@ fun MainScreen(
     val textColor = if (isDarkMode) Color.White else Color.Black
     val secondaryTextColor = if (isDarkMode) Color(0xFFB0B0B0) else Color(0xFF757575)
     val dividerColor = if (isDarkMode) Color(0xFF2A2A2A) else Color(0xFFE0E0E0)
-    val bottomNavColor = if (isDarkMode) Color(0xFF1E1E1E) else Color.White
 
     // Check permissions initially
     LaunchedEffect(Unit) {
@@ -119,18 +160,16 @@ fun MainScreen(
             bluetoothViewModel.startPeriodicScan(activity)
         }
         onDispose {
-            bluetoothViewModel.stopScan() // Stop scanning when leaving the screen
+            bluetoothViewModel.stopScan()
         }
     }
 
-    // Rest of your UI code remains largely the same, but update isScanning references
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(backgroundColor)
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
-            // TopAppBar updated with theme toggle
             androidx.compose.material.TopAppBar(
                 backgroundColor = cardBackgroundColor,
                 elevation = 8.dp
@@ -140,7 +179,7 @@ fun MainScreen(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = "BLE Sense ",
+                        text = translatedText.appTitle,
                         fontFamily = helveticaFont,
                         fontWeight = FontWeight.Bold,
                         color = textColor,
@@ -148,9 +187,8 @@ fun MainScreen(
                         textAlign = TextAlign.Center
                     )
 
-                    // Add theme toggle button
                     IconButton(
-                        onClick = { isDarkMode = !isDarkMode },
+                        onClick = { ThemeManager.toggleDarkMode(!isDarkMode) },
                         modifier = Modifier.align(Alignment.CenterEnd)
                     ) {
                         Icon(
@@ -189,7 +227,7 @@ fun MainScreen(
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Text(
-                                    text = "Nearby Devices (${bluetoothDevices.size})",
+                                    text = "${translatedText.nearbyDevices} (${bluetoothDevices.size})",
                                     style = MaterialTheme.typography.h6,
                                     color = textColor
                                 )
@@ -206,16 +244,15 @@ fun MainScreen(
                                         Icon(
                                             imageVector = Icons.Default.Refresh,
                                             contentDescription = "Refresh",
-                                            tint = if (isDarkMode) Color.White else Color.Black
+                                            tint = textColor
                                         )
                                     }
-                                    // DropdownMenu remains unchanged
                                     Box {
                                         IconButton(onClick = { expanded = true }) {
                                             Icon(
                                                 imageVector = Icons.Default.MoreVert,
                                                 contentDescription = "More Options",
-                                                tint = if (isDarkMode) Color.White else Color.Black
+                                                tint = textColor
                                             )
                                         }
                                         DropdownMenu(
@@ -240,7 +277,7 @@ fun MainScreen(
 
                             if (!isPermissionGranted.value) {
                                 Text(
-                                    "Bluetooth permissions required",
+                                    text = translatedText.bluetoothPermissionsRequired,
                                     textAlign = TextAlign.Center,
                                     modifier = Modifier.fillMaxWidth(),
                                     color = textColor
@@ -255,9 +292,9 @@ fun MainScreen(
                                             color = if (isDarkMode) Color(0xFF64B5F6) else Color(0xFF2196F3)
                                         )
                                         Spacer(modifier = Modifier.height(8.dp))
-                                        Text("Scanning for devices...", color = textColor)
+                                        Text(translatedText.scanningForDevices, color = textColor)
                                     } else {
-                                        Text("No devices found", color = textColor)
+                                        Text(translatedText.noDevicesFound, color = textColor)
                                     }
                                 }
                             } else {
@@ -284,7 +321,7 @@ fun MainScreen(
                                         contentAlignment = Alignment.Center
                                     ) {
                                         Text(
-                                            text = if (showAllDevices) "Show Less" else "Show More",
+                                            text = if (showAllDevices) translatedText.showLess else translatedText.showMore,
                                             modifier = Modifier.padding(12.dp),
                                             textAlign = TextAlign.Center,
                                             color = textColor
@@ -321,7 +358,7 @@ fun MainScreen(
                                 horizontalArrangement = Arrangement.SpaceBetween
                             ) {
                                 Text(
-                                    text = "Game Devices (${gameDevices.size})",
+                                    text = "${translatedText.gameDevices} (${gameDevices.size})",
                                     style = MaterialTheme.typography.h6,
                                     color = textColor
                                 )
@@ -335,7 +372,7 @@ fun MainScreen(
                                     Icon(
                                         imageVector = Icons.Default.Refresh,
                                         contentDescription = "Refresh",
-                                        tint = if (isDarkMode) Color.White else Color.Black
+                                        tint = textColor
                                     )
                                 }
                             }
@@ -343,7 +380,7 @@ fun MainScreen(
 
                             if (!isPermissionGranted.value) {
                                 Text(
-                                    "Bluetooth permissions required",
+                                    text = translatedText.bluetoothPermissionsRequired,
                                     textAlign = TextAlign.Center,
                                     modifier = Modifier.fillMaxWidth(),
                                     color = textColor
@@ -358,9 +395,9 @@ fun MainScreen(
                                             color = if (isDarkMode) Color(0xFF64B5F6) else Color(0xFF2196F3)
                                         )
                                         Spacer(modifier = Modifier.height(8.dp))
-                                        Text("Scanning for game devices...", color = textColor)
+                                        Text(translatedText.scanningForGameDevices, color = textColor)
                                     } else {
-                                        Text("No game devices found", color = textColor)
+                                        Text(translatedText.noGameDevicesFound, color = textColor)
                                     }
                                 }
                             } else {
@@ -386,7 +423,7 @@ fun MainScreen(
                                         contentAlignment = Alignment.Center
                                     ) {
                                         Text(
-                                            text = if (showAllDevices) "Show Less" else "Show More",
+                                            text = if (showAllDevices) translatedText.showLess else translatedText.showMore,
                                             modifier = Modifier.padding(12.dp),
                                             textAlign = TextAlign.Center,
                                             color = textColor
@@ -409,7 +446,6 @@ fun MainScreen(
         }
     }
 }
-
 private fun checkBluetoothPermissions(context: Context): Boolean {
     return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
         checkPermission(context, Manifest.permission.BLUETOOTH_SCAN) &&

@@ -1,8 +1,4 @@
-//package com.example.splashscreen.ui.theme
 package com.example.ble_jetpackcompose
-//import androidx.compose.runtime.Composable
-//import com.example.splashscreen.R
-
 
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.LinearOutSlowInEasing
@@ -13,18 +9,9 @@ import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.BasicText
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -40,9 +27,45 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
 
+// Data class for translatable text in SplashScreen
+data class TranslatedSplashScreenText(
+    val appName: String = "BLE Sense",
+    val developedBy: String = "Developed by AWaDH, IIT Ropar"
+)
+
 @Composable
-fun SplashScreen( onNavigateToLogin: () -> Unit ) {
+fun SplashScreen(onNavigateToLogin: () -> Unit) {
     LocalContext.current
+
+    // Theme and Language state
+    val isDarkMode by ThemeManager.isDarkMode.collectAsState()
+    val currentLanguage by LanguageManager.currentLanguage.collectAsState()
+
+    // Translated text state
+    var translatedText by remember {
+        mutableStateOf(
+            TranslatedSplashScreenText(
+                appName = TranslationCache.get("BLE Sense-$currentLanguage") ?: "BLE Sense",
+                developedBy = TranslationCache.get("Developed by AWaDH, IIT Ropar-$currentLanguage") ?: "Developed by AWaDH, IIT Ropar"
+            )
+        )
+    }
+
+    // Preload translations on language change
+    LaunchedEffect(currentLanguage) {
+        val translator = GoogleTranslationService()
+        val textsToTranslate = listOf("BLE Sense", "Developed by AWaDH, IIT Ropar")
+        val translatedList = translator.translateBatch(textsToTranslate, currentLanguage)
+        translatedText = TranslatedSplashScreenText(
+            appName = translatedList[0],
+            developedBy = translatedList[1]
+        )
+    }
+
+    // Theme-based colors
+    val backgroundColor = if (isDarkMode) Color(0xFF121212) else Color.White
+    val textColor = if (isDarkMode) Color.White else Color.Black
+    val secondaryTextColor = if (isDarkMode) Color.White.copy(alpha = 0.8f) else Color.Black.copy(alpha = 0.8f)
 
     // Trigger navigation after 2-second delay
     LaunchedEffect(key1 = true) {
@@ -72,7 +95,7 @@ fun SplashScreen( onNavigateToLogin: () -> Unit ) {
         )
     )
 
-    // Slow zoom animation for "Developed by IIT Ropar" text
+    // Slow zoom animation for "Developed by AWaDH, IIT Ropar" text
     val footerScale by infiniteTransition.animateFloat(
         initialValue = 1f,
         targetValue = 1.1f,
@@ -85,7 +108,7 @@ fun SplashScreen( onNavigateToLogin: () -> Unit ) {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.White), // White background
+            .background(backgroundColor),
         contentAlignment = Alignment.Center
     ) {
         Column(
@@ -110,10 +133,10 @@ fun SplashScreen( onNavigateToLogin: () -> Unit ) {
 
             // "BLE Sense" text with zoom animation
             BasicText(
-                text = "BLE Sense",
+                text = translatedText.appName,
                 style = TextStyle(
                     fontSize = 40.sp,
-                    color = Color.Black, // Black text
+                    color = textColor,
                     fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.Center,
                     fontFamily = helveticaFont
@@ -124,12 +147,12 @@ fun SplashScreen( onNavigateToLogin: () -> Unit ) {
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            // "Developed by IIT Ropar" text with zoom animation
+            // "Developed by AWaDH, IIT Ropar" text with zoom animation
             BasicText(
-                text = "Developed by AWaDH, IIT Ropar",
+                text = translatedText.developedBy,
                 style = TextStyle(
                     fontSize = 18.sp,
-                    color = Color.Black.copy(alpha = 0.8f), // Black text with slight transparency
+                    color = secondaryTextColor,
                     fontWeight = FontWeight.SemiBold,
                     textAlign = TextAlign.Center,
                     fontFamily = helveticaFont

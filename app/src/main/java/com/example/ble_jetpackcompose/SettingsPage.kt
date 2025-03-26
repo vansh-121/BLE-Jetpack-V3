@@ -48,11 +48,21 @@ import java.net.URLEncoder
 
 // Create a singleton object to manage app-wide theme state
 object ThemeManager {
-    private val _isDarkMode = MutableStateFlow(false)
+    private val _isDarkMode = MutableStateFlow(false) // Default to false until initialized
     val isDarkMode: StateFlow<Boolean> = _isDarkMode
+
+    private var isInitialized = false
 
     fun toggleDarkMode(value: Boolean) {
         _isDarkMode.value = value
+        isInitialized = true // Mark as initialized once toggled
+    }
+
+    fun initializeWithSystemTheme(isSystemDark: Boolean) {
+        if (!isInitialized) {
+            _isDarkMode.value = isSystemDark
+            isInitialized = true
+        }
     }
 }
 
@@ -124,7 +134,6 @@ data class TranslationCandidate(
 interface TranslationService {
     suspend fun translateText(text: String, targetLanguage: String): String
 }
-
 object TranslationCache {
     private val cache = mutableMapOf<String, String>()
 
@@ -133,6 +142,7 @@ object TranslationCache {
         cache[key] = value
     }
 }
+
 
 // Modified GoogleTranslationService
 class GoogleTranslationService(
@@ -245,32 +255,38 @@ fun ModernSettingsScreen(
     onSignOut: () -> Unit,
     navController: NavHostController
 ) {
-    val systemDarkMode = isSystemInDarkTheme()
     val isDarkMode by ThemeManager.isDarkMode.collectAsState()
     val currentLanguage by LanguageManager.currentLanguage.collectAsState()
-    val initializedFromSystem = remember { mutableStateOf(false) }
 
-    // State for translated text
-    var translatedText by remember { mutableStateOf(TranslatedSettings()) }
-
-    // Update translations when language changes
-    LaunchedEffect(currentLanguage) {
-        val translator = GoogleTranslationService()
-        translatedText = TranslatedSettings(
-            settingsTitle = "Settings".translateTo(currentLanguage),
-            darkMode = "Dark Mode".translateTo(currentLanguage),
-            language = "Language".translateTo(currentLanguage),
-            help = "Help".translateTo(currentLanguage),
-            accounts = "Accounts".translateTo(currentLanguage),
-            about = "About BLE".translateTo(currentLanguage)
+    // State for translated text with initial fallback
+    var translatedText by remember {
+        mutableStateOf(
+            TranslatedSettings(
+                settingsTitle = TranslationCache.get("Settings-$currentLanguage") ?: "Settings",
+                darkMode = TranslationCache.get("Dark Mode-$currentLanguage") ?: "Dark Mode",
+                language = TranslationCache.get("Language-$currentLanguage") ?: "Language",
+                help = TranslationCache.get("Help-$currentLanguage") ?: "Help",
+                accounts = TranslationCache.get("Accounts-$currentLanguage") ?: "Accounts",
+                about = TranslationCache.get("About BLE-$currentLanguage") ?: "About BLE"
+            )
         )
     }
 
-    LaunchedEffect(Unit) {
-        if (!initializedFromSystem.value) {
-            ThemeManager.toggleDarkMode(systemDarkMode)
-            initializedFromSystem.value = true
-        }
+    // Preload translations on language change
+    LaunchedEffect(currentLanguage) {
+        val translator = GoogleTranslationService()
+        val textsToTranslate = listOf(
+            "Settings", "Dark Mode", "Language", "Help", "Accounts", "About BLE"
+        )
+        val translatedList = translator.translateBatch(textsToTranslate, currentLanguage)
+        translatedText = TranslatedSettings(
+            settingsTitle = translatedList[0],
+            darkMode = translatedList[1],
+            language = translatedList[2],
+            help = translatedList[3],
+            accounts = translatedList[4],
+            about = translatedList[5]
+        )
     }
 
     val backgroundColor = if (isDarkMode) Color(0xFF121212) else Color(0xFFF2F2F7)
@@ -352,7 +368,6 @@ fun ModernSettingsScreen(
         }
     }
 }
-
 @Composable
 fun UserProfileCard(
     cardBackground: Color,
