@@ -1,6 +1,7 @@
 package com.example.ble_jetpackcompose
 
 import android.app.Activity
+import android.app.Application
 import android.media.AudioAttributes
 import android.media.MediaPlayer
 import androidx.compose.animation.AnimatedVisibility
@@ -24,33 +25,12 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.horizontalScroll
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.produceState
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -86,25 +66,83 @@ fun dpToPx(dp: Dp): Float {
 fun GameActivityScreen(
     activity: Activity,
     bluetoothViewModel: BluetoothScanViewModel<Any> = viewModel(
-        factory = BluetoothScanViewModelFactory (LocalContext.current)
+        factory = BluetoothScanViewModelFactory(LocalContext.current.applicationContext as Application)
     )
 ) {
+    // Theme and Language state
+    val isDarkMode by ThemeManager.isDarkMode.collectAsState()
+    val currentLanguage by LanguageManager.currentLanguage.collectAsState()
+
+    // Translated text state
+    var translatedText by remember {
+        mutableStateOf(
+            TranslatedGameScreenText(
+                huntTheHeroes = TranslationCache.get("Hunt the Heroes-$currentLanguage")
+                    ?: "Hunt the Heroes",
+                guessTheCharacter = TranslationCache.get("Guess the Character-$currentLanguage")
+                    ?: "Guess the Character",
+                whichHeroNearby = TranslationCache.get("Which hero do you think is nearby?-$currentLanguage")
+                    ?: "Which hero do you think is nearby?",
+                correctGuess = TranslationCache.get("Correct!-$currentLanguage") ?: "Correct!",
+                youFound = TranslationCache.get("You found-$currentLanguage") ?: "You found",
+                wrongGuess = TranslationCache.get("Wrong Guess!-$currentLanguage")
+                    ?: "Wrong Guess!",
+                tryAgain = TranslationCache.get("Try again...-$currentLanguage") ?: "Try again...",
+                heroesDetected = TranslationCache.get("Heroes Detected:-$currentLanguage")
+                    ?: "Heroes Detected:",
+                heroesCollection = TranslationCache.get("Heroes Collection-$currentLanguage")
+                    ?: "Heroes Collection",
+                collected = TranslationCache.get("Collected:-$currentLanguage") ?: "Collected:"
+            )
+        )
+    }
+
+    // Preload translations on language change
+    LaunchedEffect(currentLanguage) {
+        val translator = GoogleTranslationService()
+        val textsToTranslate = listOf(
+            "Hunt the Heroes", "Guess the Character", "Which hero do you think is nearby?",
+            "Correct!", "You found", "Wrong Guess!", "Try again...", "Heroes Detected:",
+            "Heroes Collection", "Collected:"
+        )
+        val translatedList = translator.translateBatch(textsToTranslate, currentLanguage)
+        translatedText = TranslatedGameScreenText(
+            huntTheHeroes = translatedList[0],
+            guessTheCharacter = translatedList[1],
+            whichHeroNearby = translatedList[2],
+            correctGuess = translatedList[3],
+            youFound = translatedList[4],
+            wrongGuess = translatedList[5],
+            tryAgain = translatedList[6],
+            heroesDetected = translatedList[7],
+            heroesCollection = translatedList[8],
+            collected = translatedList[9]
+        )
+    }
+
+    // Theme-based colors
+    val backgroundColor = if (isDarkMode) Color(0xFF121212) else Color.White
+    val textColor = if (isDarkMode) Color.White else Color.Black
+    val secondaryTextColor = if (isDarkMode) Color(0xFFB0B0B0) else Color(0xFF8E8E93)
+    val buttonBackgroundColor = if (isDarkMode) Color(0xFFBB86FC) else Color(0xFF007AFF)
+    val dialogBackgroundColor = if (isDarkMode) Color(0xFF1E1E1E) else Color.White
+    val overlayColor =
+        if (isDarkMode) Color.Black.copy(alpha = 0.8f) else Color.Black.copy(alpha = 0.5f)
+
     var expandedImage by remember { mutableStateOf<Int?>(null) }
     var screenWidth by remember { mutableFloatStateOf(0f) }
     var screenHeight by remember { mutableFloatStateOf(0f) }
     var isSoundOn by remember { mutableStateOf(true) }
     var showScratchCard by remember { mutableStateOf(false) }
     var showTTHButton by remember { mutableStateOf(false) }
-    var showSearchImage by remember { mutableStateOf(true) } // Initially visible
+    var showSearchImage by remember { mutableStateOf(true) }
     var showPopup by remember { mutableStateOf(false) }
     var scratchCompleted by remember { mutableStateOf(false) }
     var showHeroSelectionDialog by remember { mutableStateOf(false) }
     var currentHeroToGuess by remember { mutableStateOf<String?>(null) }
-    var showGuessResult by remember { mutableStateOf<Boolean?>(null) } // null, true (correct), false (incorrect)
+    var showGuessResult by remember { mutableStateOf<Boolean?>(null) }
     var guessAnimationRunning by remember { mutableStateOf(false) }
 
-
-    // Bluetooth-related states
     val allowedHeroes = listOf(
         "Scarlet Witch", "Black Widow", "Captain Marvel", "Wasp", "Hela",
         "Hulk", "Thor", "Iron_Man", "Spider Man", "Captain America"
@@ -112,13 +150,9 @@ fun GameActivityScreen(
     val bluetoothDevices by bluetoothViewModel.devices.collectAsState(initial = emptyList())
     var foundCharacters by remember { mutableStateOf<Map<String, Int>>(emptyMap()) }
 
-    // Extract LocalContext outside of remember
     val context = LocalContext.current
-
-// Create and manage MediaPlayer using DisposableEffect
     val lifecycle = LocalLifecycleOwner.current.lifecycle
 
-    // Create and manage MediaPlayer using DisposableEffect with lifecycle
     val mediaPlayer = remember {
         MediaPlayer.create(context, R.raw.bgmusic).apply {
             isLooping = true
@@ -131,7 +165,6 @@ fun GameActivityScreen(
             setVolume(0.5f, 0.5f)
         }
     }
-    // Use different audio attributes for sound effects
     val correctSoundPlayer = remember {
         MediaPlayer.create(context, R.raw.yayy).apply {
             isLooping = false
@@ -141,10 +174,9 @@ fun GameActivityScreen(
                     .setUsage(AudioAttributes.USAGE_GAME)
                     .build()
             )
-            setVolume(1.0f, 1.0f) // Full volume for effects
+            setVolume(1.0f, 1.0f)
         }
     }
-
     val wrongSoundPlayer = remember {
         MediaPlayer.create(context, R.raw.wrong).apply {
             isLooping = false
@@ -154,38 +186,26 @@ fun GameActivityScreen(
                     .setUsage(AudioAttributes.USAGE_GAME)
                     .build()
             )
-            setVolume(1.0f, 1.0f) // Full volume for effects
+            setVolume(1.0f, 1.0f)
         }
     }
 
-
-    // Your other MediaPlayer instances
-
-    // Properly dispose of all resources when the composable leaves composition OR when the activity is destroyed
     DisposableEffect(lifecycle) {
         val observer = LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_PAUSE) {
-                // Pause the audio when the app goes to background
                 if (mediaPlayer.isPlaying) mediaPlayer.pause()
-                // Also pause any other playing audio
                 if (correctSoundPlayer.isPlaying) correctSoundPlayer.pause()
                 if (wrongSoundPlayer.isPlaying) wrongSoundPlayer.pause()
             } else if (event == Lifecycle.Event.ON_RESUME) {
-                // Resume background music if it was on when app returns to foreground
                 if (isSoundOn && !mediaPlayer.isPlaying) mediaPlayer.start()
             } else if (event == Lifecycle.Event.ON_DESTROY) {
-                // Release all media resources when activity is destroyed
                 mediaPlayer.release()
                 correctSoundPlayer.release()
                 wrongSoundPlayer.release()
                 bluetoothViewModel.stopScan()
             }
         }
-
-        // Add the observer to the lifecycle
         lifecycle.addObserver(observer)
-
-        // When the effect leaves composition, remove the observer and clean up
         onDispose {
             lifecycle.removeObserver(observer)
             bluetoothViewModel.stopScan()
@@ -195,19 +215,6 @@ fun GameActivityScreen(
         }
     }
 
-
-
-
-// Proper cleanup of Bluetooth scanning
-//    DisposableEffect(Unit) {
-//        onDispose {
-//            bluetoothViewModel.stopScan()
-//            mediaPlayer.release()
-//            correctSoundPlayer.release()
-//            wrongSoundPlayer.release()
-//        }
-//    }
-
     LaunchedEffect(isSoundOn) {
         if (isSoundOn) {
             if (!mediaPlayer.isPlaying) mediaPlayer.start()
@@ -216,13 +223,12 @@ fun GameActivityScreen(
         }
     }
 
-    // Infinite circular animation for search button
     val infiniteTransition = rememberInfiniteTransition(label = "searchButtonAnimation")
     val angle by infiniteTransition.animateFloat(
         initialValue = 0f,
         targetValue = 360f,
         animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = 5000, easing = LinearEasing), // Slower animation
+            animation = tween(durationMillis = 5000, easing = LinearEasing),
             repeatMode = RepeatMode.Restart
         ),
         label = "searchButtonRotation"
@@ -234,31 +240,23 @@ fun GameActivityScreen(
     val searchY =
         remember { derivedStateOf { radius * sin(Math.toRadians(angle.toDouble())).toFloat() } }
 
-    // Animation states
     val animateHero by remember { mutableStateOf<String?>(null) }
     val transitionProgress by animateFloatAsState(
         targetValue = if (animateHero != null) 2f else 0f,
         animationSpec = tween(durationMillis = 1000, easing = LinearEasing),
         label = "heroTransition"
     )
-    // State for Game Box visibility
     var isGameBoxOpen by remember { mutableStateOf(false) }
-
-// Position of the Game Box Button (bottom-left corner)
     val gameBoxPosition = remember { Offset(40f, screenHeight - 100f) }
-
-// Animation state for moving heroes into the Game Box
     val heroAnimationState = remember { mutableStateListOf<Pair<String, Offset>>() }
 
-
-    // Particle explosion effect
     val particles = remember { mutableStateListOf<Triple<Float, Float, Double>>() }
     val centerX = screenWidth / 2
     val centerY = screenHeight / 2
 
     LaunchedEffect(scratchCompleted) {
         if (scratchCompleted && screenWidth > 0 && screenHeight > 0) {
-            repeat(35) { // Reduced particle count
+            repeat(35) {
                 val angle = Random.nextDouble(0.0, 360.0)
                 val distance = Random.nextFloat() * 50
                 val startX = (centerX + cos(Math.toRadians(angle)) * distance).toFloat()
@@ -269,38 +267,25 @@ fun GameActivityScreen(
     }
     LaunchedEffect(particles.isNotEmpty()) {
         if (particles.isNotEmpty()) {
-            // Reduce update frequency
-            val particlesToUpdate = particles.size.coerceAtMost(10) // Limit to 10 particles at a time
-
-            repeat(5) { // Reduce animatio
-                // n duration
+            val particlesToUpdate = particles.size.coerceAtMost(10)
+            repeat(5) {
                 particles.take(particlesToUpdate).forEachIndexed { index, (x, y, angle) ->
-                    val speedX = (cos(Math.toRadians(angle)) * 5).toFloat() // Reduce speed
+                    val speedX = (cos(Math.toRadians(angle)) * 5).toFloat()
                     val speedY = (sin(Math.toRadians(angle)) * 5).toFloat()
-
                     if (index < particles.size) {
-                        particles[index] = Triple(
-                            x + speedX,
-                            y + speedY,
-                            angle
-                        )
+                        particles[index] = Triple(x + speedX, y + speedY, angle)
                     }
                 }
-                delay(50) // Slower frame rate
+                delay(50)
             }
-            particles.clear() // Clear after brief animation
+            particles.clear()
         }
     }
 
     if (particles.isNotEmpty()) {
         Canvas(modifier = Modifier.fillMaxSize()) {
             particles.forEach { (x, y, _) ->
-                // Simplified drawing
-                drawCircle(
-                    color = Color.Red, // Use fixed color instead of random
-                    radius = 5f,
-                    center = Offset(x, y)
-                )
+                drawCircle(color = Color.Red, radius = 5f, center = Offset(x, y))
             }
         }
     }
@@ -308,12 +293,12 @@ fun GameActivityScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
+            .background(backgroundColor)
             .onGloballyPositioned { coordinates ->
                 screenWidth = coordinates.size.width.toFloat()
                 screenHeight = coordinates.size.height.toFloat()
             }
     ) {
-        // Background Image
         Image(
             painter = painterResource(id = R.drawable.background),
             contentDescription = null,
@@ -321,7 +306,6 @@ fun GameActivityScreen(
             modifier = Modifier.fillMaxSize()
         )
 
-        // Foreground Content
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -330,7 +314,6 @@ fun GameActivityScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top
         ) {
-            // Title Image
             Image(
                 painter = painterResource(id = R.drawable.ble_games),
                 contentDescription = "BLE Games Title",
@@ -340,15 +323,10 @@ fun GameActivityScreen(
                     .height(150.dp)
             )
 
-//            Spacer(modifier = Modifier.height(24.dp))
-
-            // Stack "Hunt the Heroes" and "Guess the Character" buttons vertically
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(0.dp)  // Add spacing between buttons
+                verticalArrangement = Arrangement.spacedBy(0.dp)
             ) {
-
-                // Hunt the Heroes Section
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -361,7 +339,7 @@ fun GameActivityScreen(
                     var buttonPosition by remember { mutableStateOf(IntOffset.Zero) }
                     AnimatedImageButton(
                         imageResId = R.drawable.guess_the_character,
-                        contentDescription = "Hunt the Heroes",
+                        contentDescription = translatedText.huntTheHeroes,
                         isExpanded = expandedImage == R.drawable.hunt_the_heroes,
                         expandedImageResId = R.drawable.gth,
                         screenWidth = screenWidth,
@@ -369,8 +347,8 @@ fun GameActivityScreen(
                         currentPosition = buttonPosition,
                         onPositioned = { buttonPosition = it },
                         onClick = {
-                            expandedImage = if (expandedImage == R.drawable.hunt_the_heroes) null
-                            else R.drawable.hunt_the_heroes
+                            expandedImage =
+                                if (expandedImage == R.drawable.hunt_the_heroes) null else R.drawable.hunt_the_heroes
                             showPopup = !showPopup
                             showSearchImage = true
                             showTTHButton = false
@@ -379,8 +357,6 @@ fun GameActivityScreen(
                     )
                 }
 
-
-                // Guess the Character Section
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -393,7 +369,7 @@ fun GameActivityScreen(
                     var buttonPosition by remember { mutableStateOf(IntOffset.Zero) }
                     AnimatedImageButton(
                         imageResId = R.drawable.hunt_the_heroes,
-                        contentDescription = "Guess the Character",
+                        contentDescription = translatedText.guessTheCharacter,
                         isExpanded = expandedImage == R.drawable.guess_the_character,
                         expandedImageResId = R.drawable.hth,
                         screenWidth = screenWidth,
@@ -402,42 +378,37 @@ fun GameActivityScreen(
                         onPositioned = { buttonPosition = it },
                         onClick = {
                             expandedImage =
-                                if (expandedImage == R.drawable.guess_the_character) null
-                                else R.drawable.guess_the_character
+                                if (expandedImage == R.drawable.guess_the_character) null else R.drawable.guess_the_character
                             showPopup = !showPopup
                             showSearchImage = true
                             showTTHButton = false
                             showScratchCard = false
-                        },
+                        }
                     )
                 }
             }
         }
 
-        // Add scan throttling
         val isScanningActive = remember { mutableStateOf(false) }
-        val scanInterval = 3000L // milliseconds between scans
+        val scanInterval = 3000L
 
         LaunchedEffect(expandedImage) {
             if (expandedImage == R.drawable.hunt_the_heroes || expandedImage == R.drawable.guess_the_character) {
-                // Set appropriate game mode
                 bluetoothViewModel.setGameMode(
                     when (expandedImage) {
                         R.drawable.hunt_the_heroes -> BluetoothScanViewModel.GameMode.HUNT_THE_HEROES
                         else -> BluetoothScanViewModel.GameMode.GUESS_THE_CHARACTER
                     }
                 )
-
-                // Throttled scanning
                 while (true) {
                     if (!isScanningActive.value) {
                         isScanningActive.value = true
                         bluetoothViewModel.startScan(activity)
                         delay(scanInterval)
-                        bluetoothViewModel.stopScan() // Make sure you implement this method
+                        bluetoothViewModel.stopScan()
                         isScanningActive.value = false
                     }
-                    delay(500) // Check if we need to scan again after a short delay
+                    delay(500)
                 }
             } else {
                 bluetoothViewModel.setGameMode(BluetoothScanViewModel.GameMode.NONE)
@@ -445,15 +416,10 @@ fun GameActivityScreen(
             }
         }
 
-        // Hunt the Heroes Logic
         if (expandedImage == R.drawable.hunt_the_heroes) {
             val nearbyHeroDevice = bluetoothDevices.find {
                 it.name in allowedHeroes && it.rssi.toInt() in -40..0 && it.name !in foundCharacters.keys
             }
-
-
-
-
 
             LaunchedEffect(nearbyHeroDevice) {
                 if (nearbyHeroDevice != null) {
@@ -465,24 +431,15 @@ fun GameActivityScreen(
                 }
             }
 
-            // Handle Scratch Card Logic
             LaunchedEffect(scratchCompleted) {
                 if (scratchCompleted && nearbyHeroDevice != null) {
                     val heroName = nearbyHeroDevice.name
-
-                    // Start the animation for the hero moving into the Game Box
                     heroAnimationState.add(Pair(heroName, Offset(centerX, centerY)))
-
-                    // Simulate the hero moving to the Game Box
-                    delay(500) // Wait for the particle explosion effect
-                    heroAnimationState.clear() // Clear the animation after it's done
-
-                    // Add the hero to the found characters list
+                    delay(500)
+                    heroAnimationState.clear()
                     val updatedCharacters = foundCharacters.toMutableMap()
                     updatedCharacters[heroName] = (updatedCharacters[heroName] ?: 0) + 1
                     foundCharacters = updatedCharacters
-
-                    // Reset states
                     scratchCompleted = false
                     showScratchCard = false
                     showTTHButton = false
@@ -511,7 +468,6 @@ fun GameActivityScreen(
                 }
             }
 
-            // Replace the existing TTR button section
             if (showTTHButton && !showScratchCard) {
                 Box(
                     modifier = Modifier
@@ -525,9 +481,7 @@ fun GameActivityScreen(
                         modifier = Modifier
                             .size(80.dp)
                             .clickable {
-                                // Instead of showing scratchcard directly, show the hero selection dialog
                                 showHeroSelectionDialog = true
-                                // Randomly select a hero to guess from detected devices
                                 currentHeroToGuess = nearbyHeroDevice?.name
                             },
                         contentScale = ContentScale.Crop
@@ -535,12 +489,11 @@ fun GameActivityScreen(
                 }
             }
 
-            // Add this inside the main Box, at the same level as other dialogs
             if (showHeroSelectionDialog) {
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .background(Color.Black.copy(alpha = 0.8f))
+                        .background(overlayColor)
                         .zIndex(10f),
                     contentAlignment = Alignment.Center
                 ) {
@@ -548,19 +501,18 @@ fun GameActivityScreen(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center,
                         modifier = Modifier
-                            .background(Color.White, shape = RoundedCornerShape(16.dp))
+                            .background(dialogBackgroundColor, shape = RoundedCornerShape(16.dp))
                             .padding(16.dp)
                     ) {
                         Text(
-                            text = "Which hero do you think is nearby?",
+                            text = translatedText.whichHeroNearby,
                             fontFamily = helveticaFont,
                             style = MaterialTheme.typography.h6,
-                            color = Color.Black
+                            color = textColor
                         )
 
                         Spacer(modifier = Modifier.height(16.dp))
 
-                        // Display all heroes for selection
                         Row(
                             horizontalArrangement = Arrangement.spacedBy(16.dp),
                             modifier = Modifier.horizontalScroll(rememberScrollState())
@@ -569,21 +521,13 @@ fun GameActivityScreen(
                                 Column(
                                     horizontalAlignment = Alignment.CenterHorizontally,
                                     modifier = Modifier.clickable {
-                                        // Handle hero selection
                                         val isCorrect = character == currentHeroToGuess
                                         showGuessResult = isCorrect
                                         guessAnimationRunning = true
                                         showHeroSelectionDialog = false
-
-                                        // Play appropriate sound
-                                        if (isCorrect) {
-                                            correctSoundPlayer.start()
-                                        } else {
-                                            wrongSoundPlayer.start()
-                                        }
+                                        if (isCorrect) correctSoundPlayer.start() else wrongSoundPlayer.start()
                                     }
                                 ) {
-                                    // Get the resource ID for the character
                                     val resourceId = when (character) {
                                         "Iron_Man" -> R.drawable.iron_man
                                         "Hulk" -> R.drawable.hulk_
@@ -607,7 +551,7 @@ fun GameActivityScreen(
                                     Text(
                                         text = character.replace("_", " "),
                                         style = MaterialTheme.typography.caption,
-                                        color = Color.Black
+                                        color = textColor
                                     )
                                 }
                             }
@@ -615,79 +559,63 @@ fun GameActivityScreen(
                     }
                 }
             }
-            // Add this to show the result of the guess
-            if (guessAnimationRunning) {
-                // Use LaunchedEffect to handle the animation timing
-                LaunchedEffect(guessAnimationRunning) {
-                    delay(3000) // Show result for 3 seconds
-                    guessAnimationRunning = false
 
-                    if (showGuessResult == true) {
-                        // If correct, proceed to scratch card and reveal
-                        showScratchCard = true
-                    } else {
-                        // If wrong, reset and allow another guess
-                        showHeroSelectionDialog = true
-                    }
+            if (guessAnimationRunning) {
+                LaunchedEffect(guessAnimationRunning) {
+                    delay(3000)
+                    guessAnimationRunning = false
+                    if (showGuessResult == true) showScratchCard =
+                        true else showHeroSelectionDialog = true
                 }
 
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .background(Color.Black.copy(alpha = 0.5f))
+                        .background(overlayColor)
                         .zIndex(10f),
                     contentAlignment = Alignment.Center
                 ) {
                     if (showGuessResult == true) {
-                        // Correct guess animation
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            // Party popper animation
-//                            PartyPopperAnimation()
-
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             Text(
-                                text = "Correct!",
+                                text = translatedText.correctGuess,
                                 style = MaterialTheme.typography.h4,
                                 fontFamily = helveticaFont,
                                 color = Color.Green
                             )
-
                             Spacer(modifier = Modifier.height(8.dp))
-
                             Text(
-                                text = "You found ${currentHeroToGuess?.replace("_", " ")}!",
+                                text = "${translatedText.youFound} ${
+                                    currentHeroToGuess?.replace(
+                                        "_",
+                                        " "
+                                    )
+                                }!",
                                 style = MaterialTheme.typography.h6,
                                 fontFamily = helveticaFont,
-                                color = Color.White
+                                color = textColor
                             )
                         }
                     } else {
-                        // Wrong guess animation
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             Text(
-                                text = "Wrong Guess!",
+                                text = translatedText.wrongGuess,
                                 fontFamily = helveticaFont,
                                 style = MaterialTheme.typography.h4,
                                 color = Color.Red
                             )
-
                             Spacer(modifier = Modifier.height(8.dp))
-
                             Text(
-                                text = "Try again...",
+                                text = translatedText.tryAgain,
                                 fontFamily = helveticaFont,
                                 style = MaterialTheme.typography.h6,
-                                color = Color.White
+                                color = textColor
                             )
                         }
                     }
                 }
             }
 
-            // Scratch Card Screen
             if (expandedImage == R.drawable.hunt_the_heroes && showScratchCard && nearbyHeroDevice != null) {
                 Box(
                     modifier = Modifier
@@ -702,7 +630,7 @@ fun GameActivityScreen(
                     )
                 }
             }
-            // Pop-up Animation for Revealed Hero
+
             if (scratchCompleted) {
                 val offsetY by animateFloatAsState(
                     targetValue = if (scratchCompleted) screenHeight / 2 else 0f,
@@ -723,28 +651,26 @@ fun GameActivityScreen(
                                 "Hulk" -> R.drawable.hulk_
                                 "Captain Marvel" -> R.drawable.captain_marvel
                                 "Captain America" -> R.drawable.captain_america
-                                "Scarlet Witch" -> R.drawable.scarlet_witch_ // Replace with actual resource
-                                "Black Widow" -> R.drawable.black_widow_ // Replace with actual resource
-                                "Wasp" -> R.drawable.wasp_ // Replace with actual resource
-                                "Hela" -> R.drawable.hela_ // Replace with actual resource
-                                "Thor" -> R.drawable.thor_ // Replace with actual resource
-                                "Spider Man" -> R.drawable.spider_man_ // Replace with actual resource
-                                else -> R.drawable.search // Placeholder
+                                "Scarlet Witch" -> R.drawable.scarlet_witch_
+                                "Black Widow" -> R.drawable.black_widow_
+                                "Wasp" -> R.drawable.wasp_
+                                "Hela" -> R.drawable.hela_
+                                "Thor" -> R.drawable.thor_
+                                "Spider Man" -> R.drawable.spider_man_
+                                else -> R.drawable.search
                             }
                         ),
                         contentDescription = "Revealed Hero",
                         modifier = Modifier
                             .size(150.dp)
                             .graphicsLayer {
-                                scaleX = transitionProgress // Scale horizontally
-                                scaleY = transitionProgress // Scale vertically
-                                alpha = transitionProgress // Fade in
+                                scaleX = transitionProgress
+                                scaleY = transitionProgress
+                                alpha = transitionProgress
                             }
                     )
                 }
 
-
-                // Particle Explosion Effect
                 Canvas(modifier = Modifier.fillMaxSize()) {
                     particles.forEach { (x, y) ->
                         drawCircle(
@@ -760,7 +686,6 @@ fun GameActivityScreen(
                 }
             }
 
-            // Use lazy loading for hero images
             val heroImages = produceState<Map<String, Int>>(initialValue = emptyMap()) {
                 value = mapOf(
                     "Iron_Man" to R.drawable.iron_man,
@@ -779,17 +704,11 @@ fun GameActivityScreen(
 
             Box(modifier = Modifier.fillMaxSize()) {
                 heroAnimationState.forEach { (heroName, _) ->
-                    // Interpolate the position of the hero
                     val animatedPosition by animateOffsetAsState(
                         targetValue = gameBoxPosition,
-                        animationSpec = tween(
-                            durationMillis = 1000,
-                            easing = FastOutSlowInEasing
-                        ),
+                        animationSpec = tween(durationMillis = 1000, easing = FastOutSlowInEasing),
                         label = "heroAnimation"
                     )
-
-                    // Use Image composable with painterResource
                     Image(
                         painter = painterResource(
                             id = heroImages[heroName] ?: heroImages["Default"]!!
@@ -801,25 +720,23 @@ fun GameActivityScreen(
                                     animatedPosition.x.roundToInt(),
                                     animatedPosition.y.roundToInt()
                                 )
-                            } // Convert Offset to IntOffset
-                            .size(50.dp), // Adjust size as needed
+                            }
+                            .size(50.dp),
                         alpha = 1f
                     )
                 }
             }
         }
-        // Guess the Character Logic
+
         if (expandedImage == R.drawable.guess_the_character) {
             var showRadar by remember { mutableStateOf(false) }
             var showCharacterReveal by remember { mutableStateOf(false) }
             var detectedCharacters by remember { mutableStateOf<List<String>>(emptyList()) }
 
-            // Detect nearby Bluetooth devices (multiple)
             val nearbyHeroes = bluetoothDevices.filter {
                 it.name in allowedHeroes && it.rssi.toInt() in -40..0
             }
 
-            // Show radar when Guess the Character is selected
             LaunchedEffect(expandedImage) {
                 if (expandedImage == R.drawable.guess_the_character) {
                     bluetoothViewModel.setGameMode(BluetoothScanViewModel.GameMode.GUESS_THE_CHARACTER)
@@ -833,10 +750,9 @@ fun GameActivityScreen(
                 }
             }
 
-            // Handle character detection
             LaunchedEffect(nearbyHeroes) {
                 if (nearbyHeroes.isNotEmpty() && expandedImage == R.drawable.guess_the_character) {
-                    delay(1000) // Slight delay for dramatic effect
+                    delay(1000)
                     detectedCharacters = nearbyHeroes.map { it.name }
                     showCharacterReveal = true
                 } else {
@@ -845,8 +761,7 @@ fun GameActivityScreen(
                 }
             }
 
-            // Use lazy loading for hero images
-            val heroImages = produceState <Map<String, Int>>(initialValue = emptyMap()) {
+            val heroImages = produceState<Map<String, Int>>(initialValue = emptyMap()) {
                 value = mapOf(
                     "Iron_Man" to R.drawable.iron_man,
                     "Hulk" to R.drawable.hulk_,
@@ -861,18 +776,14 @@ fun GameActivityScreen(
                     "Default" to R.drawable.search
                 )
             }.value
-            // Create a list of all heroes with their positions on the radar
+
             val allHeroesDeviceList = remember {
                 val positions = generateMultiplePositions(allowedHeroes.size, 600f)
-
-                // Pair each hero with its image resource and position
                 allowedHeroes.mapIndexed { index, heroName ->
                     val imageRes = heroImages[heroName] ?: R.drawable.search
                     Pair(imageRes, positions.getOrElse(index) { Offset.Zero })
                 }
             }
-
-            // Display radar with all heroes
 
             if (showRadar) {
                 Box(
@@ -889,7 +800,6 @@ fun GameActivityScreen(
                 }
             }
 
-            // Optional: Display detected character names at the bottom
             if (detectedCharacters.isNotEmpty()) {
                 Box(
                     modifier = Modifier
@@ -901,174 +811,153 @@ fun GameActivityScreen(
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         modifier = Modifier
-                            .background(Color(0x99000000), RoundedCornerShape(8.dp))
+                            .background(overlayColor, RoundedCornerShape(8.dp))
                             .padding(16.dp)
                     ) {
                         Text(
-                            text = "Heroes Detected:",
-                            //style = MaterialTheme.typography.titleMedium,
-                            color = Color.White
+                            text = translatedText.heroesDetected,
+                            color = textColor
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         detectedCharacters.forEach { heroName ->
                             Text(
                                 text = heroName,
-                                //style = MaterialTheme.typography.bodyMedium,
-                                color = Color.White
+                                color = textColor
                             )
                         }
                     }
                 }
             }
         }
-    }
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(bottom = 16.dp),
-        contentAlignment = Alignment.BottomCenter
-    ) {
-        Row(
+
+        // Replace the existing Box containing the Row and AnimatedVisibility at the bottom of the main Box:
+        Box(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 8.dp) // Added vertical padding
-                .zIndex(15f), // Higher z-index to keep row above other elements
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.Bottom
+                .fillMaxSize()
+                .padding(bottom = 16.dp)
+                .zIndex(1f), // Lower z-index for the button row to stay below dialog
+            contentAlignment = Alignment.BottomCenter
         ) {
-            // Game Box Button in the bottom-left corner
-            Box(
+            Row(
                 modifier = Modifier
-                    .size(80.dp)
-                    .pointerInput(Unit) {
-                        detectTapGestures(
-                            onTap = { isGameBoxOpen = true },
-                            onLongPress = {
-                                // Optional: Add a different interaction for long press
-                                // For example, you could show a preview or additional info
-                            }
-                        )
-                    }
-                    .animateContentSize() // Smooth size changes
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.Bottom
             ) {
-                Image(
-                    painter = painterResource(id = R.drawable.close_box),
-                    contentDescription = "Game Box",
-                    modifier = Modifier.fillMaxSize(),
-                    contentScale = ContentScale.Crop
-                )
-
-                // Display counter with better contrast
-                // Counter with smoother background
-                Text(
-                    text = "${foundCharacters.size}/${allowedHeroes.size}",
-                    style = MaterialTheme.typography.body2,
-                    color = Color.White,
+                Box(
                     modifier = Modifier
-                        .align(Alignment.TopEnd)
-                        .background(
-                            Color.Black.copy(alpha = 0.8f),
-                            shape = RoundedCornerShape(4.dp)
-                        )
-                        .padding(4.dp)
-                )
-            }
+                        .size(80.dp)
+                        .pointerInput(Unit) {
+                            detectTapGestures(onTap = { isGameBoxOpen = true })
+                        }
+                        .animateContentSize()
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.close_box),
+                        contentDescription = "Game Box",
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.Crop
+                    )
+                    Text(
+                        text = "${foundCharacters.size}/${allowedHeroes.size}",
+                        style = MaterialTheme.typography.body2,
+                        color = textColor,
+                        modifier = Modifier
+                            .align(Alignment.TopEnd)
+                            .background(overlayColor, shape = RoundedCornerShape(4.dp))
+                            .padding(4.dp)
+                    )
+                }
 
-            // Sound Button with clearer position and higher z-index
-            Box(
-                modifier = Modifier
-                    .size(60.dp)
-                    .pointerInput(Unit) {
-                        detectTapGestures(
-                            onTap = { isSoundOn = !isSoundOn },
-                        )
-                    }
-                    .zIndex(20f) // Even higher z-index than the row
-                    .background(Color.Black.copy(alpha = 0.3f), RoundedCornerShape(30.dp)) // Add slight background for visibility
-                    .padding(4.dp) // Add padding inside the background
-            ) {
-                Image(
-                    painter = painterResource(id = if (isSoundOn) R.drawable.soundon else R.drawable.soundoff),
-                    contentDescription = if (isSoundOn) "Sound On" else "Sound Off",
-                    modifier = Modifier.fillMaxSize()
-                )
+                Box(
+                    modifier = Modifier
+                        .size(60.dp)
+                        .pointerInput(Unit) {
+                            detectTapGestures(onTap = { isSoundOn = !isSoundOn })
+                        }
+                        .background(overlayColor, RoundedCornerShape(30.dp))
+                        .padding(4.dp)
+                ) {
+                    Image(
+                        painter = painterResource(id = if (isSoundOn) R.drawable.soundon else R.drawable.soundoff),
+                        contentDescription = if (isSoundOn) "Sound On" else "Sound Off",
+                        modifier = Modifier.fillMaxSize()
+                    )
+                }
             }
         }
 
-        // Open Game Box Popup
-        if (isGameBoxOpen) {
-            AnimatedVisibility(
-                visible = isGameBoxOpen,
-                enter = fadeIn() + slideInVertically(),
-                exit = fadeOut() + slideOutVertically()
-            ){
+// Add this as a separate top-level composable within the main Box (after all other content):
+        AnimatedVisibility(
+            visible = isGameBoxOpen,
+            enter = fadeIn() + slideInVertically(),
+            exit = fadeOut() + slideOutVertically(),
+            modifier = Modifier.zIndex(20f) // Higher z-index to ensure it’s on top
+        ) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(Color.Black.copy(alpha = 0.8f))
-                    .clickable { isGameBoxOpen = false }, // Close the popup when clicking outside
+                    .background(overlayColor.copy(alpha = 0.9f)) // Slightly more opaque for clarity
+                    .clickable { isGameBoxOpen = false },
                 contentAlignment = Alignment.Center
             ) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center,
                     modifier = Modifier
-                        .background(Color.White, shape = RoundedCornerShape(16.dp))
+                        .background(dialogBackgroundColor, shape = RoundedCornerShape(16.dp))
                         .padding(16.dp)
+                        .fillMaxWidth(0.9f) // Slightly narrower for better layout
                 ) {
                     Text(
-                        text = "Heroes Collection",
+                        text = translatedText.heroesCollection,
                         fontFamily = helveticaFont,
                         style = MaterialTheme.typography.h6,
-                        color = Color.Black
+                        color = textColor
                     )
 
                     Text(
-                        text = "Collected: ${foundCharacters.size}/${allowedHeroes.size}",
+                        text = "${translatedText.collected} ${foundCharacters.size}/${allowedHeroes.size}",
                         fontFamily = helveticaFont,
                         style = MaterialTheme.typography.body1,
-                        color = Color.Gray
+                        color = secondaryTextColor
                     )
 
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    // Display all possible heroes
                     Row(
                         horizontalArrangement = Arrangement.spacedBy(16.dp),
-                        modifier = Modifier.horizontalScroll(rememberScrollState())
+                        modifier = Modifier
+                            .horizontalScroll(rememberScrollState())
+                            .padding(bottom = 8.dp)
                     ) {
                         allowedHeroes.forEach { character ->
                             val isCollected = character in foundCharacters.keys
                             val count = foundCharacters[character] ?: 0
 
-                            Column(
-                                horizontalAlignment = Alignment.CenterHorizontally
-                            ) {
-                                // Get the resource ID for the character
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                 val resourceId = when (character) {
                                     "Iron_Man" -> R.drawable.iron_man
                                     "Hulk" -> R.drawable.hulk_
                                     "Captain Marvel" -> R.drawable.captain_marvel
                                     "Captain America" -> R.drawable.captain_america
-                                    "Scarlet Witch" -> R.drawable.scarlet_witch_ // Replace with actual resource
-                                    "Black Widow" -> R.drawable.black_widow_ // Replace with actual resource
-                                    "Wasp" -> R.drawable.wasp_ // Replace with actual resource
-                                    "Hela" -> R.drawable.hela_ // Replace with actual resource
-                                    "Thor" -> R.drawable.thor_ // Replace with actual resource
-                                    "Spider Man" -> R.drawable.spider_man_ // Replace with actual resource
+                                    "Scarlet Witch" -> R.drawable.scarlet_witch_
+                                    "Black Widow" -> R.drawable.black_widow_
+                                    "Wasp" -> R.drawable.wasp_
+                                    "Hela" -> R.drawable.hela_
+                                    "Thor" -> R.drawable.thor_
+                                    "Spider Man" -> R.drawable.spider_man_
                                     else -> R.drawable.search
                                 }
 
-                                // Use two separate Image composables instead of modifiers
                                 if (isCollected) {
-                                    // Show colored version for collected heroes
                                     Image(
                                         painter = painterResource(id = resourceId),
                                         contentDescription = character,
                                         modifier = Modifier.size(80.dp)
                                     )
                                 } else {
-                                    // Show grayscale version with alpha for uncollected heroes
                                     Box(modifier = Modifier.size(80.dp)) {
                                         Image(
                                             painter = painterResource(id = resourceId),
@@ -1081,28 +970,24 @@ fun GameActivityScreen(
                                                 .size(80.dp)
                                                 .alpha(0.7f)
                                         )
-
-                                        // Add a semi-transparent overlay to indicate it's not collected yet
                                         Box(
                                             modifier = Modifier
                                                 .matchParentSize()
-                                                .background(Color.Black.copy(alpha = 0.3f))
+                                                .background(overlayColor)
                                         )
                                     }
                                 }
 
-                                // Show the count if collected, otherwise show "?"
                                 Text(
                                     text = if (isCollected) "×$count" else "?",
                                     style = MaterialTheme.typography.body2,
-                                    color = if (isCollected) Color.Black else Color.Gray
+                                    color = if (isCollected) textColor else secondaryTextColor
                                 )
 
-                                // Show the character name
                                 Text(
                                     text = character.replace("_", " "),
                                     style = MaterialTheme.typography.caption,
-                                    color = if (isCollected) Color.Black else Color.Gray
+                                    color = if (isCollected) textColor else secondaryTextColor
                                 )
                             }
                         }
@@ -1112,4 +997,17 @@ fun GameActivityScreen(
         }
     }
 }
-}
+
+// Data class for translatable text
+data class TranslatedGameScreenText(
+    val huntTheHeroes: String,
+    val guessTheCharacter: String,
+    val whichHeroNearby: String,
+    val correctGuess: String,
+    val youFound: String,
+    val wrongGuess: String,
+    val tryAgain: String,
+    val heroesDetected: String,
+    val heroesCollection: String,
+    val collected: String
+)

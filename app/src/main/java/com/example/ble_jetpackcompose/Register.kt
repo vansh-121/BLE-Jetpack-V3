@@ -1,5 +1,6 @@
 package com.example.ble_jetpackcompose
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -19,7 +20,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -30,13 +30,69 @@ fun RegisterScreen(
     onNavigateToLogin: () -> Unit,
     onNavigateToHome: () -> Unit
 ) {
+    // Theme and Language state
+    val isDarkMode by ThemeManager.isDarkMode.collectAsState()
+    val currentLanguage by LanguageManager.currentLanguage.collectAsState()
+
+    // Translated text state
+    var translatedText by remember {
+        mutableStateOf(
+            TranslatedRegisterScreenText(
+                createAccount = TranslationCache.get("Create Account-$currentLanguage") ?: "Create Account",
+                signUpToGetStarted = TranslationCache.get("Sign up to get started-$currentLanguage") ?: "Sign up to get started",
+                usernamePlaceholder = TranslationCache.get("Username-$currentLanguage") ?: "Username",
+                emailPlaceholder = TranslationCache.get("Email-$currentLanguage") ?: "Email",
+                passwordPlaceholder = TranslationCache.get("Password-$currentLanguage") ?: "Password",
+                confirmPasswordPlaceholder = TranslationCache.get("Confirm Password-$currentLanguage") ?: "Confirm Password",
+                createAccountButton = TranslationCache.get("Create Account-$currentLanguage") ?: "Create Account",
+                orContinueWith = TranslationCache.get("Or continue with-$currentLanguage") ?: "Or continue with",
+                alreadyHaveAccount = TranslationCache.get("Already have an account?-$currentLanguage") ?: "Already have an account?",
+                loginNow = TranslationCache.get("Login Now-$currentLanguage") ?: "Login Now",
+                creatingAccount = TranslationCache.get("Creating Account-$currentLanguage") ?: "Creating Account"
+            )
+        )
+    }
+
+    // Preload translations on language change
+    LaunchedEffect(currentLanguage) {
+        val translator = GoogleTranslationService()
+        val textsToTranslate = listOf(
+            "Create Account", "Sign up to get started", "Username", "Email", "Password",
+            "Confirm Password", "Create Account", "Or continue with", "Already have an account?",
+            "Login Now", "Creating Account"
+        )
+        val translatedList = translator.translateBatch(textsToTranslate, currentLanguage)
+        translatedText = TranslatedRegisterScreenText(
+            createAccount = translatedList[0],
+            signUpToGetStarted = translatedList[1],
+            usernamePlaceholder = translatedList[2],
+            emailPlaceholder = translatedList[3],
+            passwordPlaceholder = translatedList[4],
+            confirmPasswordPlaceholder = translatedList[5],
+            createAccountButton = translatedList[6],
+            orContinueWith = translatedList[7],
+            alreadyHaveAccount = translatedList[8],
+            loginNow = translatedList[9],
+            creatingAccount = translatedList[10]
+        )
+    }
+
+    // Theme-based colors
+    val backgroundColor = if (isDarkMode) Color(0xFF121212) else Color.White
+    val textColor = if (isDarkMode) Color.White else Color.Black
+    val secondaryTextColor = if (isDarkMode) Color(0xFFB0B0B0) else Color(0xFF8E8E93)
+    val textFieldBackgroundColor = if (isDarkMode) Color(0xFF1E1E1E) else Color(0xFFFFFFFF)
+    val buttonBackgroundColor = if (isDarkMode) Color(0xFFBB86FC) else Color(0xFF007AFF)
+    val buttonTextColor = if (isDarkMode) Color.Black else Color.White
+    val dividerColor = if (isDarkMode) Color(0xFFB0B0B0) else Color.LightGray
+    val borderColor = if (isDarkMode) Color(0xFFB0B0B0) else Color.LightGray
+
     var username by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
     var confirmPasswordVisible by remember { mutableStateOf(false) }
-
 
     var isUsernameValid by remember { mutableStateOf(false) }
     var isEmailValid by remember { mutableStateOf(false) }
@@ -45,11 +101,6 @@ fun RegisterScreen(
     LocalFocusManager.current
 
     val authState by viewModel.authState.collectAsState()
-
-    // Define custom colors (matching login screen)
-    val primaryColor = Color(0xFF007AFF)
-    val textFieldBgColor = Color(0xFFFFFFFF)
-    val secondaryTextColor = Color(0xFF8E8E93)
 
     fun validateUsername(value: String): Boolean {
         return value.length >= 3 && value.matches(Regex("^[a-zA-Z0-9_]+$"))
@@ -70,16 +121,17 @@ fun RegisterScreen(
     if (authState is AuthState.Loading) {
         AlertDialog(
             onDismissRequest = { },
-            title = { Text("Creating Account") },
+            title = { Text(translatedText.creatingAccount, color = textColor) },
             text = {
                 Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxWidth()) {
-                    CircularProgressIndicator()
+                    CircularProgressIndicator(color = buttonBackgroundColor)
                 }
             },
-            confirmButton = { }
+            confirmButton = { },
+            containerColor = if (isDarkMode) Color(0xFF1E1E1E) else Color.White
         )
     }
-    // Handle auth state changes
+
     LaunchedEffect(authState) {
         when (authState) {
             is AuthState.Success -> {
@@ -93,10 +145,10 @@ fun RegisterScreen(
         }
     }
 
-
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .background(backgroundColor)
             .verticalScroll(rememberScrollState())
             .padding(horizontal = 24.dp)
             .systemBarsPadding(),
@@ -104,92 +156,100 @@ fun RegisterScreen(
     ) {
         Spacer(modifier = Modifier.height(60.dp))
 
-        // Welcome Text
         Text(
-            text = "Create Account",
+            text = translatedText.createAccount,
             style = TextStyle(
                 fontSize = 34.sp,
                 fontFamily = helveticaFont,
                 fontWeight = FontWeight.Bold,
-                color = Color.Black
+                color = textColor
             ),
             textAlign = TextAlign.Center
         )
 
         Text(
-            text = "Sign up to get started",
+            text = translatedText.signUpToGetStarted,
             style = TextStyle(
                 fontSize = 17.sp,
                 color = secondaryTextColor,
                 fontFamily = helveticaFont,
-                fontWeight = FontWeight.Bold,
+                fontWeight = FontWeight.Bold
             ),
             modifier = Modifier.padding(top = 8.dp)
         )
 
         Spacer(modifier = Modifier.height(60.dp))
 
-        // Username TextField
         TextField(
             value = username,
-            onValueChange = { username = it
-                isUsernameValid = validateUsername(it) },
+            onValueChange = {
+                username = it
+                isUsernameValid = validateUsername(it)
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 16.dp),
-            placeholder = { Text("Username") },
+            placeholder = { Text(translatedText.usernamePlaceholder, color = secondaryTextColor) },
             isError = username.isNotEmpty() && !isUsernameValid,
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Text,
                 imeAction = ImeAction.Next
             ),
             colors = TextFieldDefaults.textFieldColors(
-                containerColor = textFieldBgColor,
-                unfocusedIndicatorColor = Color.LightGray,
-                focusedIndicatorColor = primaryColor
+                containerColor = textFieldBackgroundColor,
+                unfocusedIndicatorColor = borderColor,
+                focusedIndicatorColor = buttonBackgroundColor,
+                focusedTextColor = textColor,
+                unfocusedTextColor = textColor
             ),
             shape = RoundedCornerShape(12.dp),
             textStyle = TextStyle(
                 fontSize = 17.sp,
-                fontFamily = helveticaFont
+                fontFamily = helveticaFont,
+                color = textColor
             )
         )
 
-        // Email TextField
         TextField(
             value = email,
-            onValueChange = { email = it
-                isEmailValid = validateEmail(it)},
+            onValueChange = {
+                email = it
+                isEmailValid = validateEmail(it)
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 16.dp),
-            placeholder = { Text("Email") },
+            placeholder = { Text(translatedText.emailPlaceholder, color = secondaryTextColor) },
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Email,
                 imeAction = ImeAction.Next
             ),
             isError = email.isNotEmpty() && !isEmailValid,
             colors = TextFieldDefaults.textFieldColors(
-                containerColor = textFieldBgColor,
-                unfocusedIndicatorColor = Color.LightGray,
-                focusedIndicatorColor = primaryColor
+                containerColor = textFieldBackgroundColor,
+                unfocusedIndicatorColor = borderColor,
+                focusedIndicatorColor = buttonBackgroundColor,
+                focusedTextColor = textColor,
+                unfocusedTextColor = textColor
             ),
             shape = RoundedCornerShape(12.dp),
             textStyle = TextStyle(
                 fontSize = 17.sp,
-                fontFamily = helveticaFont
+                fontFamily = helveticaFont,
+                color = textColor
             )
         )
 
-        // Password TextField
         TextField(
             value = password,
-            onValueChange = { password = it
-                isPasswordValid = validatePassword(it)},
+            onValueChange = {
+                password = it
+                isPasswordValid = validatePassword(it)
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 16.dp),
-            placeholder = { Text("Password") },
+            placeholder = { Text(translatedText.passwordPlaceholder, color = secondaryTextColor) },
             isError = password.isNotEmpty() && !isPasswordValid,
             visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(
@@ -203,11 +263,7 @@ fun RegisterScreen(
                 ) {
                     Icon(
                         painter = painterResource(
-                            id = if (passwordVisible) {
-                                R.drawable.monkey
-                            } else {
-                                R.drawable.eyes
-                            }
+                            id = if (passwordVisible) R.drawable.monkey else R.drawable.eyes
                         ),
                         contentDescription = if (passwordVisible) "Hide password" else "Show password",
                         tint = Color.Unspecified
@@ -215,24 +271,28 @@ fun RegisterScreen(
                 }
             },
             colors = TextFieldDefaults.textFieldColors(
-                containerColor = textFieldBgColor,
-                unfocusedIndicatorColor = Color.LightGray,
-                focusedIndicatorColor = primaryColor
+                containerColor = textFieldBackgroundColor,
+                unfocusedIndicatorColor = borderColor,
+                focusedIndicatorColor = buttonBackgroundColor,
+                focusedTextColor = textColor,
+                unfocusedTextColor = textColor
             ),
             shape = RoundedCornerShape(12.dp),
             textStyle = TextStyle(
                 fontSize = 17.sp,
-                fontFamily = helveticaFont
+                fontFamily = helveticaFont,
+                color = textColor
             )
         )
 
-        // Confirm Password TextField
         TextField(
             value = confirmPassword,
-            onValueChange = { confirmPassword = it
-                isConfirmPasswordValid = password == it},
+            onValueChange = {
+                confirmPassword = it
+                isConfirmPasswordValid = password == it
+            },
             modifier = Modifier.fillMaxWidth(),
-            placeholder = { Text("Confirm Password") },
+            placeholder = { Text(translatedText.confirmPasswordPlaceholder, color = secondaryTextColor) },
             isError = confirmPassword.isNotEmpty() && !isConfirmPasswordValid,
             visualTransformation = if (confirmPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(
@@ -246,11 +306,7 @@ fun RegisterScreen(
                 ) {
                     Icon(
                         painter = painterResource(
-                            id = if (confirmPasswordVisible) {
-                                R.drawable.monkey
-                            } else {
-                                R.drawable.eyes
-                            }
+                            id = if (confirmPasswordVisible) R.drawable.monkey else R.drawable.eyes
                         ),
                         contentDescription = if (confirmPasswordVisible) "Hide password" else "Show password",
                         tint = Color.Unspecified
@@ -258,48 +314,51 @@ fun RegisterScreen(
                 }
             },
             colors = TextFieldDefaults.textFieldColors(
-                containerColor = textFieldBgColor,
-                unfocusedIndicatorColor = Color.LightGray,
-                focusedIndicatorColor = primaryColor
+                containerColor = textFieldBackgroundColor,
+                unfocusedIndicatorColor = borderColor,
+                focusedIndicatorColor = buttonBackgroundColor,
+                focusedTextColor = textColor,
+                unfocusedTextColor = textColor
             ),
             shape = RoundedCornerShape(12.dp),
             textStyle = TextStyle(
                 fontSize = 17.sp,
-                fontFamily = helveticaFont
+                fontFamily = helveticaFont,
+                color = textColor
             )
         )
 
         Spacer(modifier = Modifier.height(32.dp))
 
-        // Register Button
         Button(
             onClick = {
                 if (isUsernameValid && isEmailValid && isPasswordValid && password == confirmPassword) {
                     viewModel.registerUser(email, password)
-                } },
-            enabled = isUsernameValid &&
-                    isEmailValid &&
-                    isPasswordValid &&
-                    isConfirmPasswordValid,
+                }
+            },
+            enabled = isUsernameValid && isEmailValid && isPasswordValid && isConfirmPasswordValid,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(50.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = primaryColor),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = buttonBackgroundColor,
+                disabledContainerColor = buttonBackgroundColor.copy(alpha = 0.7f)
+            ),
             shape = RoundedCornerShape(12.dp)
         ) {
             Text(
-                text = "Create Account",
+                text = translatedText.createAccountButton,
                 style = TextStyle(
                     fontSize = 17.sp,
                     fontWeight = FontWeight.SemiBold,
-                    fontFamily = helveticaFont
+                    fontFamily = helveticaFont,
+                    color = buttonTextColor
                 )
             )
         }
 
         Spacer(modifier = Modifier.height(48.dp))
 
-        // Social Sign Up Section
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.Center,
@@ -307,10 +366,10 @@ fun RegisterScreen(
         ) {
             HorizontalDivider(
                 modifier = Modifier.weight(1f),
-                color = Color.LightGray
+                color = dividerColor
             )
             Text(
-                text = "Or continue with",
+                text = translatedText.orContinueWith,
                 modifier = Modifier.padding(horizontal = 16.dp),
                 style = TextStyle(
                     fontSize = 15.sp,
@@ -321,50 +380,52 @@ fun RegisterScreen(
             )
             HorizontalDivider(
                 modifier = Modifier.weight(1f),
-                color = Color.LightGray
+                color = dividerColor
             )
         }
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // Social Login Buttons Row
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
             SocialLoginButton(
                 icon = R.drawable.google_g,
-                onClick = { /* Handle Google sign up */ }
+                onClick = { /* Handle Google sign up */ },
+                backgroundColor = textFieldBackgroundColor,
+                borderColor = borderColor
             )
             SocialLoginButton(
                 icon = R.drawable.facebook_f_,
-                onClick = { /* Handle Facebook sign up */ }
+                onClick = { /* Handle Facebook sign up */ },
+                backgroundColor = textFieldBackgroundColor,
+                borderColor = borderColor
             )
         }
 
         Spacer(modifier = Modifier.weight(1f))
 
-        // Login Now Section
         Row(
             modifier = Modifier.padding(bottom = 32.dp),
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "Already have an account? ",
+                text = translatedText.alreadyHaveAccount,
                 style = TextStyle(
                     fontSize = 15.sp,
-                    color = Color.Black,
+                    color = textColor,
                     fontFamily = helveticaFont,
                     fontWeight = FontWeight.SemiBold
                 )
             )
             TextButton(onClick = onNavigateToLogin) {
                 Text(
-                    text = "Login Now",
+                    text = translatedText.loginNow,
                     style = TextStyle(
                         fontSize = 15.sp,
-                        color = primaryColor,
+                        color = buttonBackgroundColor,
                         fontWeight = FontWeight.SemiBold,
                         fontFamily = helveticaFont
                     )
@@ -374,8 +435,23 @@ fun RegisterScreen(
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun RegisterScreenPreview() {
-    RegisterScreen(onNavigateToLogin = { }, onNavigateToHome = {}, viewModel = AuthViewModel())
-}
+// Data class for translatable text
+data class TranslatedRegisterScreenText(
+    val createAccount: String,
+    val signUpToGetStarted: String,
+    val usernamePlaceholder: String,
+    val emailPlaceholder: String,
+    val passwordPlaceholder: String,
+    val confirmPasswordPlaceholder: String,
+    val createAccountButton: String,
+    val orContinueWith: String,
+    val alreadyHaveAccount: String,
+    val loginNow: String,
+    val creatingAccount: String
+)
+
+//@Preview(showBackground = true)
+//@Composable
+//fun RegisterScreenPreview() {
+//    RegisterScreen(onNavigateToLogin = { }, onNavigateToHome = {}, viewModel = AuthViewModel())
+//}
