@@ -1,5 +1,9 @@
 package com.example.ble_jetpackcompose
 
+import android.app.Dialog
+import android.content.Intent
+import android.net.Uri
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -18,12 +22,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -508,17 +514,25 @@ fun SettingsItemRow(
     navController: NavHostController? = null
 ) {
     var switchState by remember { mutableStateOf(initialSwitchState) }
-    var showLanguageDialog by remember { mutableStateOf(false) } // Reset dialog state properly
+    var showLanguageDialog by remember { mutableStateOf(false) }
+    var showAboutDialog by remember { mutableStateOf(false) }
+    var showHelpDialog by remember { mutableStateOf(false) } // Add state for Help dialog
     val currentLanguage by LanguageManager.currentLanguage.collectAsState()
+    val context = LocalContext.current // Get context for launching email intent
 
-    // Use the icon or a unique identifier to determine if this is the Language item
     val isLanguageItem = item.icon == Icons.Outlined.Language
+    val isAboutItem = item.icon == Icons.Outlined.Info
+    val isHelpItem = item.icon == Icons.AutoMirrored.Outlined.Help // Identify Help item
 
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable(enabled = item.type == SettingsItemType.DETAIL && isLanguageItem) {
-                showLanguageDialog = true
+            .clickable(enabled = item.type == SettingsItemType.DETAIL) {
+                when {
+                    isLanguageItem -> showLanguageDialog = true
+                    isAboutItem -> showAboutDialog = true
+                    isHelpItem -> showHelpDialog = true // Show Help dialog
+                }
             }
             .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically
@@ -559,13 +573,15 @@ fun SettingsItemRow(
                 )
             }
             SettingsItemType.DETAIL -> {
-                Text(
-                    text = if (isLanguageItem) LanguageManager.getLanguageName(currentLanguage) else "",
-                    fontFamily = helveticaFont,
-                    style = MaterialTheme.typography.body2.copy(
-                        color = secondaryTextColor
+                if (isLanguageItem) {
+                    Text(
+                        text = LanguageManager.getLanguageName(currentLanguage),
+                        fontFamily = helveticaFont,
+                        style = MaterialTheme.typography.body2.copy(
+                            color = secondaryTextColor
+                        )
                     )
-                )
+                }
                 Spacer(modifier = Modifier.width(8.dp))
                 Icon(
                     imageVector = Icons.Outlined.ChevronRight,
@@ -576,13 +592,13 @@ fun SettingsItemRow(
         }
     }
 
-    // Language selection dialog
+    // Language selection dialog (unchanged)
     if (showLanguageDialog) {
         AlertDialog(
             onDismissRequest = { showLanguageDialog = false },
             title = {
                 Text(
-                    text = "Select Language", // Keep this in English or translate it separately if needed
+                    text = "Select Language",
                     fontFamily = helveticaFont,
                     style = MaterialTheme.typography.h6,
                     textAlign = TextAlign.Center,
@@ -625,11 +641,230 @@ fun SettingsItemRow(
                 }
             },
             backgroundColor = if (initialSwitchState) Color(0xFF1E1E1E) else Color.White,
-            contentColor = if (initialSwitchState) Color.White else Color.Black
+            contentColor = if (initialSwitchState) Color.White else Color.Black,
+            modifier = Modifier
+                .widthIn(max = 400.dp)
+                .heightIn(max = 500.dp)
         )
     }
-}
 
+    // About BLE dialog (unchanged)
+    if (showAboutDialog) {
+        Dialog(
+            onDismissRequest = { showAboutDialog = false }
+        ) {
+            Surface(
+                modifier = Modifier
+                    .widthIn(max = 400.dp)
+                    .heightIn(max = 600.dp)
+                    .padding(16.dp),
+                shape = RoundedCornerShape(16.dp),
+                color = if (initialSwitchState) Color(0xFF1E1E1E) else Color.White
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                ) {
+//                    Text(
+//                        text = "About BLE",
+//                        fontFamily = helveticaFont,
+//                        style = MaterialTheme.typography.h6,
+//                        textAlign = TextAlign.Center,
+//                        color = if (initialSwitchState) Color.White else Color.Black,
+//                        modifier = Modifier
+//                            .fillMaxWidth()
+//                            .padding(bottom = 8.dp)
+//                    )
+
+                    LazyColumn(
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        item {
+                            Icon(
+                                imageVector = Icons.Outlined.Info,
+                                contentDescription = "BLE Info",
+                                tint = iconTint,
+                                modifier = Modifier
+                                    .size(48.dp)
+                                    .padding(top = 16.dp, bottom = 16.dp)
+                            )
+
+                            Text(
+                                text = "Bluetooth Low Energy",
+                                fontFamily = helveticaFont,
+                                style = MaterialTheme.typography.subtitle1.copy(
+                                    fontWeight = FontWeight.Bold
+                                ),
+                                textAlign = TextAlign.Center,
+                                color = if (initialSwitchState) Color.White else Color.Black,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(bottom = 8.dp)
+                            )
+
+                            Text(
+                                text = "Bluetooth Low Energy (BLE) is a wireless personal area network technology " +
+                                        "designed for low power consumption while maintaining a similar communication " +
+                                        "range to classic Bluetooth.",
+                                fontFamily = helveticaFont,
+                                style = MaterialTheme.typography.body2,
+                                textAlign = TextAlign.Justify,
+                                color = if (initialSwitchState) Color.White else Color.Black,
+                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 12.dp)
+                            )
+
+                            Text(
+                                text = "Key Features:",
+                                fontFamily = helveticaFont,
+                                style = MaterialTheme.typography.subtitle2.copy(
+                                    fontWeight = FontWeight.Bold
+                                ),
+                                color = if (initialSwitchState) Color.White else Color.Black,
+                                modifier = Modifier.padding(top = 12.dp, bottom = 8.dp, start = 8.dp)
+                            )
+                        }
+
+                        items(listOf(
+                            "Low power consumption",
+                            "Small data packets",
+                            "Quick connection times",
+                            "Secure communication",
+                            "Wide device compatibility"
+                        )) { feature ->
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 4.dp, horizontal = 8.dp)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Outlined.Check,
+                                    contentDescription = "Check",
+                                    tint = iconTint,
+                                    modifier = Modifier.size(20.dp)
+                                )
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text(
+                                    text = feature,
+                                    fontFamily = helveticaFont,
+                                    style = MaterialTheme.typography.body2,
+                                    color = if (initialSwitchState) Color.White else Color.Black,
+                                    modifier = Modifier.weight(1f)
+                                )
+                            }
+                        }
+                    }
+
+                    TextButton(
+                        onClick = { showAboutDialog = false },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 16.dp, bottom = 8.dp)
+                    ) {
+                        Text(
+                            text = "Close",
+                            color = iconTint
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    // New Help dialog
+    if (showHelpDialog) {
+        Dialog(
+            onDismissRequest = { showHelpDialog = false }
+        ) {
+            Surface(
+                modifier = Modifier
+                    .widthIn(max = 400.dp)
+                    .padding(16.dp),
+                shape = RoundedCornerShape(16.dp),
+                color = if (initialSwitchState) Color(0xFF1E1E1E) else Color.White
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+//                    Text(
+//                        text = "Help",
+//                        fontFamily = helveticaFont,
+//                        style = MaterialTheme.typography.h6,
+//                        textAlign = TextAlign.Center,
+//                        color = if (initialSwitchState) Color.White else Color.Black,
+//                        modifier = Modifier
+//                            .fillMaxWidth()
+//                            .padding(bottom = 8.dp)
+//                    )
+
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Outlined.Help,
+                        contentDescription = "Help",
+                        tint = iconTint,
+                        modifier = Modifier
+                            .size(48.dp)
+                            .padding(bottom = 16.dp)
+                    )
+
+                    Text(
+                        text = "For any help or to report bugs:",
+                        fontFamily = helveticaFont,
+                        style = MaterialTheme.typography.body1,
+                        textAlign = TextAlign.Center,
+                        color = if (initialSwitchState) Color.White else Color.Black,
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
+
+                    TextButton(
+                        onClick = {
+                            val intent = Intent(Intent.ACTION_SENDTO).apply {
+                                data = Uri.parse("mailto:awadhropar@gmail.com")
+                                putExtra(Intent.EXTRA_SUBJECT, "Help/Support Request")
+                                putExtra(Intent.EXTRA_TEXT, "Please describe your issue or question here:")
+                            }
+                            try {
+                                context.startActivity(Intent.createChooser(intent, "Send Email"))
+                            } catch (e: Exception) {
+                                Toast.makeText(context, "No email app found", Toast.LENGTH_SHORT).show()
+                            }
+                            showHelpDialog = false
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 8.dp)
+                    ) {
+                        Text(
+                            text = "Contact Developer",
+                            color = iconTint,
+                            fontFamily = helveticaFont,
+                            style = MaterialTheme.typography.button
+                        )
+                    }
+
+                    TextButton(
+                        onClick = { showHelpDialog = false },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 8.dp)
+                    ) {
+                        Text(
+                            text = "Close",
+                            color = iconTint,
+                            fontFamily = helveticaFont,
+                            style = MaterialTheme.typography.button
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
 
 @Composable
 fun BottomNavigation(
@@ -687,6 +922,145 @@ fun BottomNavigation(
             selected = currentRoute == "settings_screen",
             onClick = { navController.navigate("settings_screen") }
         )
+    }
+}
+@Composable
+fun AboutBleScreen(
+    navController: NavHostController,
+    isDarkMode: Boolean
+) {
+    val backgroundColor = if (isDarkMode) Color(0xFF121212) else Color(0xFFF2F2F7)
+    val cardBackground = if (isDarkMode) Color(0xFF1E1E1E) else Color.White
+    val textColor = if (isDarkMode) Color.White else Color.Black
+    val secondaryTextColor = if (isDarkMode) Color(0xFFB0B0B0) else Color.Gray
+
+    Scaffold(
+        backgroundColor = backgroundColor,
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(
+                        text = "About BLE",
+                        fontFamily = helveticaFont,
+                        style = MaterialTheme.typography.h5.copy(
+                            fontWeight = FontWeight.Bold,
+                            color = textColor
+                        )
+                    )
+                },
+                navigationIcon = {
+                    IconButton(onClick = { navController.navigateUp() }) {
+                        Icon(
+                            imageVector = Icons.Outlined.ArrowBack,
+                            contentDescription = "Back",
+                            tint = textColor
+                        )
+                    }
+                },
+                backgroundColor = backgroundColor,
+                elevation = 0.dp
+            )
+        }
+    ) { padding ->
+        Column(
+            modifier = Modifier
+                .padding(padding)
+                .fillMaxSize()
+                .padding(16.dp)
+        ) {
+            Card(
+                shape = RoundedCornerShape(12.dp),
+                backgroundColor = cardBackground,
+                elevation = 0.dp,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Column(
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .fillMaxWidth()
+                ) {
+                    // BLE Icon
+                    Icon(
+                        imageVector = Icons.Outlined.Info,
+                        contentDescription = "BLE Info",
+                        tint = if (isDarkMode) Color(0xFF64B5F6) else Color(0xFF007AFF),
+                        modifier = Modifier
+                            .size(48.dp)
+                            .align(Alignment.CenterHorizontally)
+                    )
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    // Title
+                    Text(
+                        text = "Bluetooth Low Energy",
+                        fontFamily = helveticaFont,
+                        style = MaterialTheme.typography.h5.copy(
+                            fontWeight = FontWeight.Bold,
+                            color = textColor
+                        ),
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    // Description
+                    Text(
+                        text = "Bluetooth Low Energy (BLE) is a wireless personal area network technology " +
+                                "designed for low power consumption while maintaining a similar communication " +
+                                "range to classic Bluetooth. It's ideal for applications requiring periodic " +
+                                "data transfer, such as fitness trackers, smart home devices, and IoT sensors.",
+                        fontFamily = helveticaFont,
+                        style = MaterialTheme.typography.body1.copy(
+                            color = secondaryTextColor
+                        ),
+                        textAlign = TextAlign.Justify
+                    )
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    // Key Features
+                    Text(
+                        text = "Key Features:",
+                        fontFamily = helveticaFont,
+                        style = MaterialTheme.typography.subtitle1.copy(
+                            fontWeight = FontWeight.Bold,
+                            color = textColor
+                        )
+                    )
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    listOf(
+                        "Low power consumption",
+                        "Small data packets",
+                        "Quick connection times",
+                        "Secure communication",
+                        "Wide device compatibility"
+                    ).forEach { feature ->
+                        Row(
+                            modifier = Modifier.padding(bottom = 4.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Outlined.Check,
+                                contentDescription = "Check",
+                                tint = if (isDarkMode) Color(0xFF64B5F6) else Color(0xFF007AFF),
+                                modifier = Modifier.size(20.dp)
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(
+                                text = feature,
+                                fontFamily = helveticaFont,
+                                style = MaterialTheme.typography.body2.copy(
+                                    color = secondaryTextColor
+                                )
+                            )
+                        }
+                    }
+                }
+            }
+        }
     }
 }
 

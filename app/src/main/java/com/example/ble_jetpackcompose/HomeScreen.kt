@@ -571,59 +571,6 @@ fun BluetoothDeviceItem(
 }
 
 @Composable
-private fun GameSignalItem(isDarkMode: Boolean = false) {
-    val bgColor = if (isDarkMode) Color(0xFF2A2A2A) else Color.Gray
-
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 4.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Box(
-            modifier = Modifier
-                .size(54.dp)
-                .clip(RoundedCornerShape(8.dp))
-                .background(bgColor)
-        )
-        Spacer(modifier = Modifier.width(16.dp))
-        Column(
-            modifier = Modifier.weight(1f),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(15.dp)
-                    .clip(RoundedCornerShape(4.dp))
-                    .background(
-                        brush = Brush.linearGradient(
-                            colors = listOf(
-                                colorResource(id = R.color.gradient1),
-                                colorResource(id = R.color.gradient2)
-                            )
-                        )
-                    )
-            )
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(15.dp)
-                    .clip(RoundedCornerShape(4.dp))
-                    .background(
-                        brush = Brush.linearGradient(
-                            colors = listOf(
-                                colorResource(id = R.color.gradient1),
-                                colorResource(id = R.color.gradient2)
-                            )
-                        )
-                    )
-            )
-        }
-    }
-}
-
-@Composable
 fun CustomBottomNavigation(
     modifier: Modifier = Modifier,
     navController: NavHostController,
