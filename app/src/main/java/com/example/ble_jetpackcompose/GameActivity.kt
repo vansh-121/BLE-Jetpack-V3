@@ -733,9 +733,12 @@ fun GameActivityScreen(
             var showCharacterReveal by remember { mutableStateOf(false) }
             var detectedCharacters by remember { mutableStateOf<List<String>>(emptyList()) }
 
-            val nearbyHeroes = bluetoothDevices.filter {
-                it.name in allowedHeroes && it.rssi.toInt() in -40..0
-            }
+            val nearbyHeroes = bluetoothDevices.filter { it.name in allowedHeroes }
+            val rssiValues = remember(bluetoothDevices) {
+                allowedHeroes.associateWith { heroName ->
+                    nearbyHeroes.find { it.name == heroName }?.rssi?.toInt()
+                }
+            } // Map with null for undetected heroes
 
             LaunchedEffect(expandedImage) {
                 if (expandedImage == R.drawable.guess_the_character) {
@@ -753,7 +756,7 @@ fun GameActivityScreen(
             LaunchedEffect(nearbyHeroes) {
                 if (nearbyHeroes.isNotEmpty() && expandedImage == R.drawable.guess_the_character) {
                     delay(1000)
-                    detectedCharacters = nearbyHeroes.map { it.name }
+                    detectedCharacters = nearbyHeroes.filter { it.rssi.toInt() in -40..0 }.map { it.name }
                     showCharacterReveal = true
                 } else {
                     showCharacterReveal = false
@@ -795,7 +798,8 @@ fun GameActivityScreen(
                 ) {
                     RadarScreenWithAllCharacters(
                         activatedDevices = detectedCharacters,
-                        deviceList = allHeroesDeviceList
+                        deviceList = allHeroesDeviceList,
+                        rssiValues = rssiValues // Pass full RSSI map
                     )
                 }
             }

@@ -22,7 +22,9 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
@@ -59,13 +61,16 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.boundsInWindow
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInParent
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
 import kotlin.math.cos
 import kotlin.math.roundToInt
@@ -166,19 +171,16 @@ fun AnimatedImageButton(
     }
 }
 
-
-//GameAdditionals
-
 @Composable
 fun RadarScreenWithAllCharacters(
     modifier: Modifier = Modifier,
     deviceList: List<Pair<Int, Offset>> = emptyList(),
-    activatedDevices: List<String> = emptyList()
+    activatedDevices: List<String> = emptyList(),
+    rssiValues: Map<String, Int?> = emptyMap()
 ) {
     val radarColor = colorResource(id = R.color.radar_color)
     val centerCircleColor = colorResource(id = R.color.radar_color)
 
-    // List of characters and their corresponding image resources
     val characters = listOf(
         R.drawable.iron_man to "Iron_Man",
         R.drawable.hulk_ to "Hulk",
@@ -192,12 +194,8 @@ fun RadarScreenWithAllCharacters(
         R.drawable.thor_ to "Thor"
     )
 
-    // Generate positions only once and store them
-    val positions = remember {
-        generateSymmetricalPositions(characters.size, 350f)
-    }
+    val positions = remember { generateSymmetricalPositions(characters.size, 330f) } // Increased from 300f
 
-    // Combine characters with their positions
     val characterPositions = remember(positions) {
         characters.zip(positions).map { (imageResId, position) ->
             imageResId.first to position
@@ -212,7 +210,8 @@ fun RadarScreenWithAllCharacters(
             radarColor = radarColor,
             centerCircleColor = centerCircleColor,
             deviceList = characterPositions,
-            activatedDevices = activatedDevices
+            activatedDevices = activatedDevices,
+            rssiValues = rssiValues
         )
     }
 }
@@ -227,19 +226,15 @@ fun generateSymmetricalPositions(count: Int, radius: Float): List<Offset> {
         positions.add(Offset(x, y))
     }
     return positions
-}
-@Composable
+}@Composable
 fun OptimizedRadarLayout(
     radarColor: Color,
     centerCircleColor: Color,
     deviceList: List<Pair<Int, Offset>> = emptyList(),
-    activatedDevices: List<String> = emptyList()
+    activatedDevices: List<String> = emptyList(),
+    rssiValues: Map<String, Int?> = emptyMap()
 ) {
-    // Use rememberUpdatedState to reduce recompositions
     val rememberActivatedDevices = remember(activatedDevices) { activatedDevices }
-
-    // Use animateFloatAsState for rotation instead of direct state changes
-    // This improves performance by letting the animation system handle updates
     val infiniteTransition = rememberInfiniteTransition(label = "radar_rotation")
     val rotationAngle by infiniteTransition.animateFloat(
         initialValue = 0f,
@@ -249,8 +244,6 @@ fun OptimizedRadarLayout(
             repeatMode = RepeatMode.Restart
         ), label = "radar_angle"
     )
-
-    // Also use transition-based animation for blinking
     val blinkAlpha by infiniteTransition.animateFloat(
         initialValue = 1f,
         targetValue = 0.3f,
@@ -262,19 +255,14 @@ fun OptimizedRadarLayout(
 
     Box(
         modifier = Modifier
-            .size(300.dp)
+            .size(340.dp) // Kept at 340.dp, can increase to 350.dp if needed
             .clip(CircleShape)
             .background(Color.Transparent),
         contentAlignment = Alignment.Center
     ) {
-        // Radar base with circles
         RadarBase(radarColor, centerCircleColor)
-
-        // Rotating line - Now handled by Compose's animation system
         Canvas(modifier = Modifier.fillMaxSize()) {
             val radius = size.minDimension / 2
-
-            // Draw rotating line
             rotate(degrees = rotationAngle) {
                 drawLine(
                     color = radarColor,
@@ -282,8 +270,6 @@ fun OptimizedRadarLayout(
                     end = center.copy(x = center.x, y = center.y - radius),
                     strokeWidth = 3.dp.toPx()
                 )
-
-                // Draw radar sector shadow
                 val shadowColor = Color.Black.copy(alpha = 0.2f)
                 drawArc(
                     color = shadowColor,
@@ -297,77 +283,129 @@ fun OptimizedRadarLayout(
             }
         }
 
-        // Devices - now using more efficient rendering approach
         deviceList.forEach { (imageResId, position) ->
             val deviceName = getDeviceNameFromResId(imageResId)
             val isActivated = rememberActivatedDevices.contains(deviceName)
+            val rssi = rssiValues[deviceName]
 
-            key(imageResId) {  // Use key to prevent unnecessary recompositions
+            key(imageResId) {
                 DeviceIcon(
                     imageResId = imageResId,
                     position = position,
                     isActivated = isActivated,
-                    blinkAlpha = if (isActivated) blinkAlpha else 1f
+                    blinkAlpha = if (isActivated) blinkAlpha else 1f,
+                    rssi = rssi
                 )
             }
         }
     }
-}
-// Updated DeviceIcon to be more efficient
-@Composable
+}@Composable
 fun DeviceIcon(
     imageResId: Int,
     position: Offset,
     isActivated: Boolean,
-    blinkAlpha: Float
+    blinkAlpha: Float,
+    rssi: Int?
 ) {
     val localDensity = LocalDensity.current
-
-    // Avoid creating new modifiers on each recomposition
+    val heroSize = 60.dp
     val baseModifier = Modifier
-        .size(60.dp)
+        .size(heroSize)
         .offset(
             x = with(localDensity) { position.x.toDp() },
             y = with(localDensity) { position.y.toDp() }
         )
 
+    val animatedRssi by animateFloatAsState(
+        targetValue = rssi?.toFloat() ?: -100f,
+        animationSpec = tween(durationMillis = 500, easing = FastOutSlowInEasing),
+        label = "rssiAnimation"
+    )
+
+    var heroTopY by remember { mutableStateOf(0f) }
+
     Box(modifier = baseModifier) {
-        // Only render activated effect when needed
-        if (isActivated) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+            modifier = Modifier.fillMaxSize()
+        ) {
+            RssiIcon(
+                rssi = rssi,
+                animatedRssi = animatedRssi,
+                modifier = Modifier
+                    .size(18.dp)
+                    .offset {
+                        val rssiHeightPx = with(localDensity) { 18.dp.toPx() }
+                        IntOffset(0, (heroTopY - rssiHeightPx - 2f).toInt())
+                    }
+            )
+
             Box(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .background(Color.White.copy(alpha = 0.3f), shape = CircleShape)
-            )
-        }
-
-        // Create scale animation only when activated to reduce overhead
-        val scaleAnimation by animateFloatAsState(
-            targetValue = if (isActivated) 1.2f else 1f,
-            animationSpec = spring(
-                dampingRatio = Spring.DampingRatioMediumBouncy,
-                stiffness = Spring.StiffnessLow
-            ),
-            label = "device_scale"
-        )
-
-        Image(
-            painter = painterResource(id = imageResId),
-            contentDescription = null,
-            modifier = Modifier
-                .fillMaxSize()
-                .graphicsLayer {
-                    alpha = blinkAlpha
-                    scaleX = scaleAnimation
-                    scaleY = scaleAnimation
+                    .size(heroSize)
+                    .align(Alignment.CenterHorizontally)
+                    .onGloballyPositioned { coordinates ->
+                        heroTopY = coordinates.positionInParent().y
+                    }
+            ) {
+                if (isActivated) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(Color.White.copy(alpha = 0.3f), shape = CircleShape)
+                    )
                 }
-        )
+                val scaleAnimation by animateFloatAsState(
+                    targetValue = if (isActivated) 1.2f else 1f,
+                    animationSpec = spring(
+                        dampingRatio = Spring.DampingRatioMediumBouncy,
+                        stiffness = Spring.StiffnessLow
+                    ),
+                    label = "device_scale"
+                )
+                Image(
+                    painter = painterResource(id = imageResId),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .graphicsLayer {
+                            alpha = blinkAlpha
+                            scaleX = scaleAnimation
+                            scaleY = scaleAnimation
+                        }
+                )
+            }
+        }
     }
 }
 
-
-
-
+@Composable
+fun RssiIcon(
+    rssi: Int?,
+    animatedRssi: Float,
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = modifier,
+        contentAlignment = Alignment.Center
+    ) {
+        Canvas(modifier = Modifier.matchParentSize()) {
+            drawCircle(
+                color = Color.Red,
+                radius = size.minDimension / 2,
+                center = center
+            )
+        }
+        Text(
+            text = if (rssi != null) "${animatedRssi.roundToInt()}" else "N/A",
+            style = MaterialTheme.typography.bodySmall.copy(fontSize = 8.sp),
+            color = Color.White,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.align(Alignment.Center)
+        )
+    }
+}
 @Composable
 fun RotatingRadarLine(radarColor: Color, rotationAngle: Float) {
     Canvas(modifier = Modifier.fillMaxSize()) {
