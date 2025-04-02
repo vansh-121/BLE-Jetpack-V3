@@ -2,12 +2,14 @@ package com.example.ble_jetpackcompose
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.GoogleAuthProvider
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -29,6 +31,7 @@ class AuthViewModel : ViewModel() {
 
     // Current user state
     private val _currentUser = MutableStateFlow(auth.currentUser)
+    private lateinit var googleSignInClient: GoogleSignInClient
 
     init {
         // Initialize current user and listen for changes
@@ -123,6 +126,28 @@ class AuthViewModel : ViewModel() {
                     else -> e.message ?: "Login failed due to an unknown error."
                 }
                 _authState.value = AuthState.Error(errorMessage)
+            }
+        }
+    }
+
+    fun setGoogleSignInClient(client: GoogleSignInClient) {
+        googleSignInClient = client
+    }
+
+    fun signInWithGoogle(idToken: String) {
+        viewModelScope.launch {
+            try {
+                _authState.value = AuthState.Loading
+                val credential = GoogleAuthProvider.getCredential(idToken, null)
+                val result = auth.signInWithCredential(credential).await()
+                result.user?.let {
+                    _authState.value = AuthState.Success(it)
+                    updateCurrentUser()
+                } ?: throw Exception("Google sign-in failed")
+            } catch (e: Exception) {
+                _authState.value = AuthState.Error(
+                    e.message ?: "Google sign-in failed due to an unknown error"
+                )
             }
         }
     }

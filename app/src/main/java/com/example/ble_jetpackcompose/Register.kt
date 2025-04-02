@@ -1,5 +1,8 @@
 package com.example.ble_jetpackcompose
 
+import android.app.Activity
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -11,6 +14,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -22,6 +26,8 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.common.api.ApiException
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -98,6 +104,27 @@ fun RegisterScreen(
     var isEmailValid by remember { mutableStateOf(false) }
     var isPasswordValid by remember { mutableStateOf(false) }
     var isConfirmPasswordValid by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+            try {
+                val account = task.getResult(ApiException::class.java)
+                account.idToken?.let { viewModel.signInWithGoogle(it) }
+            } catch (e: ApiException) {
+//                viewModel.authState.value = AuthState.Error("Google Sign-In failed: ${e.message}")
+            }
+        }
+    }
+
+    val googleSignInClient = remember { GoogleSignInHelper.getGoogleSignInClient(context) }
+    LaunchedEffect(Unit) {
+        viewModel.setGoogleSignInClient(googleSignInClient)
+    }
+
+
     LocalFocusManager.current
 
     val authState by viewModel.authState.collectAsState()
@@ -392,16 +419,16 @@ fun RegisterScreen(
         ) {
             SocialLoginButton(
                 icon = R.drawable.google_g,
-                onClick = { /* Handle Google sign up */ },
+                onClick = { launcher.launch(googleSignInClient.signInIntent) },
                 backgroundColor = textFieldBackgroundColor,
                 borderColor = borderColor
             )
-            SocialLoginButton(
-                icon = R.drawable.facebook_f_,
-                onClick = { /* Handle Facebook sign up */ },
-                backgroundColor = textFieldBackgroundColor,
-                borderColor = borderColor
-            )
+//            SocialLoginButton(
+//                icon = R.drawable.facebook_f_,
+//                onClick = { /* Handle Facebook sign up */ },
+//                backgroundColor = textFieldBackgroundColor,
+//                borderColor = borderColor
+//            )
         }
 
         Spacer(modifier = Modifier.weight(1f))

@@ -2,6 +2,9 @@
 
 package com.example.ble_jetpackcompose
 
+import android.app.Activity
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
@@ -17,6 +20,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
@@ -30,6 +34,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.common.api.ApiException
 import kotlinx.coroutines.delay
 
 val helveticaFont = FontFamily(
@@ -162,6 +168,25 @@ fun LoginScreen(
     }
 
     val authState by viewModel.authState.collectAsState()
+    val context = LocalContext.current
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+            try {
+                val account = task.getResult(ApiException::class.java)
+                account.idToken?.let { viewModel.signInWithGoogle(it) }
+            } catch (e: ApiException) {
+//                viewModel.authState.value = AuthState.Error("Google Sign-In failed: ${e.message}")
+            }
+        }
+    }
+
+    val googleSignInClient = remember { GoogleSignInHelper.getGoogleSignInClient(context) }
+    LaunchedEffect(Unit) {
+        viewModel.setGoogleSignInClient(googleSignInClient)
+    }
 
     if (authState is AuthState.Loading) {
         LoadingDialog(onDismissRequest = {})
@@ -366,16 +391,16 @@ fun LoginScreen(
         ) {
             SocialLoginButton(
                 icon = R.drawable.google_g,
-                onClick = { /* Handle Google login */ },
+                onClick = { launcher.launch(googleSignInClient.signInIntent) },
                 backgroundColor = textFieldBackgroundColor,
                 borderColor = borderColor
             )
-            SocialLoginButton(
-                icon = R.drawable.facebook_f_,
-                onClick = { /* Handle Facebook login */ },
-                backgroundColor = textFieldBackgroundColor,
-                borderColor = borderColor
-            )
+//            SocialLoginButton(
+//                icon = R.drawable.facebook_f_,
+//                onClick = { /* Handle Facebook login */ },
+//                backgroundColor = textFieldBackgroundColor,
+//                borderColor = borderColor
+//            )
         }
 
         Spacer(modifier = Modifier.weight(1f))
