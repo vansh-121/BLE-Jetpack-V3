@@ -17,6 +17,7 @@
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
+        android:usesCleartextTraffic="true"
         android:hardwareAccelerated="true"
         android:largeHeap="true"
         android:fullBackupContent="@xml/backup_rules"

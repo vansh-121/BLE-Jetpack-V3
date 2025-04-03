@@ -160,9 +160,10 @@ fun LoginScreen(
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
-    var errorMessage by remember { mutableStateOf<String?>(null) }
+    var errorMessage by remember { mutableStateOf<String?>(null) } // For popup
     var forgotPasswordEmail by remember { mutableStateOf("") }
     var showForgotPasswordDialog by remember { mutableStateOf(false) }
+    var showErrorDialog by remember { mutableStateOf(false) } // New state for error popup
     val isFormValid by remember(email, password) {
         derivedStateOf { isValidEmail(email) && isValidPassword(password) }
     }
@@ -178,11 +179,14 @@ fun LoginScreen(
                 val account = task.getResult(ApiException::class.java)
                 account.idToken?.let { viewModel.signInWithGoogle(it) }
             } catch (e: ApiException) {
-//                viewModel.authState.value = AuthState.Error("Google Sign-In failed: ${e.message}")
+                errorMessage = "Google Sign-In failed: ${e.statusCode} - ${e.message}"
+                showErrorDialog = true
             }
+        } else {
+            errorMessage = "Google Sign-In cancelled with result code: $result.resultCode"
+            showErrorDialog = true
         }
     }
-
     val googleSignInClient = remember { GoogleSignInHelper.getGoogleSignInClient(context) }
     LaunchedEffect(Unit) {
         viewModel.setGoogleSignInClient(googleSignInClient)
@@ -203,16 +207,13 @@ fun LoginScreen(
         when (authState) {
             is AuthState.Success -> onNavigateToHome()
             is AuthState.Error -> {
-                val error = (authState as AuthState.Error).message
-                errorMessage = when {
-                    error.contains("network", ignoreCase = true) -> translatedText.networkError
-                    error.contains("credentials", ignoreCase = true) -> translatedText.invalidCredentials
-                    else -> translatedText.unexpectedError
-                }
+                errorMessage = (authState as AuthState.Error).message
+                showErrorDialog = true
             }
             is AuthState.PasswordResetEmailSent -> {
                 showForgotPasswordDialog = false
                 errorMessage = translatedText.resetEmailSent
+                showErrorDialog = true // Show success as popup too
             }
             else -> {}
         }
@@ -290,18 +291,18 @@ fun LoginScreen(
             buttonBackgroundColor = buttonBackgroundColor // Passed explicitly
         )
 
-        AnimatedVisibility(
-            visible = errorMessage != null,
-            enter = fadeIn() + expandVertically(),
-            exit = fadeOut() + shrinkVertically()
-        ) {
-            Text(
-                text = errorMessage ?: "",
-                color = errorColor,
-                style = TextStyle(fontSize = 14.sp, fontFamily = helveticaFont),
-                modifier = Modifier.padding(top = 8.dp)
-            )
-        }
+//        AnimatedVisibility(
+//            visible = errorMessage != null,
+//            enter = fadeIn() + expandVertically(),
+//            exit = fadeOut() + shrinkVertically()
+//        ) {
+//            Text(
+//                text = errorMessage ?: "",
+//                color = errorColor,
+//                style = TextStyle(fontSize = 14.sp, fontFamily = helveticaFont),
+//                modifier = Modifier.padding(top = 8.dp)
+//            )
+//        }
 
         TextButton(
             onClick = { showForgotPasswordDialog = true },
@@ -441,6 +442,50 @@ fun LoginScreen(
                     )
                 )
             }
+        }
+
+        if (showErrorDialog && errorMessage != null) {
+            AlertDialog(
+                onDismissRequest = {
+                    showErrorDialog = false
+                    errorMessage = null
+                },
+                title = {
+                    Text(
+                        text = "Error",
+                        style = TextStyle(
+                            fontSize = 20.sp,
+                            fontFamily = helveticaFont,
+                            fontWeight = FontWeight.Bold,
+                            color = textColor
+                        )
+                    )
+                },
+                text = {
+                    Text(
+                        text = errorMessage ?: "An unknown error occurred",
+                        style = TextStyle(
+                            fontSize = 16.sp,
+                            fontFamily = helveticaFont,
+                            color = textColor
+                        )
+                    )
+                },
+                confirmButton = {
+                    Button(
+                        onClick = {
+                            showErrorDialog = false
+                            errorMessage = null
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = buttonBackgroundColor
+                        )
+                    ) {
+                        Text("OK", color = buttonTextColor)
+                    }
+                },
+                containerColor = dialogBackgroundColor
+            )
         }
 
         if (showForgotPasswordDialog) {

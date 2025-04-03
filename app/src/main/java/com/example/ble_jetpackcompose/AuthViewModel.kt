@@ -33,6 +33,7 @@ class AuthViewModel : ViewModel() {
     private val _currentUser = MutableStateFlow(auth.currentUser)
     private lateinit var googleSignInClient: GoogleSignInClient
 
+
     init {
         // Initialize current user and listen for changes
         updateCurrentUser()
@@ -71,6 +72,16 @@ class AuthViewModel : ViewModel() {
                 }
                 _authState.value = AuthState.Error(errorMessage)
             }
+        }
+    }
+
+//    fun handleSignInError(message: String) {
+//        _authState.value = AuthState.Error(message)
+//    }
+
+    fun handleGoogleSignInError(errorMessage: String) {
+        viewModelScope.launch {
+            _authState.value = AuthState.Error(errorMessage)
         }
     }
 

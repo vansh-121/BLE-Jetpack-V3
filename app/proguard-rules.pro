@@ -19,3 +19,11 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+#-keep class com.google.** { *; }
+-keep class com.google.android.gms.** { *; }
+-keep class com.google.firebase.** { *; }
+-keep class com.google.api.** { *; }
+-keep class android.accounts.** { *; }
+-keepattributes *Annotation*
+
+

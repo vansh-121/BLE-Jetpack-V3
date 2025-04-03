@@ -114,8 +114,10 @@ fun RegisterScreen(
                 val account = task.getResult(ApiException::class.java)
                 account.idToken?.let { viewModel.signInWithGoogle(it) }
             } catch (e: ApiException) {
-//                viewModel.authState.value = AuthState.Error("Google Sign-In failed: ${e.message}")
+                viewModel.handleGoogleSignInError("Google Sign-In failed: ${e.message}")
             }
+        } else {
+            viewModel.handleGoogleSignInError("Google Sign-In was cancelled")
         }
     }
 

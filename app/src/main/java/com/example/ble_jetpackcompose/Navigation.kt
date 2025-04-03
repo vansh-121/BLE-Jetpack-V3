@@ -30,6 +30,8 @@ fun AppNavigation(navController: NavHostController) {
     // Get system theme and initialize ThemeManager
     val systemDarkMode = isSystemInDarkTheme()
 
+
+
     // Initialize ThemeManager with system theme on app start
     LaunchedEffect(Unit) {
         ThemeManager.initializeWithSystemTheme(systemDarkMode)
