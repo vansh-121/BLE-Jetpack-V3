@@ -2,6 +2,7 @@ package com.example.ble_jetpackcompose
 
 import android.app.Dialog
 import android.content.Intent
+//import com.example.ble_jetpackcompose.BuildConfig
 import android.net.Uri
 import android.widget.Toast
 import androidx.compose.foundation.background
@@ -34,6 +35,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.google.firebase.BuildConfig
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -143,6 +145,7 @@ interface TranslationService {
 object TranslationCache {
     private val cache = mutableMapOf<String, String>()
 
+
     fun get(key: String): String? = cache[key]
     fun put(key: String, value: String) {
         cache[key] = value
@@ -152,7 +155,7 @@ object TranslationCache {
 
 // Modified GoogleTranslationService
 class GoogleTranslationService(
-    private val apiKey: String = "AIzaSyCf2lBMD9qOmPH_F2PSR-WV4mYmrrIUEis" // Replace with your actual API key and
+    private val apiKey: String = com.example.ble_jetpackcompose.BuildConfig.API_KEY
 ) : TranslationService {
     private val retrofit = Retrofit.Builder()
         .baseUrl("https://generativelanguage.googleapis.com/")
@@ -233,14 +236,14 @@ class GoogleTranslationService(
     }
 }
 
-// Extension function for easy translation
-suspend fun String.translateTo(
-    targetLanguage: String,
-    apiKey: String = "AIzaSyCf2lBMD9qOmPH_F2PSR-WV4mYmrrIUEis"
-): String {
-    val translator = GoogleTranslationService(apiKey)
-    return translator.translateText(this, targetLanguage)
-}
+//// Extension function for easy translation
+//suspend fun String.translateTo(
+//    targetLanguage: String,
+//    apiKey: String = "AIzaSyBr_EdKrLRXftUK9MN2TDTKctiEZD6-mOM"
+//): String {
+//    val translator = GoogleTranslationService(apiKey)
+//    return translator.translateText(this, targetLanguage)
+//}
 
 // Data class for language options
 data class LanguageOption(val code: String, val name: String)

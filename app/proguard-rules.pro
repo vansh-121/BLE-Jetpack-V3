@@ -20,10 +20,74 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 #-keep class com.google.** { *; }
--keep class com.google.android.gms.** { *; }
--keep class com.google.firebase.** { *; }
--keep class com.google.api.** { *; }
--keep class android.accounts.** { *; }
+# Gemini API
+# Preserve generic signatures and reflection metadata
+#-keepattributes Signature
+#-keepattributes *Annotation*
+#-keepattributes Exceptions
+#
+## Gemini API SDK
+#-keep class com.google.ai.client.** { *; }
+#-dontwarn com.google.ai.client.**
+#
+## Coroutines
+#-keep class kotlinx.coroutines.** { *; }
+#-dontwarn kotlinx.coroutines.**
+#
+## Your app’s models (adjust package name)
+#-keep class com.example.ble_jetpackcompose.models.** { *; }
+#
+## Reflection and proxies
+#-keep class java.lang.reflect.** { *; }
+#-dontwarn java.lang.reflect.**
+#
+## Gson (if used)
+#-keep class com.google.gson.** { *; }
+#-dontwarn com.google.gson.**
+
+# Preserve generic signatures and reflection metadata
+# Preserve generic signatures and reflection metadata
+# Preserve generic signatures and reflection metadata
+-keepattributes Signature
 -keepattributes *Annotation*
+-keepattributes Exceptions
+-keepattributes InnerClasses
 
+# Retrofit
+-keep class retrofit2.** { *; }
+-dontwarn retrofit2.**
+-keep class retrofit2.http.** { *; }
+-keep class retrofit2.converter.** { *; }
 
+# OkHttp (used by Retrofit)
+-keep class okhttp3.** { *; }
+-dontwarn okhttp3.**
+
+# Gson (used by GsonConverterFactory)
+-keep class com.google.gson.** { *; }
+-dontwarn com.google.gson.**
+
+# Your API interface and models
+-keep class com.example.ble_jetpackcompose.GeminiTranslationApi { *; }
+-keep class com.example.ble_jetpackcompose.TranslationRequest { *; }
+-keep class com.example.ble_jetpackcompose.TranslationResponse { *; }
+-keep class com.example.ble_jetpackcompose.Content { *; }
+-keep class com.example.ble_jetpackcompose.Part { *; }
+-keep class com.example.ble_jetpackcompose.GenerationConfig { *; }
+-keep class com.example.ble_jetpackcompose.TranslationCandidate { *; }
+
+# Preserve suspend function return types and annotations
+-keepclassmembers,allowobfuscation interface * {
+    @retrofit2.http.* <methods>;
+}
+-keepclassmembers class * {
+    @retrofit2.http.* <methods>;
+}
+
+# Coroutines (used in suspend functions)
+-keep class kotlinx.coroutines.** { *; }
+-dontwarn kotlinx.coroutines.**
+
+# Jetpack Compose
+-keep class androidx.compose.** { *; }
+-dontwarn androidx.compose.**
