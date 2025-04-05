@@ -23,6 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -35,6 +36,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import coil.compose.AsyncImage
 import com.google.firebase.BuildConfig
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -53,6 +55,7 @@ import retrofit2.http.POST
 import retrofit2.http.Query
 import java.net.URL
 import java.net.URLEncoder
+import kotlin.random.Random
 
 // Create a singleton object to manage app-wide theme state
 object ThemeManager {
@@ -353,6 +356,7 @@ fun ModernSettingsScreen(
                     currentUser != null -> currentUser.email ?: ""
                     else -> ""
                 },
+                profilePictureUrl = currentUser?.photoUrl?.toString(), // Pass profile picture URL
                 onLogout = {
                     viewModel.signOut()
                     onSignOut()
@@ -377,6 +381,16 @@ fun ModernSettingsScreen(
         }
     }
 }
+//// Helper function to generate a random color for the avatar (fallback)
+//fun generateRandomColor(): Color {
+//    val random = Random.Default
+//    return Color(
+//        red = random.nextInt(256),
+//        green = random.nextInt(256),
+//        blue = random.nextInt(256)
+//    ).copy(alpha = 0.8f)
+
+
 @Composable
 fun UserProfileCard(
     cardBackground: Color,
@@ -385,6 +399,7 @@ fun UserProfileCard(
     iconTint: Color,
     userName: String,
     userEmail: String,
+    profilePictureUrl: String? = null, // Add profile picture URL parameter
     onLogout: () -> Unit
 ) {
     Card(
@@ -397,20 +412,39 @@ fun UserProfileCard(
             modifier = Modifier.padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Profile Image
-            Box(
-                modifier = Modifier
-                    .size(60.dp)
-                    .clip(CircleShape)
-                    .background(if (textColor == Color.White) Color(0xFF2A2A2A) else Color(0xFFE0E0E0)),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    imageVector = Icons.Outlined.Person,
+            // Profile Image (Google picture or fallback)
+            if (profilePictureUrl != null) {
+                AsyncImage(
+                    model = profilePictureUrl,
                     contentDescription = "Profile",
-                    tint = secondaryTextColor,
-                    modifier = Modifier.size(40.dp)
+                    modifier = Modifier
+                        .size(60.dp)
+                        .clip(CircleShape),
+//                    placeholder = painterResource(R.drawable.placeholder), // Optional
+                    error = painterResource(R.drawable.error), // Optional
+                    contentScale = ContentScale.Crop
                 )
+            } else {
+                val avatarColor = remember { generateRandomColor() }
+                val initials = userName.take(2).uppercase()
+
+                Box(
+                    modifier = Modifier
+                        .size(60.dp)
+                        .clip(CircleShape)
+                        .background(avatarColor),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = initials,
+                        fontFamily = helveticaFont,
+                        style = MaterialTheme.typography.h6.copy(
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White
+                        ),
+                        textAlign = TextAlign.Center
+                    )
+                }
             }
 
             Spacer(modifier = Modifier.width(16.dp))
@@ -444,7 +478,18 @@ fun UserProfileCard(
             }
         }
     }
-}@Composable
+}
+
+//// Helper function to generate a random color for the avatar (fallback)
+//fun generateRandomColor(): Color {
+//    val random = Random.Default
+//    return Color(
+//        red = random.nextInt(256),
+//        green = random.nextInt(256),
+//        blue = random.nextInt(256)
+//    ).copy(alpha = 0.8f)
+//}
+@Composable
 fun SettingsOptionsList(
     cardBackground: Color,
     textColor: Color,
@@ -519,13 +564,15 @@ fun SettingsItemRow(
     var switchState by remember { mutableStateOf(initialSwitchState) }
     var showLanguageDialog by remember { mutableStateOf(false) }
     var showAboutDialog by remember { mutableStateOf(false) }
-    var showHelpDialog by remember { mutableStateOf(false) } // Add state for Help dialog
+    var showHelpDialog by remember { mutableStateOf(false) }
+    var showAccountsDialog by remember { mutableStateOf(false) }
     val currentLanguage by LanguageManager.currentLanguage.collectAsState()
-    val context = LocalContext.current // Get context for launching email intent
+    val context = LocalContext.current
 
     val isLanguageItem = item.icon == Icons.Outlined.Language
     val isAboutItem = item.icon == Icons.Outlined.Info
-    val isHelpItem = item.icon == Icons.AutoMirrored.Outlined.Help // Identify Help item
+    val isHelpItem = item.icon == Icons.AutoMirrored.Outlined.Help
+    val isAccountsItem = item.icon == Icons.Outlined.AccountCircle
 
     Row(
         modifier = Modifier
@@ -534,10 +581,11 @@ fun SettingsItemRow(
                 when {
                     isLanguageItem -> showLanguageDialog = true
                     isAboutItem -> showAboutDialog = true
-                    isHelpItem -> showHelpDialog = true // Show Help dialog
+                    isHelpItem -> showHelpDialog = true
+                    isAccountsItem -> showAccountsDialog = true
                 }
             }
-            .padding(16.dp),
+            .padding(16.dp), // Restored original padding
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
@@ -556,7 +604,7 @@ fun SettingsItemRow(
                 fontWeight = FontWeight.Medium,
                 color = textColor
             ),
-            modifier = Modifier.weight(1f)
+            modifier = Modifier.weight(1f) // Restored alignment with weight
         )
 
         when (item.type) {
@@ -776,6 +824,31 @@ fun SettingsItemRow(
             }
         }
     }
+// Inside SettingsItemRow
+    if (showAccountsDialog) {
+        val viewModel: AuthViewModel = viewModel()
+        val currentUser = viewModel.checkCurrentUser()
+
+        AccountsDialog(
+            isDarkMode = initialSwitchState,
+            userName = navController?.let {
+                when {
+                    currentUser?.isAnonymous == true -> "Guest User"
+                    currentUser != null -> currentUser.email?.substringBefore('@') ?: "User"
+                    else -> "Not Signed In"
+                }
+            } ?: "User",
+            userEmail = navController?.let {
+                when {
+                    currentUser?.isAnonymous == true -> "Anonymous User"
+                    currentUser != null -> currentUser.email ?: ""
+                    else -> ""
+                }
+            } ?: "",
+            profilePictureUrl = currentUser?.photoUrl?.toString(), // Pass profile picture URL
+            onDismiss = { showAccountsDialog = false }
+        )
+    }
 
     // New Help dialog
     if (showHelpDialog) {
@@ -867,6 +940,122 @@ fun SettingsItemRow(
             }
         }
     }
+}
+@Composable
+fun AccountsDialog(
+    isDarkMode: Boolean,
+    userName: String,
+    userEmail: String,
+    profilePictureUrl: String? = null, // Add profile picture URL parameter
+    onDismiss: () -> Unit
+) {
+    Dialog(
+        onDismissRequest = onDismiss
+    ) {
+        Surface(
+            modifier = Modifier
+                .widthIn(max = 400.dp)
+                .padding(16.dp),
+            shape = RoundedCornerShape(16.dp),
+            color = if (isDarkMode) Color(0xFF1E1E1E) else Color.White
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                // Avatar: Use Google profile picture if available, otherwise random avatar
+                if (profilePictureUrl != null) {
+                    AsyncImage(
+                        model = profilePictureUrl,
+                        contentDescription = "User Avatar",
+                        modifier = Modifier
+                            .size(120.dp)
+                            .clip(CircleShape),
+//                        placeholder = painterResource(R.drawable.placeholder), // Optional: Add a placeholder drawable
+                        error = painterResource(R.drawable.error), // Optional: Add an error drawable
+                        contentScale = ContentScale.Crop
+                    )
+                } else {
+                    val avatarColor = remember { generateRandomColor() }
+                    val initials = userName.take(2).uppercase()
+
+                    Box(
+                        modifier = Modifier
+                            .size(120.dp)
+                            .clip(CircleShape)
+                            .background(avatarColor),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = initials,
+                            fontFamily = helveticaFont,
+                            style = MaterialTheme.typography.h3.copy(
+                                fontWeight = FontWeight.Bold,
+                                color = Color.White
+                            ),
+                            textAlign = TextAlign.Center
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(20.dp))
+
+                // User Name
+                Text(
+                    text = userName,
+                    fontFamily = helveticaFont,
+                    style = MaterialTheme.typography.h4.copy(
+                        fontWeight = FontWeight.Bold,
+                        color = if (isDarkMode) Color.White else Color.Black
+                    ),
+                    textAlign = TextAlign.Center,
+                    maxLines = 1
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                // User Email
+                Text(
+                    text = userEmail,
+                    fontFamily = helveticaFont,
+                    style = MaterialTheme.typography.body2.copy(
+                        color = if (isDarkMode) Color(0xFFB0B0B0) else Color.Gray
+                    ),
+                    textAlign = TextAlign.Center,
+                    maxLines = 1
+                )
+
+                Spacer(modifier = Modifier.height(32.dp))
+
+                // Close Button
+                TextButton(
+                    onClick = onDismiss,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp)
+                ) {
+                    Text(
+                        text = "Close",
+                        color = if (isDarkMode) Color(0xFF64B5F6) else Color(0xFF007AFF),
+                        fontFamily = helveticaFont,
+                        style = MaterialTheme.typography.button
+                    )
+                }
+            }
+        }
+    }
+}
+
+// Helper function to generate a random color for the avatar (fallback)
+fun generateRandomColor(): Color {
+    val random = Random.Default
+    return Color(
+        red = random.nextInt(256),
+        green = random.nextInt(256),
+        blue = random.nextInt(256)
+    ).copy(alpha = 0.8f)
 }
 
 @Composable
