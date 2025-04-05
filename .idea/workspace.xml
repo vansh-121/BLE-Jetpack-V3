@@ -21,19 +21,12 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2a8d1c62-c65c-4014-bffc-df98cbe8e759" name="Changes" comment="Fixed release version issue">
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/xml/network_security_config.xml" afterDir="false" />
+    <list default="true" id="2a8d1c62-c65c-4014-bffc-df98cbe8e759" name="Changes" comment="Gemini API issue resolved">
       <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/outputFiles.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/outputFiles.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/file-system.probe" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/file-system.probe" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/app/build.gradle.kts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/proguard-rules.pro" beforeDir="false" afterPath="$PROJECT_DIR$/app/proguard-rules.pro" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/release/app-release.apk" beforeDir="false" afterPath="$PROJECT_DIR$/app/release/app-release.apk" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/release/baselineProfiles/0/app-release.dm" beforeDir="false" afterPath="$PROJECT_DIR$/app/release/baselineProfiles/0/app-release.dm" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/release/baselineProfiles/1/app-release.dm" beforeDir="false" afterPath="$PROJECT_DIR$/app/release/baselineProfiles/1/app-release.dm" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/ble_jetpackcompose/SettingsPage.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/ble_jetpackcompose/SettingsPage.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/ble_jetpackcompose/GameLoading.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/ble_jetpackcompose/GameLoading.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -43,7 +36,7 @@
   <component name="ClangdSettings">
     <option name="formatViaClangd" value="false" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[DeviceId(pluginId=LocalEmulator, isTemplate=false, identifier=path=C:\Users\DELL\.android\avd\flutter_emulator.avd)]" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[DeviceId(pluginId=PhysicalDevice, isTemplate=false, identifier=serial=R9ZXA0NW2ZB)]" />
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
@@ -265,14 +258,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1737008090736</updated>
-    </task>
-    <task id="LOCAL-00006" summary="Permissions Change">
-      <option name="closed" value="true" />
-      <created>1738072205913</created>
-      <option name="number" value="00006" />
-      <option name="presentableId" value="LOCAL-00006" />
-      <option name="project" value="LOCAL" />
-      <updated>1738072205913</updated>
     </task>
     <task id="LOCAL-00007" summary="Guest User Entered">
       <option name="closed" value="true" />
@@ -658,7 +643,15 @@
       <option name="project" value="LOCAL" />
       <updated>1743681100354</updated>
     </task>
-    <option name="localTasksCounter" value="55" />
+    <task id="LOCAL-00055" summary="Gemini API issue resolved">
+      <option name="closed" value="true" />
+      <created>1743776361689</created>
+      <option name="number" value="00055" />
+      <option name="presentableId" value="LOCAL-00055" />
+      <option name="project" value="LOCAL" />
+      <updated>1743776361691</updated>
+    </task>
+    <option name="localTasksCounter" value="56" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -683,7 +676,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Update in Soil Table" />
     <MESSAGE value="Dark Mode &amp; lux Sensor Parsing Implemented" />
     <MESSAGE value="Games Section Updated" />
     <MESSAGE value="Scanning Initiated in Hunt the heroes" />
@@ -708,7 +700,8 @@
     <MESSAGE value="RSSI indicator added" />
     <MESSAGE value="Google Authentication added" />
     <MESSAGE value="Fixed release version issue" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fixed release version issue" />
+    <MESSAGE value="Gemini API issue resolved" />
+    <option name="LAST_COMMIT_MESSAGE" value="Gemini API issue resolved" />
   </component>
   <component name="play_dynamic_filters_status">
     <option name="appIdToCheckInfo">

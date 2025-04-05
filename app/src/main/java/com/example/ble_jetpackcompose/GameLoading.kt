@@ -72,7 +72,9 @@ fun BLEGamesScreen(navController: NavHostController) {
             animationSpec = tween(durationMillis = 4000, easing = FastOutSlowInEasing)
         )
         delay(500)
-        navController.navigate("game_screen")
+        navController.navigate("game_screen") {
+            popUpTo("game_loading") { inclusive = true }
+        }
     }
 
     val progress = lineWidth.value / 198f
