@@ -54,7 +54,8 @@ data class TranslatedAdvertisingText(
     val lightIntensity: String = "Light Intensity",
     val speed: String = "Speed",
     val distance: String = "Distance",
-    val objectDetected: String = "Object Detected"
+    val objectDetected: String = "Object Detected",
+    val steps: String  // Added steps property
 )
 
 @Composable
@@ -101,7 +102,8 @@ fun AdvertisingDataScreen(
                 lightIntensity = TranslationCache.get("Light Intensity-$currentLanguage") ?: "Light Intensity",
                 speed = TranslationCache.get("Speed-$currentLanguage") ?: "Speed",
                 distance = TranslationCache.get("Distance-$currentLanguage") ?: "Distance",
-                objectDetected = TranslationCache.get("Object Detected-$currentLanguage") ?: "Object Detected"
+                objectDetected = TranslationCache.get("Object Detected-$currentLanguage") ?: "Object Detected",
+                steps = TranslationCache.get("Steps-$currentLanguage") ?: "Steps"
             )
         )
     }
@@ -113,7 +115,7 @@ fun AdvertisingDataScreen(
             "Advertising Data", "Device Name", "Node ID", "DOWNLOAD DATA", "EXPORTING DATA...",
             "Temperature", "Humidity", "X-Axis", "Y-Axis", "Z-Axis",
             "Nitrogen", "Phosphorus", "Potassium", "Moisture", "Electric Conductivity",
-            "pH", "Light Intensity", "Speed", "Distance", "Object Detected"
+            "pH", "Light Intensity", "Speed", "Distance", "Object Detected", "Steps"
         )
         val translatedList = translator.translateBatch(textsToTranslate, currentLanguage)
         translatedText = TranslatedAdvertisingText(
@@ -136,11 +138,12 @@ fun AdvertisingDataScreen(
             lightIntensity = translatedList[16],
             speed = translatedList[17],
             distance = translatedList[18],
-            objectDetected = translatedList[19]
+            objectDetected = translatedList[19],
+            steps = translatedList[20]
         )
     }
 
-    // Prepare display data with translated labels
+// Prepare display data with translated labels
     val displayData by remember(currentDevice?.sensorData, translatedText) {
         derivedStateOf {
             when (val sensorData = currentDevice?.sensorData) {
@@ -172,11 +175,13 @@ fun AdvertisingDataScreen(
                 is BluetoothScanViewModel.SensorData.ObjectDetectorData -> listOf(
                     translatedText.objectDetected to sensorData.detection.toString()
                 )
+                is BluetoothScanViewModel.SensorData.StepCounterData -> listOf(
+                    translatedText.steps to "${sensorData.steps} steps"
+                )
                 null -> emptyList()
             }
         }
     }
-
     // Define theme-based colors
     val backgroundGradient = if (isDarkMode) {
         Brush.verticalGradient(listOf(Color(0xFF1E1E1E), Color(0xFF424242)))
@@ -474,6 +479,7 @@ private fun exportDataToCSV(
                             is BluetoothScanViewModel.SensorData.LuxData -> dataBuilder.append("${sensorData.calculatedLux}")
                             is BluetoothScanViewModel.SensorData.SDTData -> dataBuilder.append("${sensorData.speed},${sensorData.distance}")
                             is BluetoothScanViewModel.SensorData.ObjectDetectorData -> dataBuilder.append("${sensorData.detection}")
+                            is BluetoothScanViewModel.SensorData.StepCounterData -> dataBuilder.append("${sensorData.steps}")
                             null -> {}
                         }
                         dataBuilder.append("\n")
@@ -568,18 +574,23 @@ fun SunWithRayAnimation(
         )
     }
 }
-
 @Composable
-fun ResponsiveDataCards(
+private fun ResponsiveDataCards(
     data: List<Pair<String, String>>,
     cardBackground: Color,
     cardGradient: Brush,
     textColor: Color
 ) {
     when (data.size) {
+        0 -> {
+            // Handle empty data case
+            Box(modifier = Modifier.height(100.dp))
+        }
         1 -> {
             Box(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp),
                 contentAlignment = Alignment.Center
             ) {
                 DataCard(
@@ -593,7 +604,9 @@ fun ResponsiveDataCards(
         }
         2 -> {
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp),
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
                 data.forEach { (label, value) ->
@@ -608,13 +621,16 @@ fun ResponsiveDataCards(
             }
         }
         else -> {
+            // For 3+ items, use a more compact layout
             Column(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 data.chunked(2).forEach { rowItems ->
                     Row(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 4.dp),
                         horizontalArrangement = Arrangement.SpaceEvenly
                     ) {
                         rowItems.forEach { (label, value) ->
@@ -626,14 +642,16 @@ fun ResponsiveDataCards(
                                 textColor = textColor
                             )
                         }
+                        // If we have odd number of items, add a spacer for balance
+                        if (rowItems.size == 1) {
+                            Spacer(modifier = Modifier.width(141.dp))
+                        }
                     }
-                    Spacer(modifier = Modifier.height(16.dp))
                 }
             }
         }
     }
 }
-
 @Composable
 fun DataCard(
     label: String,

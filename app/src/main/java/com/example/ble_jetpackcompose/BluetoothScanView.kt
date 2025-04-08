@@ -107,6 +107,12 @@ class BluetoothScanViewModel<T>(private val context: Context) : ViewModel() {
             override val deviceId: String,
             val detection: Boolean
         ) : SensorData()
+
+        // New Step Counter data class
+        data class StepCounterData(
+            override val deviceId: String,
+            val steps: String
+        ) : SensorData()
     }
 
     data class BluetoothDevice(
@@ -262,6 +268,7 @@ class BluetoothScanViewModel<T>(private val context: Context) : ViewModel() {
             "Soil Sensor" -> parseSoilSensorData(data)
             "SPEED_DISTANCE" -> parseSDTData(data)
             "Metal Detector" -> parseMetalDetectorData(data)
+            "Step Counter" -> parseStepCounterData(data)
             else -> null
         }
     }
@@ -335,6 +342,22 @@ class BluetoothScanViewModel<T>(private val context: Context) : ViewModel() {
         )
     }
 
+    // New parsing function for step counter data
+    private fun parseStepCounterData(data: ByteArray): SensorData? {
+        // Check if we have enough data (at least 5 bytes as per your requirement)
+        if (data.size < 5) return null
+
+        // Device ID is at index 0, and steps are at index 3 and 4
+        // We'll combine the bytes at index 3 and 4 to create a 16-bit step count
+        // Using the first byte (index 3) as the high byte and the second byte (index 4) as the low byte
+        val stepCount = (data[3].toUByte().toInt() shl 8) or data[4].toUByte().toInt()
+
+        return SensorData.StepCounterData(
+            deviceId = data[0].toUByte().toString(),
+            steps = stepCount.toString()
+        )
+    }
+
     // Region: Utility Functions
     private fun determineDeviceType(name: String?): String? = when {
         name?.contains("SHT", ignoreCase = true) == true -> "SHT40"
@@ -343,6 +366,7 @@ class BluetoothScanViewModel<T>(private val context: Context) : ViewModel() {
         name?.contains("SOIL", ignoreCase = true) == true -> "Soil Sensor"
         name?.contains("Speed", ignoreCase = true) == true -> "SPEED_DISTANCE"
         name?.contains("Object", ignoreCase = true) == true -> "Metal Detector"
+        name?.contains("Step", ignoreCase = true) == true -> "Step Counter"  // Add detection for step counter devices
         else -> null
     }
 

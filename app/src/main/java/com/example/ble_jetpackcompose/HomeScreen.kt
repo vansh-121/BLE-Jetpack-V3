@@ -86,7 +86,7 @@ fun MainScreen(
 
     val isPermissionGranted = remember { mutableStateOf(checkBluetoothPermissions(context)) }
     var expanded by remember { mutableStateOf(false) }
-    val sensorTypes = listOf("SHT40", "LIS2DH", "Soil Sensor", "Weather", "LUX", "Speed Distance", "Metal Detector")
+    val sensorTypes = listOf("SHT40", "LIS2DH", "Soil Sensor", "Weather", "LUX", "Speed Distance", "Metal Detector", "Step Counter")
     var selectedSensor by remember { mutableStateOf(sensorTypes[0]) }
     var showAllDevices by remember { mutableStateOf(false) }
 
@@ -346,7 +346,7 @@ fun MainScreen(
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(16.dp),
+                            .padding(vertical = 16.dp), // Match Nearby Devices padding
                         elevation = 4.dp,
                         shape = RoundedCornerShape(16.dp),
                         backgroundColor = cardBackgroundColor
@@ -535,6 +535,8 @@ fun BluetoothDeviceItem(
                                 "Temp: ${sensorData.temperature}°C, Moisture: ${sensorData.moisture}%"
                             sensorData is BluetoothScanViewModel.SensorData.LuxData ->
                                 "Light: ${sensorData.calculatedLux} LUX"
+                            sensorData is BluetoothScanViewModel.SensorData.StepCounterData ->
+                                "Steps: ${sensorData.steps}"
                             sensorData is BluetoothScanViewModel.SensorData.ObjectDetectorData ->
                                 "Metal Detected: ${if (sensorData.detection) "Yes" else "No"}"
                             sensorData is BluetoothScanViewModel.SensorData.SDTData ->
@@ -554,6 +556,8 @@ fun BluetoothDeviceItem(
                             "N: ${sensorData.nitrogen}, P: ${sensorData.phosphorus}, K: ${sensorData.potassium}\n" +
                                     "Moisture: ${sensorData.moisture}%, Temp: ${sensorData.temperature}°C\n" +
                                     "EC: ${sensorData.ec}, pH: ${sensorData.pH}"
+                        selectedSensor == "Step Counter" && sensorData is BluetoothScanViewModel.SensorData.StepCounterData ->
+                            "Steps: ${sensorData.steps}"
                         selectedSensor == "LUX" && sensorData is BluetoothScanViewModel.SensorData.LuxData ->
                             "Light: ${sensorData.calculatedLux} LUX"
 
