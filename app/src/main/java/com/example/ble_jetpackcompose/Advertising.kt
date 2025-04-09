@@ -55,8 +55,9 @@ data class TranslatedAdvertisingText(
     val speed: String = "Speed",
     val distance: String = "Distance",
     val objectDetected: String = "Object Detected",
-    val steps: String  // Added steps property
-)
+    val steps: String,  // Added steps property,
+    val resetSteps: String = "RESET STEPS" // Add this new field
+    )
 
 @Composable
 fun AdvertisingDataScreen(
@@ -103,7 +104,8 @@ fun AdvertisingDataScreen(
                 speed = TranslationCache.get("Speed-$currentLanguage") ?: "Speed",
                 distance = TranslationCache.get("Distance-$currentLanguage") ?: "Distance",
                 objectDetected = TranslationCache.get("Object Detected-$currentLanguage") ?: "Object Detected",
-                steps = TranslationCache.get("Steps-$currentLanguage") ?: "Steps"
+                steps = TranslationCache.get("Steps-$currentLanguage") ?: "Steps",
+                resetSteps = TranslationCache.get("RESET STEPS-$currentLanguage") ?: "RESET STEPS"
             )
         )
     }
@@ -115,7 +117,7 @@ fun AdvertisingDataScreen(
             "Advertising Data", "Device Name", "Node ID", "DOWNLOAD DATA", "EXPORTING DATA...",
             "Temperature", "Humidity", "X-Axis", "Y-Axis", "Z-Axis",
             "Nitrogen", "Phosphorus", "Potassium", "Moisture", "Electric Conductivity",
-            "pH", "Light Intensity", "Speed", "Distance", "Object Detected", "Steps"
+            "pH", "Light Intensity", "Speed", "Distance", "Object Detected", "Steps", "RESET STEPS" // Add this new field
         )
         val translatedList = translator.translateBatch(textsToTranslate, currentLanguage)
         translatedText = TranslatedAdvertisingText(
@@ -139,7 +141,8 @@ fun AdvertisingDataScreen(
             speed = translatedList[17],
             distance = translatedList[18],
             objectDetected = translatedList[19],
-            steps = translatedList[20]
+            steps = translatedList[20],
+            resetSteps = translatedList[21] // Add this new field
         )
     }
 
@@ -260,7 +263,17 @@ fun AdvertisingDataScreen(
                 )
             }
 
+
             Spacer(modifier = Modifier.height(16.dp))
+
+            if (currentDevice?.sensorData is BluetoothScanViewModel.SensorData.StepCounterData) {
+                Spacer(modifier = Modifier.height(16.dp))
+                ResetStepsButton(
+                    viewModel = viewModel,
+                    deviceAddress = deviceAddress,
+                    translatedText = translatedText
+                )
+            }
 
             DownloadButton(
                 viewModel = viewModel,
@@ -272,6 +285,37 @@ fun AdvertisingDataScreen(
 //                textColor = textColor
             )
         }
+    }
+}
+
+@Composable
+private fun ResetStepsButton(
+    viewModel: BluetoothScanViewModel<Any?>,
+    deviceAddress: String,
+    translatedText: TranslatedAdvertisingText
+) {
+    val isDarkMode by ThemeManager.isDarkMode.collectAsState()
+
+    // Define button colors based on theme
+    val buttonBackgroundColor = if (isDarkMode) Color(0xFFFF5252) else Color(0xFFE53935)  // Red color for reset
+    val buttonTextColor = Color.White
+
+    Button(
+        onClick = {
+            viewModel.resetStepCounter(deviceAddress)
+        },
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(48.dp),
+        shape = RoundedCornerShape(12.dp),
+        colors = ButtonDefaults.buttonColors(containerColor = buttonBackgroundColor)
+    ) {
+        Text(
+            text = translatedText.resetSteps,
+            color = buttonTextColor,
+            fontSize = 14.sp,
+            fontWeight = FontWeight.Bold
+        )
     }
 }
 

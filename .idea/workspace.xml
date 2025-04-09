@@ -21,17 +21,11 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2a8d1c62-c65c-4014-bffc-df98cbe8e759" name="Changes" comment="Account Image Added">
-      <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/file-system.probe" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/file-system.probe" afterDir="false" />
+    <list default="true" id="2a8d1c62-c65c-4014-bffc-df98cbe8e759" name="Changes" comment="Added &quot;Step Counter&quot; Sensor">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/release/app-release.apk" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/release/baselineProfiles/0/app-release.dm" beforeDir="false" afterPath="$PROJECT_DIR$/app/release/baselineProfiles/0/app-release.dm" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/release/baselineProfiles/1/app-release.dm" beforeDir="false" afterPath="$PROJECT_DIR$/app/release/baselineProfiles/1/app-release.dm" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/ble_jetpackcompose/Advertising.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/ble_jetpackcompose/Advertising.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/ble_jetpackcompose/BluetoothScanView.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/ble_jetpackcompose/BluetoothScanView.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/ble_jetpackcompose/HomeScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/ble_jetpackcompose/HomeScreen.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/ble_jetpackcompose/SensorData.kt" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -263,14 +257,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1737008090736</updated>
-    </task>
-    <task id="LOCAL-00009" summary="Issue Resolve  - Devices Fetching">
-      <option name="closed" value="true" />
-      <created>1738676417615</created>
-      <option name="number" value="00009" />
-      <option name="presentableId" value="LOCAL-00009" />
-      <option name="project" value="LOCAL" />
-      <updated>1738676417615</updated>
     </task>
     <task id="LOCAL-00010" summary="Authentication State Save">
       <option name="closed" value="true" />
@@ -656,7 +642,15 @@
       <option name="project" value="LOCAL" />
       <updated>1743835648940</updated>
     </task>
-    <option name="localTasksCounter" value="58" />
+    <task id="LOCAL-00058" summary="Added &quot;Step Counter&quot; Sensor">
+      <option name="closed" value="true" />
+      <created>1744113072628</created>
+      <option name="number" value="00058" />
+      <option name="presentableId" value="LOCAL-00058" />
+      <option name="project" value="LOCAL" />
+      <updated>1744113072628</updated>
+    </task>
+    <option name="localTasksCounter" value="59" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -681,7 +675,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Scanning Initiated in Hunt the heroes" />
     <MESSAGE value="Layout Changed" />
     <MESSAGE value="Black &amp; White to Colorful Functionality" />
     <MESSAGE value="Z Index Issue resolved" />
@@ -706,7 +699,8 @@
     <MESSAGE value="Gemini API issue resolved" />
     <MESSAGE value="Fixed issue of navigation backstack in gaming" />
     <MESSAGE value="Account Image Added" />
-    <option name="LAST_COMMIT_MESSAGE" value="Account Image Added" />
+    <MESSAGE value="Added &quot;Step Counter&quot; Sensor" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added &quot;Step Counter&quot; Sensor" />
   </component>
   <component name="play_dynamic_filters_status">
     <option name="appIdToCheckInfo">

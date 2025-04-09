@@ -37,6 +37,7 @@ class BluetoothScanViewModel<T>(private val context: Context) : ViewModel() {
     // Historical data storage - using ConcurrentHashMap for thread safety
     private val deviceHistoricalData = ConcurrentHashMap<String, MutableList<HistoricalDataEntry>>()
     private val _currentGameMode = MutableStateFlow<GameMode>(GameMode.NONE)
+    private val stepCounterOffsets = ConcurrentHashMap<String, Int>()
     val currentGameMode: StateFlow<GameMode> = _currentGameMode.asStateFlow()
 
     // Configure scan intervals
@@ -169,7 +170,6 @@ class BluetoothScanViewModel<T>(private val context: Context) : ViewModel() {
             .setPhy(ScanSettings.PHY_LE_ALL_SUPPORTED)
             .build()
 
-    // Region: Scan Callback
     private fun createScanCallback(): ScanCallback = object : ScanCallback() {
         @SuppressLint("MissingPermission")
         override fun onScanResult(callbackType: Int, result: ScanResult) {
@@ -188,7 +188,14 @@ class BluetoothScanViewModel<T>(private val context: Context) : ViewModel() {
                         if (deviceAddress.isNullOrEmpty() || deviceName.isNullOrEmpty()) return
 
                         val deviceType = determineDeviceType(deviceName)
-                        val sensorData = parseAdvertisingData(result, deviceType)
+
+                        // For step counter, we need to pass the device address
+                        val sensorData = if (deviceType == "Step Counter") {
+                            // Before parsing, make sure to save the address for offset tracking
+                            parseStepCounterData(result.scanRecord?.manufacturerSpecificData?.valueAt(0), deviceAddress)
+                        } else {
+                            parseAdvertisingData(result, deviceType)
+                        }
 
                         val bluetoothDevice = BluetoothDevice(
                             name = deviceName,
@@ -205,14 +212,12 @@ class BluetoothScanViewModel<T>(private val context: Context) : ViewModel() {
                             storeHistoricalData(deviceAddress, it)
                         }
                     } catch (e: SecurityException) {
+                        // Handle security exception
                     }
                 }
             } catch (e: SecurityException) {
+                // Handle security exception
             }
-        }
-
-        override fun onScanFailed(errorCode: Int) {
-            super.onScanFailed(errorCode)
         }
     }
 
@@ -256,11 +261,16 @@ class BluetoothScanViewModel<T>(private val context: Context) : ViewModel() {
     }
 
     // Region: Data Parsing
+    // Modified parseAdvertisingData to handle the deviceAddress parameter for step counters
     fun parseAdvertisingData(result: ScanResult, deviceType: String?): SensorData? {
         val manufacturerData = result.scanRecord?.manufacturerSpecificData ?: return null
         if (manufacturerData.size() == 0) return null
 
         val data = manufacturerData.valueAt(0) ?: return null
+
+        // Get the device address for step counter devices
+        val deviceAddress = result.device?.address ?: return null
+
         return when (deviceType) {
             "SHT40" -> parseSHT40Data(data)
             "Lux Sensor" -> parseLuxSensorData(data)
@@ -268,7 +278,7 @@ class BluetoothScanViewModel<T>(private val context: Context) : ViewModel() {
             "Soil Sensor" -> parseSoilSensorData(data)
             "SPEED_DISTANCE" -> parseSDTData(data)
             "Metal Detector" -> parseMetalDetectorData(data)
-            "Step Counter" -> parseStepCounterData(data)
+            "Step Counter" -> parseStepCounterData(data, deviceAddress)  // Pass the deviceAddress here
             else -> null
         }
     }
@@ -325,6 +335,41 @@ class BluetoothScanViewModel<T>(private val context: Context) : ViewModel() {
         )
     }
 
+    fun resetStepCounter(deviceAddress: String) {
+        viewModelScope.launch {
+            val devices = _devices.value
+            val device = devices.find { it.address == deviceAddress }
+
+            if (device != null && device.sensorData is SensorData.StepCounterData) {
+                // Get the current raw step count from the device
+                val currentSteps = (device.sensorData as SensorData.StepCounterData).steps.toIntOrNull() ?: 0
+
+                // Calculate the current raw value from the device
+                val currentOffset = stepCounterOffsets[deviceAddress] ?: 0
+                val rawStepCount = currentSteps + currentOffset
+
+                // Set the new offset to the current raw value
+                // This will make the adjusted count become zero
+                stepCounterOffsets[deviceAddress] = rawStepCount
+
+                // Update the UI immediately to show 0
+                val updatedDevice = device.copy(
+                    sensorData = SensorData.StepCounterData(
+                        deviceId = device.deviceId,
+                        steps = "0"
+                    )
+                )
+
+                // Update the devices list
+                _devices.update { currentDevices ->
+                    currentDevices.map {
+                        if (it.address == deviceAddress) updatedDevice else it
+                    }
+                }
+            }
+        }
+    }
+
     private fun parseSDTData(data: ByteArray): SensorData? {
         if (data.size < 6) return null
         return SensorData.SDTData(
@@ -343,20 +388,24 @@ class BluetoothScanViewModel<T>(private val context: Context) : ViewModel() {
     }
 
     // New parsing function for step counter data
-    private fun parseStepCounterData(data: ByteArray): SensorData? {
-        // Check if we have enough data (at least 5 bytes as per your requirement)
-        if (data.size < 5) return null
+    // Modified step counter parser that handles offsets
+    private fun parseStepCounterData(data: ByteArray?, deviceAddress: String): SensorData? {
+        if (data == null || data.size < 5) return null
 
-        // Device ID is at index 0, and steps are at index 3 and 4
-        // We'll combine the bytes at index 3 and 4 to create a 16-bit step count
-        // Using the first byte (index 3) as the high byte and the second byte (index 4) as the low byte
-        val stepCount = (data[3].toUByte().toInt() shl 8) or data[4].toUByte().toInt()
+        val deviceId = data[0].toUByte().toString()
+        // Get raw step count from the device
+        val rawStepCount = (data[3].toUByte().toInt() shl 8) or data[4].toUByte().toInt()
+
+        // Apply offset to show adjusted count
+        val offset = stepCounterOffsets[deviceAddress] ?: 0
+        val adjustedStepCount = (rawStepCount - offset).coerceAtLeast(0)
 
         return SensorData.StepCounterData(
-            deviceId = data[0].toUByte().toString(),
-            steps = stepCount.toString()
+            deviceId = deviceId,
+            steps = adjustedStepCount.toString()
         )
     }
+
 
     // Region: Utility Functions
     private fun determineDeviceType(name: String?): String? = when {
