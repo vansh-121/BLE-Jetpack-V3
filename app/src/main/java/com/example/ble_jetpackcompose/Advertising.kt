@@ -2,13 +2,19 @@ package com.example.ble_jetpackcompose
 
 import android.app.Activity
 import android.content.Context
+import android.media.MediaPlayer
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
@@ -21,12 +27,14 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.IOException
@@ -34,6 +42,7 @@ import java.text.SimpleDateFormat
 import java.util.Date
 
 // Data class for translatable text in AdvertisingDataScreen
+// Update TranslatedAdvertisingText data class to include new fields
 data class TranslatedAdvertisingText(
     val advertisingDataTitle: String = "Advertising Data",
     val deviceNameLabel: String = "Device Name",
@@ -55,11 +64,12 @@ data class TranslatedAdvertisingText(
     val speed: String = "Speed",
     val distance: String = "Distance",
     val objectDetected: String = "Object Detected",
-    val steps: String,  // Added steps property,
-    val resetSteps: String = "RESET STEPS" // Add this new field
-    )
-
-@Composable
+    val steps: String = "Steps",
+    val resetSteps: String = "RESET STEPS",
+    val warningTitle: String = "Warning",
+    val warningMessage: String = "The %s has exceeded the threshold of %s!",
+    val dismissButton: String = "Dismiss"
+)@Composable
 fun AdvertisingDataScreen(
     deviceAddress: String,
     deviceName: String,
@@ -67,7 +77,8 @@ fun AdvertisingDataScreen(
     deviceId: String,
 ) {
     val context = LocalContext.current
-    val viewModel: BluetoothScanViewModel<Any?> = viewModel()
+    var mediaPlayer by remember { mutableStateOf(MediaPlayer.create(context, R.raw.beep)) }
+    val viewModel: BluetoothScanViewModel<Any?> = viewModel(factory = BluetoothScanViewModelFactory(context))
     val activity = context as Activity
 
     // Theme and Language state
@@ -78,6 +89,122 @@ fun AdvertisingDataScreen(
     val devices by viewModel.devices.collectAsState()
     val currentDevice by remember(devices, deviceAddress) {
         derivedStateOf { devices.find { it.address == deviceAddress } }
+    }
+
+    // Threshold and alarm state
+    var thresholdValue by remember { mutableStateOf("") }
+    var isAlarmActive by remember { mutableStateOf(false) }
+    var showAlertDialog by remember { mutableStateOf(false) }
+    var parameterType by remember { mutableStateOf("Temperature") }
+    var isThresholdSet by remember { mutableStateOf(false) }
+    val scope = rememberCoroutineScope()
+
+    // Blinking animation state
+    val isBlinking by remember(isAlarmActive) { derivedStateOf { isAlarmActive } }
+    val blinkAlpha by animateFloatAsState(
+        targetValue = if (isBlinking) 0.5f else 0f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 500),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "blinkAlpha"
+    )
+
+    // Threshold check for SHT40Data only
+    LaunchedEffect(currentDevice, thresholdValue, parameterType, isThresholdSet) {
+        delay(500L) // Debounce
+        if (isThresholdSet && currentDevice?.sensorData is BluetoothScanViewModel.SensorData.SHT40Data) {
+            val sht40Data = currentDevice!!.sensorData as BluetoothScanViewModel.SensorData.SHT40Data
+            val threshold = thresholdValue.toFloatOrNull()
+            if (threshold != null) {
+                val valueToCheck = when (parameterType) {
+                    "Temperature" -> sht40Data.temperature.toFloatOrNull()
+                    "Humidity" -> sht40Data.humidity.toFloatOrNull()
+                    else -> {
+                        isAlarmActive = false
+                        return@LaunchedEffect
+                    }
+                }
+                if (valueToCheck != null) {
+                    isAlarmActive = valueToCheck > threshold
+                    if (isAlarmActive) {
+                        showAlertDialog = true
+                        if (!mediaPlayer.isPlaying) {
+                            try {
+                                mediaPlayer.isLooping = true
+                                mediaPlayer.start()
+                            } catch (e: IllegalStateException) {
+                                mediaPlayer.reset()
+                                MediaPlayer.create(context, R.raw.beep)?.let {
+                                    mediaPlayer.release()
+                                    mediaPlayer = it
+                                    mediaPlayer.isLooping = true
+                                    mediaPlayer.start()
+                                }
+                            }
+                        }
+                    } else {
+                        try {
+                            mediaPlayer.stop()
+                            mediaPlayer.prepare()
+                        } catch (e: IllegalStateException) {
+                            mediaPlayer.reset()
+                            MediaPlayer.create(context, R.raw.beep)?.let {
+                                mediaPlayer.release()
+                                mediaPlayer = it
+                            }
+                        }
+                        showAlertDialog = false
+                    }
+                } else {
+                    isAlarmActive = false
+                    showAlertDialog = false
+                    try {
+                        mediaPlayer.stop()
+                        mediaPlayer.prepare()
+                    } catch (e: IllegalStateException) {
+                        mediaPlayer.reset()
+                        MediaPlayer.create(context, R.raw.beep)?.let {
+                            mediaPlayer.release()
+                            mediaPlayer = it
+                        }
+                    }
+                }
+            } else {
+                isAlarmActive = false
+                showAlertDialog = false
+                try {
+                    mediaPlayer.stop()
+                    mediaPlayer.prepare()
+                } catch (e: IllegalStateException) {
+                    mediaPlayer.reset()
+                    MediaPlayer.create(context, R.raw.beep)?.let {
+                        mediaPlayer.release()
+                        mediaPlayer = it
+                    }
+                }
+            }
+        } else {
+            isAlarmActive = false
+            showAlertDialog = false
+            try {
+                mediaPlayer.stop()
+                mediaPlayer.prepare()
+            } catch (e: IllegalStateException) {
+                mediaPlayer.reset()
+                MediaPlayer.create(context, R.raw.beep)?.let {
+                    mediaPlayer.release()
+                    mediaPlayer = it
+                }
+            }
+        }
+    }
+
+    // Clean up MediaPlayer on dispose
+    DisposableEffect(Unit) {
+        onDispose {
+            mediaPlayer.release()
+        }
     }
 
     // Translated text state
@@ -105,19 +232,23 @@ fun AdvertisingDataScreen(
                 distance = TranslationCache.get("Distance-$currentLanguage") ?: "Distance",
                 objectDetected = TranslationCache.get("Object Detected-$currentLanguage") ?: "Object Detected",
                 steps = TranslationCache.get("Steps-$currentLanguage") ?: "Steps",
-                resetSteps = TranslationCache.get("RESET STEPS-$currentLanguage") ?: "RESET STEPS"
+                resetSteps = TranslationCache.get("RESET STEPS-$currentLanguage") ?: "RESET STEPS",
+                warningTitle = TranslationCache.get("Warning-$currentLanguage") ?: "Warning",
+                warningMessage = TranslationCache.get("Threshold Exceeded-$currentLanguage") ?: "The %s has exceeded the threshold of %s!",
+                dismissButton = TranslationCache.get("Dismiss-$currentLanguage") ?: "Dismiss"
             )
         )
     }
 
-    // Preload translations on language change
+    // Preload translations
     LaunchedEffect(currentLanguage) {
         val translator = GoogleTranslationService()
         val textsToTranslate = listOf(
             "Advertising Data", "Device Name", "Node ID", "DOWNLOAD DATA", "EXPORTING DATA...",
             "Temperature", "Humidity", "X-Axis", "Y-Axis", "Z-Axis",
             "Nitrogen", "Phosphorus", "Potassium", "Moisture", "Electric Conductivity",
-            "pH", "Light Intensity", "Speed", "Distance", "Object Detected", "Steps", "RESET STEPS" // Add this new field
+            "pH", "Light Intensity", "Speed", "Distance", "Object Detected", "Steps", "RESET STEPS",
+            "Warning", "Threshold Exceeded", "Dismiss"
         )
         val translatedList = translator.translateBatch(textsToTranslate, currentLanguage)
         translatedText = TranslatedAdvertisingText(
@@ -142,50 +273,54 @@ fun AdvertisingDataScreen(
             distance = translatedList[18],
             objectDetected = translatedList[19],
             steps = translatedList[20],
-            resetSteps = translatedList[21] // Add this new field
+            resetSteps = translatedList[21],
+            warningTitle = translatedList[22],
+            warningMessage = translatedList[23],
+            dismissButton = translatedList[24]
         )
     }
 
-// Prepare display data with translated labels
+    // Restored display data for all sensor types
     val displayData by remember(currentDevice?.sensorData, translatedText) {
         derivedStateOf {
             when (val sensorData = currentDevice?.sensorData) {
                 is BluetoothScanViewModel.SensorData.SHT40Data -> listOf(
-                    translatedText.temperature to "${sensorData.temperature}°C",
-                    translatedText.humidity to "${sensorData.humidity}%"
-                )
-                is BluetoothScanViewModel.SensorData.LIS2DHData -> listOf(
-                    translatedText.xAxis to "${sensorData.x} m/s²",
-                    translatedText.yAxis to "${sensorData.y} m/s²",
-                    translatedText.zAxis to "${sensorData.z} m/s²"
-                )
-                is BluetoothScanViewModel.SensorData.SoilSensorData -> listOf(
-                    translatedText.nitrogen to "${sensorData.nitrogen} mg/kg",
-                    translatedText.phosphorus to "${sensorData.phosphorus} mg/kg",
-                    translatedText.potassium to "${sensorData.potassium} mg/kg",
-                    translatedText.moisture to "${sensorData.moisture}%",
-                    translatedText.temperature to "${sensorData.temperature}°C",
-                    translatedText.electricConductivity to "${sensorData.ec} mS/cm",
-                    translatedText.pH to sensorData.pH
+                    translatedText.temperature to "${sensorData.temperature.takeIf { it.isNotEmpty() } ?: "0"}°C",
+                    translatedText.humidity to "${sensorData.humidity.takeIf { it.isNotEmpty() } ?: "0"}%"
                 )
                 is BluetoothScanViewModel.SensorData.LuxData -> listOf(
                     translatedText.lightIntensity to "${sensorData.calculatedLux} LUX"
                 )
+                is BluetoothScanViewModel.SensorData.LIS2DHData -> listOf(
+                    translatedText.xAxis to "${sensorData.x.takeIf { it.isNotEmpty() } ?: "0"} m/s²",
+                    translatedText.yAxis to "${sensorData.y.takeIf { it.isNotEmpty() } ?: "0"} m/s²",
+                    translatedText.zAxis to "${sensorData.z.takeIf { it.isNotEmpty() } ?: "0"} m/s²"
+                )
+                is BluetoothScanViewModel.SensorData.SoilSensorData -> listOf(
+                    translatedText.nitrogen to "${sensorData.nitrogen.takeIf { it.isNotEmpty() } ?: "0"} mg/kg",
+                    translatedText.phosphorus to "${sensorData.phosphorus.takeIf { it.isNotEmpty() } ?: "0"} mg/kg",
+                    translatedText.potassium to "${sensorData.potassium.takeIf { it.isNotEmpty() } ?: "0"} mg/kg",
+                    translatedText.moisture to "${sensorData.moisture.takeIf { it.isNotEmpty() } ?: "0"}%",
+                    translatedText.temperature to "${sensorData.temperature.takeIf { it.isNotEmpty() } ?: "0"}°C",
+                    translatedText.electricConductivity to "${sensorData.ec.takeIf { it.isNotEmpty() } ?: "0"} mS/cm",
+                    translatedText.pH to "${sensorData.pH.takeIf { it.isNotEmpty() } ?: "0"}"
+                )
                 is BluetoothScanViewModel.SensorData.SDTData -> listOf(
-                    translatedText.speed to "${sensorData.speed} m/s",
-                    translatedText.distance to "${sensorData.distance} m"
+                    translatedText.speed to "${sensorData.speed.takeIf { it.isNotEmpty() } ?: "0"} m/s",
+                    translatedText.distance to "${sensorData.distance.takeIf { it.isNotEmpty() } ?: "0"} m"
                 )
                 is BluetoothScanViewModel.SensorData.ObjectDetectorData -> listOf(
-                    translatedText.objectDetected to sensorData.detection.toString()
+                    translatedText.objectDetected to if (sensorData.detection) "Yes" else "No"
                 )
                 is BluetoothScanViewModel.SensorData.StepCounterData -> listOf(
-                    translatedText.steps to "${sensorData.steps} steps"
+                    translatedText.steps to "${sensorData.steps.takeIf { it.isNotEmpty() } ?: "0"}"
                 )
-                null -> emptyList()
+                else -> emptyList()
             }
         }
     }
-    // Define theme-based colors
+
+    // Theme-based colors
     val backgroundGradient = if (isDarkMode) {
         Brush.verticalGradient(listOf(Color(0xFF1E1E1E), Color(0xFF424242)))
     } else {
@@ -197,15 +332,15 @@ fun AdvertisingDataScreen(
     } else {
         Brush.verticalGradient(listOf(Color(0xFF2A9EE5), Color(0xFF076FB8)))
     }
-    val textColor = if (isDarkMode) Color.White else Color.White // White works well on both gradients
+    val textColor = if (isDarkMode) Color.White else Color.White
     val buttonColor = if (isDarkMode) Color(0xFF64B5F6) else Color(0xFF0A74DA)
 
-    // Start scanning when the screen is composed
+    // Start scanning
     LaunchedEffect(Unit) {
         viewModel.startScan(activity)
     }
 
-    // Clean up when leaving the screen
+    // Clean up scanning
     DisposableEffect(navController) {
         onDispose {
             viewModel.stopScan()
@@ -220,6 +355,15 @@ fun AdvertisingDataScreen(
             .padding(horizontal = 16.dp, vertical = 8.dp),
         contentAlignment = Alignment.Center
     ) {
+        // Blinking red overlay
+        if (isAlarmActive) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.Red.copy(alpha = blinkAlpha))
+            )
+        }
+
         Column(
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.SpaceEvenly,
@@ -256,23 +400,31 @@ fun AdvertisingDataScreen(
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            if (currentDevice?.sensorData is BluetoothScanViewModel.SensorData.LuxData) {
-                LuxAnimationSection(
-                    luxData = currentDevice!!.sensorData as BluetoothScanViewModel.SensorData.LuxData,
-                    isDarkMode = isDarkMode
+            // Threshold input section for SHT40Data only
+            if (currentDevice?.sensorData is BluetoothScanViewModel.SensorData.SHT40Data) {
+                ThresholdInputSection(
+                    thresholdValue = thresholdValue,
+                    onThresholdChange = { thresholdValue = it },
+                    parameterType = parameterType,
+                    onParameterChange = { parameterType = it },
+                    isDarkMode = isDarkMode,
+                    onConfirmThreshold = {
+                        if (thresholdValue.toFloatOrNull() != null) {
+                            isThresholdSet = true
+                        }
+                    }
                 )
+                Spacer(modifier = Modifier.height(16.dp))
             }
 
-
-            Spacer(modifier = Modifier.height(16.dp))
-
+            // Reset Steps button for StepCounterData
             if (currentDevice?.sensorData is BluetoothScanViewModel.SensorData.StepCounterData) {
-                Spacer(modifier = Modifier.height(16.dp))
                 ResetStepsButton(
                     viewModel = viewModel,
                     deviceAddress = deviceAddress,
                     translatedText = translatedText
                 )
+                Spacer(modifier = Modifier.height(16.dp))
             }
 
             DownloadButton(
@@ -280,13 +432,135 @@ fun AdvertisingDataScreen(
                 deviceAddress = deviceAddress,
                 deviceName = deviceName,
                 deviceId = deviceId,
-                translatedText = translatedText,
-//                buttonColor = buttonColor,
-//                textColor = textColor
+                translatedText = translatedText
             )
+
+            // Alert Dialog for SHT40Data threshold
+            if (showAlertDialog) {
+                AlertDialog(
+                    onDismissRequest = {
+                        showAlertDialog = false
+                        isAlarmActive = false
+                        isThresholdSet = false
+                        try {
+                            mediaPlayer.stop()
+                            mediaPlayer.prepare()
+                        } catch (e: IllegalStateException) {
+                            mediaPlayer.reset()
+                            MediaPlayer.create(context, R.raw.beep)?.let {
+                                mediaPlayer.release()
+                                mediaPlayer = it
+                            }
+                        }
+                    },
+                    title = { Text(translatedText.warningTitle) },
+                    text = {
+                        Text(
+                            text = translatedText.warningMessage.format(
+                                parameterType,
+                                thresholdValue
+                            )
+                        )
+                    },
+                    confirmButton = {
+                        Button(
+                            onClick = {
+                                showAlertDialog = false
+                                isAlarmActive = false
+                                isThresholdSet = false
+                                try {
+                                    mediaPlayer.stop()
+                                    mediaPlayer.prepare()
+                                } catch (e: IllegalStateException) {
+                                    mediaPlayer.reset()
+                                    MediaPlayer.create(context, R.raw.beep)?.let {
+                                        mediaPlayer.release()
+                                        mediaPlayer = it
+                                    }
+                                }
+                            }
+                        ) {
+                            Text(translatedText.dismissButton)
+                        }
+                    }
+                )
+            }
         }
     }
 }
+
+@Composable
+private fun ThresholdInputSection(
+    thresholdValue: String,
+    onThresholdChange: (String) -> Unit,
+    parameterType: String,
+    onParameterChange: (String) -> Unit,
+    isDarkMode: Boolean,
+    onConfirmThreshold: () -> Unit // New callback for confirming threshold
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        // Parameter type toggle
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceEvenly
+        ) {
+            listOf("Temperature", "Humidity").forEach { type ->
+                Button(
+                    onClick = { onParameterChange(type) },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = if (parameterType == type) {
+                            if (isDarkMode) Color(0xFF64B5F6) else Color(0xFF0A74DA)
+                        } else {
+                            if (isDarkMode) Color(0xFF424242) else Color(0xFFADD8E6)
+                        }
+                    )
+                ) {
+                    Text(type)
+                }
+            }
+        }
+        Spacer(modifier = Modifier.height(8.dp))
+        // Threshold input field
+        TextField(
+            value = thresholdValue,
+            onValueChange = { onThresholdChange(it) },
+            label = { Text("Enter $parameterType Threshold") },
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+            modifier = Modifier.fillMaxWidth(),
+            isError = thresholdValue.isNotEmpty() && thresholdValue.toFloatOrNull() == null,
+            supportingText = {
+                if (thresholdValue.isNotEmpty() && thresholdValue.toFloatOrNull() == null) {
+                    Text("Please enter a valid number")
+                }
+            },
+            colors = TextFieldDefaults.colors(
+                focusedContainerColor = if (isDarkMode) Color(0xFF2A2A2A) else Color.White,
+                unfocusedContainerColor = if (isDarkMode) Color(0xFF2A2A2A) else Color.White,
+                focusedTextColor = if (isDarkMode) Color.White else Color.Black,
+                unfocusedTextColor = if (isDarkMode) Color.White else Color.Black,
+                errorContainerColor = if (isDarkMode) Color(0xFF2A2A2A) else Color.White
+            )
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        // Confirm button
+        Button(
+            onClick = onConfirmThreshold,
+            enabled = thresholdValue.isNotEmpty() && thresholdValue.toFloatOrNull() != null,
+            colors = ButtonDefaults.buttonColors(
+                containerColor = if (isDarkMode) Color(0xFF64B5F6) else Color(0xFF0A74DA)
+            )
+        ) {
+            Text("Confirm Threshold")
+        }
+    }
+}
+
+
 
 @Composable
 private fun ResetStepsButton(
