@@ -77,7 +77,7 @@ fun AdvertisingDataScreen(
     deviceId: String,
 ) {
     val context = LocalContext.current
-    var mediaPlayer by remember { mutableStateOf(MediaPlayer.create(context, R.raw.beep)) }
+    var mediaPlayer by remember { mutableStateOf(MediaPlayer.create(context, R.raw.nuclear_alarm)) }
     val viewModel: BluetoothScanViewModel<Any?> = viewModel(factory = BluetoothScanViewModelFactory(context))
     val activity = context as Activity
 
@@ -135,7 +135,7 @@ fun AdvertisingDataScreen(
                                 mediaPlayer.start()
                             } catch (e: IllegalStateException) {
                                 mediaPlayer.reset()
-                                MediaPlayer.create(context, R.raw.beep)?.let {
+                                MediaPlayer.create(context, R.raw.nuclear_alarm)?.let {
                                     mediaPlayer.release()
                                     mediaPlayer = it
                                     mediaPlayer.isLooping = true
@@ -149,7 +149,7 @@ fun AdvertisingDataScreen(
                             mediaPlayer.prepare()
                         } catch (e: IllegalStateException) {
                             mediaPlayer.reset()
-                            MediaPlayer.create(context, R.raw.beep)?.let {
+                            MediaPlayer.create(context, R.raw.nuclear_alarm)?.let {
                                 mediaPlayer.release()
                                 mediaPlayer = it
                             }
@@ -164,7 +164,7 @@ fun AdvertisingDataScreen(
                         mediaPlayer.prepare()
                     } catch (e: IllegalStateException) {
                         mediaPlayer.reset()
-                        MediaPlayer.create(context, R.raw.beep)?.let {
+                        MediaPlayer.create(context, R.raw.nuclear_alarm)?.let {
                             mediaPlayer.release()
                             mediaPlayer = it
                         }
@@ -178,7 +178,7 @@ fun AdvertisingDataScreen(
                     mediaPlayer.prepare()
                 } catch (e: IllegalStateException) {
                     mediaPlayer.reset()
-                    MediaPlayer.create(context, R.raw.beep)?.let {
+                    MediaPlayer.create(context, R.raw.nuclear_alarm)?.let {
                         mediaPlayer.release()
                         mediaPlayer = it
                     }
@@ -192,7 +192,7 @@ fun AdvertisingDataScreen(
                 mediaPlayer.prepare()
             } catch (e: IllegalStateException) {
                 mediaPlayer.reset()
-                MediaPlayer.create(context, R.raw.beep)?.let {
+                MediaPlayer.create(context, R.raw.nuclear_alarm)?.let {
                     mediaPlayer.release()
                     mediaPlayer = it
                 }
@@ -447,7 +447,7 @@ fun AdvertisingDataScreen(
                             mediaPlayer.prepare()
                         } catch (e: IllegalStateException) {
                             mediaPlayer.reset()
-                            MediaPlayer.create(context, R.raw.beep)?.let {
+                            MediaPlayer.create(context, R.raw.nuclear_alarm)?.let {
                                 mediaPlayer.release()
                                 mediaPlayer = it
                             }
@@ -473,7 +473,7 @@ fun AdvertisingDataScreen(
                                     mediaPlayer.prepare()
                                 } catch (e: IllegalStateException) {
                                     mediaPlayer.reset()
-                                    MediaPlayer.create(context, R.raw.beep)?.let {
+                                    MediaPlayer.create(context, R.raw.nuclear_alarm)?.let {
                                         mediaPlayer.release()
                                         mediaPlayer = it
                                     }

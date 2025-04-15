@@ -21,11 +21,12 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2a8d1c62-c65c-4014-bffc-df98cbe8e759" name="Changes" comment="Reset functionality for Step counter">
+    <list default="true" id="2a8d1c62-c65c-4014-bffc-df98cbe8e759" name="Changes" comment="Trigger alarm set">
       <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/file-system.probe" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/file-system.probe" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/release/app-release.apk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/ble_jetpackcompose/Advertising.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/ble_jetpackcompose/Advertising.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -147,7 +148,7 @@
     &quot;git-widget-placeholder&quot;: &quot;master&quot;,
     &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/DELL/AndroidStudioProjects/BLEJetpackCompose/app/src/main/res/drawable&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/DELL/AndroidStudioProjects/BLEJetpackCompose/app/src/main/res/raw&quot;,
     &quot;project.structure.last.edited&quot;: &quot;Dependencies&quot;,
     &quot;project.structure.proportion&quot;: &quot;0.17&quot;,
     &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
@@ -162,9 +163,9 @@
 }</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\src\main\res\raw" />
       <recent name="C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\src\main\res\drawable" />
       <recent name="C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app" />
-      <recent name="C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\src\main\res\raw" />
       <recent name="C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\src\main\java\com\example\ble_jetpackcompose" />
       <recent name="C:\Users\DELL\AndroidStudioProjects\BLEJetpackCompose\app\src\main\res\font" />
     </key>
@@ -257,14 +258,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1737008090736</updated>
-    </task>
-    <task id="LOCAL-00011" summary="Automatic Scan is Live Now (which was a issue previously)">
-      <option name="closed" value="true" />
-      <created>1738754902787</created>
-      <option name="number" value="00011" />
-      <option name="presentableId" value="LOCAL-00011" />
-      <option name="project" value="LOCAL" />
-      <updated>1738754902787</updated>
     </task>
     <task id="LOCAL-00012" summary="Automatic Scan is Live Now (which was a issue previously) with Permission Checks Correction.">
       <option name="closed" value="true" />
@@ -650,7 +643,15 @@
       <option name="project" value="LOCAL" />
       <updated>1744197985973</updated>
     </task>
-    <option name="localTasksCounter" value="60" />
+    <task id="LOCAL-00060" summary="Trigger alarm set">
+      <option name="closed" value="true" />
+      <created>1744458620458</created>
+      <option name="number" value="00060" />
+      <option name="presentableId" value="LOCAL-00060" />
+      <option name="project" value="LOCAL" />
+      <updated>1744458620458</updated>
+    </task>
+    <option name="localTasksCounter" value="61" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -675,7 +676,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Black &amp; White to Colorful Functionality" />
     <MESSAGE value="Z Index Issue resolved" />
     <MESSAGE value="Games Change &amp; Issue Resolved" />
     <MESSAGE value="Changes made in Hunt the heroes" />
@@ -700,19 +700,20 @@
     <MESSAGE value="Account Image Added" />
     <MESSAGE value="Added &quot;Step Counter&quot; Sensor" />
     <MESSAGE value="Reset functionality for Step counter" />
-    <option name="LAST_COMMIT_MESSAGE" value="Reset functionality for Step counter" />
+    <MESSAGE value="Trigger alarm set" />
+    <option name="LAST_COMMIT_MESSAGE" value="Trigger alarm set" />
   </component>
   <component name="play_dynamic_filters_status">
     <option name="appIdToCheckInfo">
       <map>
         <entry key="com.example.ble_jetpackcompose">
           <value>
-            <CheckInfo lastCheckTimestamp="1744025716412" />
+            <CheckInfo lastCheckTimestamp="1744697007446" />
           </value>
         </entry>
         <entry key="com.example.ble_jetpackcompose.test">
           <value>
-            <CheckInfo lastCheckTimestamp="1744025716412" />
+            <CheckInfo lastCheckTimestamp="1744697007927" />
           </value>
         </entry>
       </map>
