@@ -109,10 +109,15 @@ class BluetoothScanViewModel<T>(private val context: Context) : ViewModel() {
             val detection: Boolean
         ) : SensorData()
 
-        // New Step Counter data class
         data class StepCounterData(
             override val deviceId: String,
             val steps: String
+        ) : SensorData()
+
+        // New Ammonia Sensor data class
+        data class AmmoniaSensorData(
+            override val deviceId: String,
+            val ammonia: String // In ppm
         ) : SensorData()
     }
 
@@ -135,7 +140,7 @@ class BluetoothScanViewModel<T>(private val context: Context) : ViewModel() {
                 delay(SCAN_PERIOD) // 10 seconds
                 stopScan()
                 _isScanning.value = false
-                delay(SCAN_INTERVAL) // 30 seconds
+                delay(SCAN_INTERVAL) // 30 seconds between scans
             }
         }
     }
@@ -189,12 +194,11 @@ class BluetoothScanViewModel<T>(private val context: Context) : ViewModel() {
 
                         val deviceType = determineDeviceType(deviceName)
 
-                        // For step counter, we need to pass the device address
-                        val sensorData = if (deviceType == "Step Counter") {
-                            // Before parsing, make sure to save the address for offset tracking
-                            parseStepCounterData(result.scanRecord?.manufacturerSpecificData?.valueAt(0), deviceAddress)
-                        } else {
-                            parseAdvertisingData(result, deviceType)
+                        // For step counter and ammonia sensor, we need to pass the device address
+                        val sensorData = when (deviceType) {
+                            "Step Counter" -> parseStepCounterData(result.scanRecord?.manufacturerSpecificData?.valueAt(0), deviceAddress)
+                            "Ammonia Sensor" -> parseAmmoniaSensorData(result.scanRecord?.manufacturerSpecificData?.valueAt(0), deviceAddress)
+                            else -> parseAdvertisingData(result, deviceType)
                         }
 
                         val bluetoothDevice = BluetoothDevice(
@@ -261,14 +265,13 @@ class BluetoothScanViewModel<T>(private val context: Context) : ViewModel() {
     }
 
     // Region: Data Parsing
-    // Modified parseAdvertisingData to handle the deviceAddress parameter for step counters
     fun parseAdvertisingData(result: ScanResult, deviceType: String?): SensorData? {
         val manufacturerData = result.scanRecord?.manufacturerSpecificData ?: return null
         if (manufacturerData.size() == 0) return null
 
         val data = manufacturerData.valueAt(0) ?: return null
 
-        // Get the device address for step counter devices
+        // Get the device address for step counter and ammonia sensor devices
         val deviceAddress = result.device?.address ?: return null
 
         return when (deviceType) {
@@ -278,7 +281,8 @@ class BluetoothScanViewModel<T>(private val context: Context) : ViewModel() {
             "Soil Sensor" -> parseSoilSensorData(data)
             "SPEED_DISTANCE" -> parseSDTData(data)
             "Metal Detector" -> parseMetalDetectorData(data)
-            "Step Counter" -> parseStepCounterData(data, deviceAddress)  // Pass the deviceAddress here
+            "Step Counter" -> parseStepCounterData(data, deviceAddress)
+            "Ammonia Sensor" -> parseAmmoniaSensorData(data, deviceAddress)
             else -> null
         }
     }
@@ -291,26 +295,19 @@ class BluetoothScanViewModel<T>(private val context: Context) : ViewModel() {
             humidity = "${data[3].toUByte()}.${data[4].toUByte()}"
         )
     }
+
     private fun parseLuxSensorData(data: ByteArray): SensorData? {
-        // Check if we have enough data
-        if (data.size < 11) return null  // Ensure we have at least 11 bytes
-
+        if (data.size < 11) return null
         val deviceId = data[0].toUByte().toString()
-
-        // Use toUByte() to get unsigned values (0-255) instead of potentially negative values
         val digits = data.sliceArray(5..10).map { it.toUByte().toInt() }
-
-        // Join the digits as a string
         val luxValueStr = digits.joinToString("") { it.toString() }.trimStart('0')
-
-        // Parse as float, with a default of 0f if empty
         val luxValue = if (luxValueStr.isEmpty()) 0f else luxValueStr.toFloat()
-
         return SensorData.LuxData(
             deviceId = deviceId,
             calculatedLux = luxValue
         )
     }
+
     private fun parseLIS2DHData(data: ByteArray): SensorData? {
         if (data.size < 7) return null
         return SensorData.LIS2DHData(
@@ -335,41 +332,6 @@ class BluetoothScanViewModel<T>(private val context: Context) : ViewModel() {
         )
     }
 
-    fun resetStepCounter(deviceAddress: String) {
-        viewModelScope.launch {
-            val devices = _devices.value
-            val device = devices.find { it.address == deviceAddress }
-
-            if (device != null && device.sensorData is SensorData.StepCounterData) {
-                // Get the current raw step count from the device
-                val currentSteps = (device.sensorData as SensorData.StepCounterData).steps.toIntOrNull() ?: 0
-
-                // Calculate the current raw value from the device
-                val currentOffset = stepCounterOffsets[deviceAddress] ?: 0
-                val rawStepCount = currentSteps + currentOffset
-
-                // Set the new offset to the current raw value
-                // This will make the adjusted count become zero
-                stepCounterOffsets[deviceAddress] = rawStepCount
-
-                // Update the UI immediately to show 0
-                val updatedDevice = device.copy(
-                    sensorData = SensorData.StepCounterData(
-                        deviceId = device.deviceId,
-                        steps = "0"
-                    )
-                )
-
-                // Update the devices list
-                _devices.update { currentDevices ->
-                    currentDevices.map {
-                        if (it.address == deviceAddress) updatedDevice else it
-                    }
-                }
-            }
-        }
-    }
-
     private fun parseSDTData(data: ByteArray): SensorData? {
         if (data.size < 6) return null
         return SensorData.SDTData(
@@ -387,25 +349,55 @@ class BluetoothScanViewModel<T>(private val context: Context) : ViewModel() {
         )
     }
 
-    // New parsing function for step counter data
-    // Modified step counter parser that handles offsets
     private fun parseStepCounterData(data: ByteArray?, deviceAddress: String): SensorData? {
         if (data == null || data.size < 5) return null
-
         val deviceId = data[0].toUByte().toString()
-        // Get raw step count from the device
         val rawStepCount = (data[3].toUByte().toInt() shl 8) or data[4].toUByte().toInt()
-
-        // Apply offset to show adjusted count
         val offset = stepCounterOffsets[deviceAddress] ?: 0
         val adjustedStepCount = (rawStepCount - offset).coerceAtLeast(0)
-
         return SensorData.StepCounterData(
             deviceId = deviceId,
             steps = adjustedStepCount.toString()
         )
     }
 
+    private fun parseAmmoniaSensorData(data: ByteArray?, deviceAddress: String): SensorData? {
+        if (data == null || data.size < 5) return null
+        val deviceId = data[0].toUByte().toString()
+        // Parse SHT40 data and convert humidity to ammonia ppm (0-300 ppm)
+        val humidity = "${data[3].toUByte()}.${data[4].toUByte()}".toFloatOrNull() ?: 0f
+        // Example conversion: Map humidity (0-100%) to ammonia (0-300 ppm)
+        val ammoniaPpm = (humidity * 3).coerceIn(0f, 300f) // Simplified linear mapping
+        return SensorData.AmmoniaSensorData(
+            deviceId = deviceId,
+            ammonia = String.format("%.1f", ammoniaPpm)
+        )
+    }
+
+    fun resetStepCounter(deviceAddress: String) {
+        viewModelScope.launch {
+            val devices = _devices.value
+            val device = devices.find { it.address == deviceAddress }
+
+            if (device != null && device.sensorData is SensorData.StepCounterData) {
+                val currentSteps = (device.sensorData as SensorData.StepCounterData).steps.toIntOrNull() ?: 0
+                val currentOffset = stepCounterOffsets[deviceAddress] ?: 0
+                val rawStepCount = currentSteps + currentOffset
+                stepCounterOffsets[deviceAddress] = rawStepCount
+                val updatedDevice = device.copy(
+                    sensorData = SensorData.StepCounterData(
+                        deviceId = device.deviceId,
+                        steps = "0"
+                    )
+                )
+                _devices.update { currentDevices ->
+                    currentDevices.map {
+                        if (it.address == deviceAddress) updatedDevice else it
+                    }
+                }
+            }
+        }
+    }
 
     // Region: Utility Functions
     private fun determineDeviceType(name: String?): String? = when {
@@ -415,7 +407,8 @@ class BluetoothScanViewModel<T>(private val context: Context) : ViewModel() {
         name?.contains("SOIL", ignoreCase = true) == true -> "Soil Sensor"
         name?.contains("Speed", ignoreCase = true) == true -> "SPEED_DISTANCE"
         name?.contains("Object", ignoreCase = true) == true -> "Metal Detector"
-        name?.contains("Step", ignoreCase = true) == true -> "Step Counter"  // Add detection for step counter devices
+        name?.contains("Step", ignoreCase = true) == true -> "Step Counter"
+        name?.contains("Ammonia_sensor", ignoreCase = true) == true -> "Ammonia Sensor"
         else -> null
     }
 
@@ -440,7 +433,6 @@ class BluetoothScanViewModel<T>(private val context: Context) : ViewModel() {
             }
         }
     }
-
 
     fun clearDevices() {
         _devices.value = emptyList()

@@ -21,12 +21,13 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2a8d1c62-c65c-4014-bffc-df98cbe8e759" name="Changes" comment="Trigger alarm set">
+    <list default="true" id="2a8d1c62-c65c-4014-bffc-df98cbe8e759" name="Changes" comment="Nuclear Trigger alarm set">
       <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/file-system.probe" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/file-system.probe" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/release/app-release.apk" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/ble_jetpackcompose/Advertising.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/ble_jetpackcompose/Advertising.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/ble_jetpackcompose/BluetoothScanView.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/ble_jetpackcompose/BluetoothScanView.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/ble_jetpackcompose/HomeScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/ble_jetpackcompose/HomeScreen.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -258,14 +259,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1737008090736</updated>
-    </task>
-    <task id="LOCAL-00012" summary="Automatic Scan is Live Now (which was a issue previously) with Permission Checks Correction.">
-      <option name="closed" value="true" />
-      <created>1738755316910</created>
-      <option name="number" value="00012" />
-      <option name="presentableId" value="LOCAL-00012" />
-      <option name="project" value="LOCAL" />
-      <updated>1738755316910</updated>
     </task>
     <task id="LOCAL-00013" summary="Scanning Functionality Performance Improvement">
       <option name="closed" value="true" />
@@ -651,7 +644,15 @@
       <option name="project" value="LOCAL" />
       <updated>1744458620458</updated>
     </task>
-    <option name="localTasksCounter" value="61" />
+    <task id="LOCAL-00061" summary="Nuclear Trigger alarm set">
+      <option name="closed" value="true" />
+      <created>1744719710145</created>
+      <option name="number" value="00061" />
+      <option name="presentableId" value="LOCAL-00061" />
+      <option name="project" value="LOCAL" />
+      <updated>1744719710145</updated>
+    </task>
+    <option name="localTasksCounter" value="62" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -676,7 +677,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Z Index Issue resolved" />
     <MESSAGE value="Games Change &amp; Issue Resolved" />
     <MESSAGE value="Changes made in Hunt the heroes" />
     <MESSAGE value="Animation Optimized" />
@@ -701,7 +701,8 @@
     <MESSAGE value="Added &quot;Step Counter&quot; Sensor" />
     <MESSAGE value="Reset functionality for Step counter" />
     <MESSAGE value="Trigger alarm set" />
-    <option name="LAST_COMMIT_MESSAGE" value="Trigger alarm set" />
+    <MESSAGE value="Nuclear Trigger alarm set" />
+    <option name="LAST_COMMIT_MESSAGE" value="Nuclear Trigger alarm set" />
   </component>
   <component name="play_dynamic_filters_status">
     <option name="appIdToCheckInfo">

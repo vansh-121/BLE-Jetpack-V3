@@ -86,7 +86,7 @@ fun MainScreen(
 
     val isPermissionGranted = remember { mutableStateOf(checkBluetoothPermissions(context)) }
     var expanded by remember { mutableStateOf(false) }
-    val sensorTypes = listOf("SHT40", "LIS2DH", "Soil Sensor", "Weather", "LUX", "Speed Distance", "Metal Detector", "Step Counter")
+    val sensorTypes = listOf("SHT40", "LIS2DH", "Soil Sensor", "Weather", "LUX", "Speed Distance", "Metal Detector", "Step Counter", "Ammonia Sensor")
     var selectedSensor by remember { mutableStateOf(sensorTypes[0]) }
     var showAllDevices by remember { mutableStateOf(false) }
 
@@ -541,6 +541,8 @@ fun BluetoothDeviceItem(
                                 "Metal Detected: ${if (sensorData.detection) "Yes" else "No"}"
                             sensorData is BluetoothScanViewModel.SensorData.SDTData ->
                                 "Speed: ${sensorData.speed}m/s, Distance: ${sensorData.distance}m"
+                            sensorData is BluetoothScanViewModel.SensorData.AmmoniaSensorData ->
+                                "Ammonia: ${sensorData.ammonia}ppm"
 
                             else -> "No data"
                         }
@@ -563,6 +565,9 @@ fun BluetoothDeviceItem(
 
                         selectedSensor == "Speed Distance" && sensorData is BluetoothScanViewModel.SensorData.SDTData ->
                             "Speed: ${sensorData.speed}m/s, Distance: ${sensorData.distance}m"
+
+                        selectedSensor == "Ammonia Sensor" && sensorData is BluetoothScanViewModel.SensorData.AmmoniaSensorData ->
+                            "Ammonia: ${sensorData.ammonia}"
 
                         else -> "Incompatible sensor type"
                     },

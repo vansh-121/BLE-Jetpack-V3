@@ -41,8 +41,7 @@ import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.Date
 
-// Data class for translatable text in AdvertisingDataScreen
-// Update TranslatedAdvertisingText data class to include new fields
+// Update TranslatedAdvertisingText to include ammonia
 data class TranslatedAdvertisingText(
     val advertisingDataTitle: String = "Advertising Data",
     val deviceNameLabel: String = "Device Name",
@@ -65,11 +64,14 @@ data class TranslatedAdvertisingText(
     val distance: String = "Distance",
     val objectDetected: String = "Object Detected",
     val steps: String = "Steps",
+    val ammonia: String = "Ammonia", // New field
     val resetSteps: String = "RESET STEPS",
     val warningTitle: String = "Warning",
     val warningMessage: String = "The %s has exceeded the threshold of %s!",
     val dismissButton: String = "Dismiss"
-)@Composable
+)
+
+@Composable
 fun AdvertisingDataScreen(
     deviceAddress: String,
     deviceName: String,
@@ -110,55 +112,54 @@ fun AdvertisingDataScreen(
         label = "blinkAlpha"
     )
 
-    // Threshold check for SHT40Data only
+    // Threshold check for SHT40Data and AmmoniaSensorData
     LaunchedEffect(currentDevice, thresholdValue, parameterType, isThresholdSet) {
         delay(500L) // Debounce
-        if (isThresholdSet && currentDevice?.sensorData is BluetoothScanViewModel.SensorData.SHT40Data) {
-            val sht40Data = currentDevice!!.sensorData as BluetoothScanViewModel.SensorData.SHT40Data
+        if (isThresholdSet) {
             val threshold = thresholdValue.toFloatOrNull()
             if (threshold != null) {
-                val valueToCheck = when (parameterType) {
-                    "Temperature" -> sht40Data.temperature.toFloatOrNull()
-                    "Humidity" -> sht40Data.humidity.toFloatOrNull()
+                when (val sensorData = currentDevice?.sensorData) {
+                    is BluetoothScanViewModel.SensorData.SHT40Data -> {
+                        val valueToCheck = when (parameterType) {
+                            "Temperature" -> sensorData.temperature.toFloatOrNull()
+                            "Humidity" -> sensorData.humidity.toFloatOrNull()
+                            else -> null
+                        }
+                        if (valueToCheck != null) {
+                            isAlarmActive = valueToCheck > threshold
+                        } else {
+                            isAlarmActive = false
+                        }
+                    }
+                    is BluetoothScanViewModel.SensorData.AmmoniaSensorData -> {
+                        if (parameterType == "Ammonia") {
+                            val ammoniaValue = sensorData.ammonia.toFloatOrNull()
+                            isAlarmActive = ammoniaValue != null && ammoniaValue > threshold
+                        } else {
+                            isAlarmActive = false
+                        }
+                    }
                     else -> {
                         isAlarmActive = false
-                        return@LaunchedEffect
                     }
                 }
-                if (valueToCheck != null) {
-                    isAlarmActive = valueToCheck > threshold
-                    if (isAlarmActive) {
-                        showAlertDialog = true
-                        if (!mediaPlayer.isPlaying) {
-                            try {
-                                mediaPlayer.isLooping = true
-                                mediaPlayer.start()
-                            } catch (e: IllegalStateException) {
-                                mediaPlayer.reset()
-                                MediaPlayer.create(context, R.raw.nuclear_alarm)?.let {
-                                    mediaPlayer.release()
-                                    mediaPlayer = it
-                                    mediaPlayer.isLooping = true
-                                    mediaPlayer.start()
-                                }
-                            }
-                        }
-                    } else {
+                if (isAlarmActive) {
+                    showAlertDialog = true
+                    if (!mediaPlayer.isPlaying) {
                         try {
-                            mediaPlayer.stop()
-                            mediaPlayer.prepare()
+                            mediaPlayer.isLooping = true
+                            mediaPlayer.start()
                         } catch (e: IllegalStateException) {
                             mediaPlayer.reset()
                             MediaPlayer.create(context, R.raw.nuclear_alarm)?.let {
                                 mediaPlayer.release()
                                 mediaPlayer = it
+                                mediaPlayer.isLooping = true
+                                mediaPlayer.start()
                             }
                         }
-                        showAlertDialog = false
                     }
                 } else {
-                    isAlarmActive = false
-                    showAlertDialog = false
                     try {
                         mediaPlayer.stop()
                         mediaPlayer.prepare()
@@ -169,6 +170,7 @@ fun AdvertisingDataScreen(
                             mediaPlayer = it
                         }
                     }
+                    showAlertDialog = false
                 }
             } else {
                 isAlarmActive = false
@@ -232,6 +234,7 @@ fun AdvertisingDataScreen(
                 distance = TranslationCache.get("Distance-$currentLanguage") ?: "Distance",
                 objectDetected = TranslationCache.get("Object Detected-$currentLanguage") ?: "Object Detected",
                 steps = TranslationCache.get("Steps-$currentLanguage") ?: "Steps",
+                ammonia = TranslationCache.get("Ammonia-$currentLanguage") ?: "Ammonia",
                 resetSteps = TranslationCache.get("RESET STEPS-$currentLanguage") ?: "RESET STEPS",
                 warningTitle = TranslationCache.get("Warning-$currentLanguage") ?: "Warning",
                 warningMessage = TranslationCache.get("Threshold Exceeded-$currentLanguage") ?: "The %s has exceeded the threshold of %s!",
@@ -247,7 +250,7 @@ fun AdvertisingDataScreen(
             "Advertising Data", "Device Name", "Node ID", "DOWNLOAD DATA", "EXPORTING DATA...",
             "Temperature", "Humidity", "X-Axis", "Y-Axis", "Z-Axis",
             "Nitrogen", "Phosphorus", "Potassium", "Moisture", "Electric Conductivity",
-            "pH", "Light Intensity", "Speed", "Distance", "Object Detected", "Steps", "RESET STEPS",
+            "pH", "Light Intensity", "Speed", "Distance", "Object Detected", "Steps", "Ammonia", "RESET STEPS",
             "Warning", "Threshold Exceeded", "Dismiss"
         )
         val translatedList = translator.translateBatch(textsToTranslate, currentLanguage)
@@ -273,14 +276,15 @@ fun AdvertisingDataScreen(
             distance = translatedList[18],
             objectDetected = translatedList[19],
             steps = translatedList[20],
-            resetSteps = translatedList[21],
-            warningTitle = translatedList[22],
-            warningMessage = translatedList[23],
-            dismissButton = translatedList[24]
+            ammonia = translatedList[21],
+            resetSteps = translatedList[22],
+            warningTitle = translatedList[23],
+            warningMessage = translatedList[24],
+            dismissButton = translatedList[25]
         )
     }
 
-    // Restored display data for all sensor types
+    // Display data for all sensor types
     val displayData by remember(currentDevice?.sensorData, translatedText) {
         derivedStateOf {
             when (val sensorData = currentDevice?.sensorData) {
@@ -314,6 +318,9 @@ fun AdvertisingDataScreen(
                 )
                 is BluetoothScanViewModel.SensorData.StepCounterData -> listOf(
                     translatedText.steps to "${sensorData.steps.takeIf { it.isNotEmpty() } ?: "0"}"
+                )
+                is BluetoothScanViewModel.SensorData.AmmoniaSensorData -> listOf(
+                    translatedText.ammonia to "${sensorData.ammonia.takeIf { it.isNotEmpty() } ?: "0"} ppm"
                 )
                 else -> emptyList()
             }
@@ -400,14 +407,16 @@ fun AdvertisingDataScreen(
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            // Threshold input section for SHT40Data only
-            if (currentDevice?.sensorData is BluetoothScanViewModel.SensorData.SHT40Data) {
+            // Threshold input section for SHT40Data and AmmoniaSensorData
+            if (currentDevice?.sensorData is BluetoothScanViewModel.SensorData.SHT40Data ||
+                currentDevice?.sensorData is BluetoothScanViewModel.SensorData.AmmoniaSensorData) {
                 ThresholdInputSection(
                     thresholdValue = thresholdValue,
                     onThresholdChange = { thresholdValue = it },
                     parameterType = parameterType,
                     onParameterChange = { parameterType = it },
                     isDarkMode = isDarkMode,
+                    sensorData = currentDevice?.sensorData,
                     onConfirmThreshold = {
                         if (thresholdValue.toFloatOrNull() != null) {
                             isThresholdSet = true
@@ -435,7 +444,7 @@ fun AdvertisingDataScreen(
                 translatedText = translatedText
             )
 
-            // Alert Dialog for SHT40Data threshold
+            // Alert Dialog for threshold
             if (showAlertDialog) {
                 AlertDialog(
                     onDismissRequest = {
@@ -496,7 +505,8 @@ private fun ThresholdInputSection(
     parameterType: String,
     onParameterChange: (String) -> Unit,
     isDarkMode: Boolean,
-    onConfirmThreshold: () -> Unit // New callback for confirming threshold
+    sensorData: BluetoothScanViewModel.SensorData?,
+    onConfirmThreshold: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -504,12 +514,17 @@ private fun ThresholdInputSection(
             .padding(horizontal = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Parameter type toggle
+        // Parameter type toggle based on sensor data
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            listOf("Temperature", "Humidity").forEach { type ->
+            val parameters = when (sensorData) {
+                is BluetoothScanViewModel.SensorData.SHT40Data -> listOf("Temperature", "Humidity")
+                is BluetoothScanViewModel.SensorData.AmmoniaSensorData -> listOf("Ammonia")
+                else -> emptyList()
+            }
+            parameters.forEach { type ->
                 Button(
                     onClick = { onParameterChange(type) },
                     colors = ButtonDefaults.buttonColors(
@@ -560,8 +575,6 @@ private fun ThresholdInputSection(
     }
 }
 
-
-
 @Composable
 private fun ResetStepsButton(
     viewModel: BluetoothScanViewModel<Any?>,
@@ -569,9 +582,7 @@ private fun ResetStepsButton(
     translatedText: TranslatedAdvertisingText
 ) {
     val isDarkMode by ThemeManager.isDarkMode.collectAsState()
-
-    // Define button colors based on theme
-    val buttonBackgroundColor = if (isDarkMode) Color(0xFFFF5252) else Color(0xFFE53935)  // Red color for reset
+    val buttonBackgroundColor = if (isDarkMode) Color(0xFFFF5252) else Color(0xFFE53935)
     val buttonTextColor = Color.White
 
     Button(
@@ -694,7 +705,9 @@ private fun InfoCard(
             )
         }
     }
-}@Composable
+}
+
+@Composable
 private fun DownloadButton(
     viewModel: BluetoothScanViewModel<Any?>,
     deviceAddress: String,
@@ -717,7 +730,6 @@ private fun DownloadButton(
         }
     }
 
-    // Define button colors based on theme
     val buttonBackgroundColor = if (isDarkMode) Color(0xFFBB86FC) else Color(0xFF0A74DA)
     val buttonTextColor = if (isDarkMode) Color.Black else Color.White
 
@@ -752,7 +764,6 @@ private fun exportDataToCSV(
     deviceId: String,
     onComplete: () -> Unit
 ) {
-    // Same as original, no translation needed here as it’s CSV data
     kotlinx.coroutines.MainScope().launch {
         withContext(Dispatchers.IO) {
             try {
@@ -781,6 +792,8 @@ private fun exportDataToCSV(
                         is BluetoothScanViewModel.SensorData.LuxData -> headerBuilder.append("Light Intensity (LUX)")
                         is BluetoothScanViewModel.SensorData.SDTData -> headerBuilder.append("Speed (m/s),Distance (m)")
                         is BluetoothScanViewModel.SensorData.ObjectDetectorData -> headerBuilder.append("Object Detected")
+                        is BluetoothScanViewModel.SensorData.StepCounterData -> headerBuilder.append("Steps")
+                        is BluetoothScanViewModel.SensorData.AmmoniaSensorData -> headerBuilder.append("Ammonia (ppm)")
                         else -> {}
                     }
                     headerBuilder.append("\n")
@@ -798,6 +811,7 @@ private fun exportDataToCSV(
                             is BluetoothScanViewModel.SensorData.SDTData -> dataBuilder.append("${sensorData.speed},${sensorData.distance}")
                             is BluetoothScanViewModel.SensorData.ObjectDetectorData -> dataBuilder.append("${sensorData.detection}")
                             is BluetoothScanViewModel.SensorData.StepCounterData -> dataBuilder.append("${sensorData.steps}")
+                            is BluetoothScanViewModel.SensorData.AmmoniaSensorData -> dataBuilder.append("${sensorData.ammonia}")
                             null -> {}
                         }
                         dataBuilder.append("\n")
@@ -892,6 +906,7 @@ fun SunWithRayAnimation(
         )
     }
 }
+
 @Composable
 private fun ResponsiveDataCards(
     data: List<Pair<String, String>>,
@@ -901,7 +916,6 @@ private fun ResponsiveDataCards(
 ) {
     when (data.size) {
         0 -> {
-            // Handle empty data case
             Box(modifier = Modifier.height(100.dp))
         }
         1 -> {
@@ -939,7 +953,6 @@ private fun ResponsiveDataCards(
             }
         }
         else -> {
-            // For 3+ items, use a more compact layout
             Column(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
@@ -960,7 +973,6 @@ private fun ResponsiveDataCards(
                                 textColor = textColor
                             )
                         }
-                        // If we have odd number of items, add a spacer for balance
                         if (rowItems.size == 1) {
                             Spacer(modifier = Modifier.width(141.dp))
                         }
@@ -970,6 +982,7 @@ private fun ResponsiveDataCards(
         }
     }
 }
+
 @Composable
 fun DataCard(
     label: String,
