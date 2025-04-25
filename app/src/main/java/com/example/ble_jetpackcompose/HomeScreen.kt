@@ -14,11 +14,14 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -168,7 +171,9 @@ fun MainScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(backgroundColor)
-    ) {
+            // Apply system bars padding to avoid overlap with status and navigation bars
+            .padding(WindowInsets.systemBars.asPaddingValues())
+    ){
         Column(modifier = Modifier.fillMaxSize()) {
             androidx.compose.material.TopAppBar(
                 backgroundColor = cardBackgroundColor,
@@ -542,9 +547,8 @@ fun BluetoothDeviceItem(
                             sensorData is BluetoothScanViewModel.SensorData.SDTData ->
                                 "Speed: ${sensorData.speed}m/s, Distance: ${sensorData.distance}m"
                             sensorData is BluetoothScanViewModel.SensorData.AmmoniaSensorData ->
-                                "Ammonia: ${sensorData.ammonia}ppm"
-
-                            else -> "No data"
+                                "Ammonia: ${sensorData.ammonia} ppm" // Added space before ppm
+                            else -> "No data available"
                         }
 
                         // Show specific sensor data based on selection
@@ -562,19 +566,20 @@ fun BluetoothDeviceItem(
                             "Steps: ${sensorData.steps}"
                         selectedSensor == "LUX" && sensorData is BluetoothScanViewModel.SensorData.LuxData ->
                             "Light: ${sensorData.calculatedLux} LUX"
-
                         selectedSensor == "Speed Distance" && sensorData is BluetoothScanViewModel.SensorData.SDTData ->
                             "Speed: ${sensorData.speed}m/s, Distance: ${sensorData.distance}m"
-
                         selectedSensor == "Ammonia Sensor" && sensorData is BluetoothScanViewModel.SensorData.AmmoniaSensorData ->
-                            "Ammonia: ${sensorData.ammonia}"
-
+                            "Ammonia: ${sensorData.ammonia} ppm" // Added unit
                         else -> "Incompatible sensor type"
                     },
                     style = MaterialTheme.typography.caption,
                     color = if (isDarkMode) Color(0xFF64B5F6) else MaterialTheme.colors.primary
                 )
-            }
+            } ?: Text(
+                text = "No sensor data",
+                style = MaterialTheme.typography.caption,
+                color = if (isDarkMode) Color(0xFF64B5F6) else MaterialTheme.colors.primary
+            )
         }
     }
 }

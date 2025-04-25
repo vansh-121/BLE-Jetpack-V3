@@ -294,6 +294,7 @@ fun GameActivityScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(backgroundColor)
+            .padding(WindowInsets.systemBars.asPaddingValues())
             .onGloballyPositioned { coordinates ->
                 screenWidth = coordinates.size.width.toFloat()
                 screenHeight = coordinates.size.height.toFloat()

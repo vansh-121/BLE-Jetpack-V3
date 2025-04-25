@@ -214,6 +214,7 @@ class GoogleTranslationService(
                 TranslationCache.put("$original-$targetLanguage", translated)
             }
 
+            // Return translated texts
             texts.map { TranslationCache.get("$it-$targetLanguage") ?: it }
         } catch (e: Exception) {
             e.printStackTrace()
@@ -222,6 +223,7 @@ class GoogleTranslationService(
     }
 
     private fun getLanguageName(languageCode: String): String {
+        // Map language codes to their names
         return when (languageCode) {
             "en" -> "English"
             "hi" -> "Hindi"
@@ -433,6 +435,7 @@ fun UserProfileCard(
                         .size(60.dp)
                         .clip(CircleShape)
                         .background(avatarColor),
+
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
@@ -568,7 +571,6 @@ fun SettingsItemRow(
     var showAccountsDialog by remember { mutableStateOf(false) }
     val currentLanguage by LanguageManager.currentLanguage.collectAsState()
     val context = LocalContext.current
-
     val isLanguageItem = item.icon == Icons.Outlined.Language
     val isAboutItem = item.icon == Icons.Outlined.Info
     val isHelpItem = item.icon == Icons.AutoMirrored.Outlined.Help
@@ -955,7 +957,8 @@ fun AccountsDialog(
         Surface(
             modifier = Modifier
                 .widthIn(max = 400.dp)
-                .padding(16.dp),
+                .padding(16.dp)
+                .padding(WindowInsets.systemBars.asPaddingValues()),
             shape = RoundedCornerShape(16.dp),
             color = if (isDarkMode) Color(0xFF1E1E1E) else Color.White
         ) {
@@ -1150,7 +1153,7 @@ fun AboutBleScreen(
                     }
                 },
                 backgroundColor = backgroundColor,
-                elevation = 0.dp
+                elevation = 0.dp,
             )
         }
     ) { padding ->

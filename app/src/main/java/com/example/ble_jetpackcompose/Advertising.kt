@@ -69,6 +69,7 @@ data class TranslatedAdvertisingText(
     val warningTitle: String = "Warning",
     val warningMessage: String = "The %s has exceeded the threshold of %s!",
     val dismissButton: String = "Dismiss"
+
 )
 
 @Composable
@@ -359,7 +360,7 @@ fun AdvertisingDataScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(backgroundGradient)
-            .padding(horizontal = 16.dp, vertical = 8.dp),
+            .padding(WindowInsets.systemBars.asPaddingValues()),
         contentAlignment = Alignment.Center
     ) {
         // Blinking red overlay

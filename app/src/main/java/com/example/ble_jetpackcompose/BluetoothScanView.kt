@@ -362,12 +362,13 @@ class BluetoothScanViewModel<T>(private val context: Context) : ViewModel() {
     }
 
     private fun parseAmmoniaSensorData(data: ByteArray?, deviceAddress: String): SensorData? {
-        if (data == null || data.size < 5) return null
+        if (data == null || data.size < 7) {
+            return null
+        }
+
         val deviceId = data[0].toUByte().toString()
-        // Parse SHT40 data and convert humidity to ammonia ppm (0-300 ppm)
-        val humidity = "${data[3].toUByte()}.${data[4].toUByte()}".toFloatOrNull() ?: 0f
-        // Example conversion: Map humidity (0-100%) to ammonia (0-300 ppm)
-        val ammoniaPpm = (humidity * 3).coerceIn(0f, 300f) // Simplified linear mapping
+        val ammoniaPpm = data[6].toUByte().toFloat()
+
         return SensorData.AmmoniaSensorData(
             deviceId = deviceId,
             ammonia = String.format("%.1f", ammoniaPpm)
@@ -408,7 +409,7 @@ class BluetoothScanViewModel<T>(private val context: Context) : ViewModel() {
         name?.contains("Speed", ignoreCase = true) == true -> "SPEED_DISTANCE"
         name?.contains("Object", ignoreCase = true) == true -> "Metal Detector"
         name?.contains("Step", ignoreCase = true) == true -> "Step Counter"
-        name?.contains("Ammonia_sensor", ignoreCase = true) == true -> "Ammonia Sensor"
+        name?.contains("NH", ignoreCase = true) == true -> "Ammonia Sensor"
         else -> null
     }
 
