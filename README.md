@@ -1,4 +1,4 @@
-# 🔗 BLE-Jetpack-V3
+# 🔗 BLE Sense (Android App)
 
 ![GitHub repo size](https://img.shields.io/github/repo-size/vansh-121/BLE-Jetpack-V3?style=flat-square)
 ![GitHub stars](https://img.shields.io/github/stars/vansh-121/BLE-Jetpack-V3?style=flat-square)
