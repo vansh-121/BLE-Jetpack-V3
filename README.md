@@ -17,11 +17,51 @@
 
 ## 📱 Overview
 
-**BLE-Jetpack-V3** is an Android application developed using Kotlin and Jetpack Compose. It serves as a Bluetooth Low Energy (BLE) scanner, allowing users to discover and interact with nearby BLE devices. The app showcases modern Android development practices, including:
+**BLE-Sense** is an Android application developed using Kotlin and Jetpack Compose. It serves as a Bluetooth Low Energy (BLE) scanner, allowing users to discover and interact with nearby BLE devices. The app showcases modern Android development practices, including:
 
 - **Jetpack Compose** for declarative UI
 - **Kotlin Coroutines** for asynchronous operations
 - **MVVM Architecture** for a clean separation of concerns
+
+---
+
+## Video Demo 
+
+---
+
+### Real Time Sensor Data
+
+https://github.com/user-attachments/assets/390986a3-3a0a-4d50-bb1e-07c4ac72569d
+
+---
+
+### Ammonia Sensor
+
+https://github.com/user-attachments/assets/05d177c8-ee19-4a88-8380-386d9058d46d
+
+---
+
+### Graph Data 
+
+https://github.com/user-attachments/assets/aed1f63b-0a62-4e0e-b527-ff44438b417b
+
+---
+
+### Trigger Alarm
+
+https://github.com/user-attachments/assets/9827966b-0169-4b3f-ac9b-51eacd88f3c3
+
+---
+
+### Gaming Section - BLE Games
+
+https://github.com/user-attachments/assets/02168833-0cdb-4689-9543-3064d6d89fe9
+
+---
+
+### AI Based Translation (22 Regional Languages)
+
+https://github.com/user-attachments/assets/5a95e82f-1928-4600-ab4a-9b774aa5de3c
 
 ---
 
