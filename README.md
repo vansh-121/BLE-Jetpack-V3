@@ -25,6 +25,14 @@
 
 ---
 
+### 🖼️ UI Design
+
+The application's user interface is designed with a focus on simplicity and usability. You can view the design mockups on Figma:
+
+🔗 Figma Design - [BLE Sense App UI](https://www.figma.com/design/1xPsitZvQxWnFjpwRzwra5/BLE-Sense-App-UI?m=auto&t=G4m5HJRcbUnNfJLW-1)
+
+---
+
 ## Video Demo 
 
 ---
