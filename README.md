@@ -122,10 +122,18 @@ The application's user interface is designed with a focus on simplicity and usab
 └── settings.gradle.kts
 ```
 
+---
+
 ### 📜 License
 This project is licensed under the MIT License. See the LICENSE.md file for details.
+
+---
 
 ### Documentation
 
 [Read Documentation](https://docs.google.com/document/d/1NH8aituXVrfQx1NdCqPEUDg4iR6EYuuGj-75fXbgGHY/edit?usp=sharing)
+
+---
+
+#### Made with ❤️ by Vansh
 
